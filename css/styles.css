@@ -1,0 +1,93 @@
+  html {
+    padding: 0px;
+    height: 100%;
+  }
+  body {
+    height: 100%;
+    overflow-y:auto!important;
+  }
+  .Kalinga{
+      font-family:Monserrat;
+  }
+  .Kalinga-bold{
+      font-family:Monserrat-Bold;
+  }
+  @font-face{
+      font-display:fallback;
+      font-family:Monserrat;
+      src:url(https://staticd.paguetodo.com/fonts/Montserrat-Light.otf);
+  }
+  @font-face{
+      font-display:fallback;
+      font-family:Monserrat-Bold;
+      src:url(https://staticd.paguetodo.com/fonts/Montserrat-Bold.otf);
+  }
+  
+  @font-face{
+      font-family:Poppins-Bold;
+      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-Bold.ttf)
+  }
+  @font-face{
+      font-family:Poppins-LightItalic;
+      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-LightItalic.ttf)
+  }
+  @font-face{
+      font-family:Poppins-Light;
+      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-Light.ttf)
+  }
+  @font-face{
+      font-family:Poppins-Regular;
+      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-Regular.ttf)
+  }
+  .font-light{
+      font-family:Poppins-Light;
+  }
+  .font-bold{
+      font-family:Poppins-Bold;
+  }
+  .font-regular{
+      font-family: Poppins-Regular;
+  }
+  .font-light-italic{
+      font-family:Poppins-LightItalic;
+  }
+  /* Campo de entrada */
+  .form-control {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    width: 100%;
+  }
+  
+  /* Etiqueta flotante */
+  .floating-label {
+    position: absolute;
+    pointer-events: none;
+    left: 10px; /* Espacio izquierdo para la etiqueta */
+    top: 10px; /* Espacio superior para la etiqueta */
+    transition: 0.2s ease-out; /* Transición suave */
+  }
+  
+  /* Estilo de la etiqueta cuando el campo tiene el foco */
+  .form-control:focus + .floating-label,
+  .form-control:not(:placeholder-shown) + .floating-label {
+    transform: translateY(-25px); /* Mover la etiqueta hacia arriba */
+    font-size: 12px; /* Tamaño de la etiqueta reducido */
+    color: #007bff; /* Color de la etiqueta activa */
+  }
+  .mini-size-img {
+      width: 100%;
+      max-width: 60px;
+      height: 32px;
+      object-fit: contain;
+    }
+  .button-payment{
+    background-color: #eccc04 !important; border-color: #eccc04 !important;
+  }
+  .button-clean{
+    border: 1px solid #147cec!important; color: #147cec !important;
+  }
+  .button-clean:hover{
+    background: #147cec !important;
+    color:white!important;
+  }
