@@ -15,29 +15,29 @@
   @font-face{
       font-display:fallback;
       font-family:Monserrat;
-      src:url(https://staticd.paguetodo.com/fonts/Montserrat-Light.otf);
+      src:url(https://static.paguetodo.com/fonts/Montserrat-Light.otf);
   }
   @font-face{
       font-display:fallback;
       font-family:Monserrat-Bold;
-      src:url(https://staticd.paguetodo.com/fonts/Montserrat-Bold.otf);
+      src:url(https://static.paguetodo.com/fonts/Montserrat-Bold.otf);
   }
   
   @font-face{
       font-family:Poppins-Bold;
-      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-Bold.ttf)
+      src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-Bold.ttf)
   }
   @font-face{
       font-family:Poppins-LightItalic;
-      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-LightItalic.ttf)
+      src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-LightItalic.ttf)
   }
   @font-face{
       font-family:Poppins-Light;
-      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-Light.ttf)
+      src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-Light.ttf)
   }
   @font-face{
       font-family:Poppins-Regular;
-      src:url(https://staticd.paguetodo.com/fonts/Poppins/Poppins-Regular.ttf)
+      src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-Regular.ttf)
   }
   .font-light{
       font-family:Poppins-Light;

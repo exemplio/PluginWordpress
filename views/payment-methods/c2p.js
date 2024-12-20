@@ -5,7 +5,7 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
         window.alert("Testing button");
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
-        React.createElement("div", {className:"row"},
+        React.createElement("div", {className:"row", style:{marginTop:'15px'}},
             // React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
             //     React.createElement("img", { src: `assets/images/png/${banco}.png`, height: "40px", style: { objectFit: 'contain' } }),
             //     React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco)

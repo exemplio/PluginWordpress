@@ -1,7 +1,7 @@
 const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) => {
     const [phoneP2P, setUserValue] = React.useState(null);    
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
-        React.createElement("div", {className:"row"},
+        React.createElement("div", {className:"row", style:{ marginTop:'15px' }},
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("select", {

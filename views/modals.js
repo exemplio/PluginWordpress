@@ -1,4 +1,4 @@
-const WarningModal = ({ bodyText, handleClose, title }) => {
+const WarningModal = ({ bodyText }) => {
     return React.createElement('div', { id:"msgWarning", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
@@ -9,16 +9,11 @@ const WarningModal = ({ bodyText, handleClose, title }) => {
                     )
                 ),
                 React.createElement('div', { className: 'modal-body'},
-                    React.createElement('p', null, bodyText)
+                    console.log(bodyText),
+                    
+                    React.createElement('span',{className: 'font-regular' }, bodyText)
                 ),
                 React.createElement('div', { className: 'modal-footer' },
-                    React.createElement('button',{ type: 'button', className: 'btn btn-warning',
-                            onClick: () => {
-                                alert('Changes saved!');
-                            },
-                        },
-                        React.createElement('span',{className: 'font-regular' }, 'Save changes')
-                    ),
                     React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
                             onClick: () => {$("#msgWarning").modal("hide")},
                         },
@@ -29,7 +24,7 @@ const WarningModal = ({ bodyText, handleClose, title }) => {
         )
     );
 };
-const InfoModal = ({ bodyText, handleClose, title }) => {
+const InfoModal = ({ bodyText }) => {
     return React.createElement('div', { id:"msgInfo", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
@@ -60,7 +55,7 @@ const InfoModal = ({ bodyText, handleClose, title }) => {
         )
     );
 };
-const ErrorModal = ({ bodyText, handleClose, title }) => {
+const ErrorModal = ({ bodyText }) => {
     return React.createElement('div', { id:"msgError", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
@@ -74,13 +69,6 @@ const ErrorModal = ({ bodyText, handleClose, title }) => {
                     React.createElement('p', null, bodyText)
                 ),
                 React.createElement('div', { className: 'modal-footer' },
-                    React.createElement('button',{ type: 'button', className: 'btn btn-danger',
-                            onClick: () => {
-                                alert('Changes saved!');
-                            },
-                        },
-                        React.createElement('span',{className: 'font-regular' }, 'Save changes')
-                    ),
                     React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
                             onClick: () => {$("#msgError").modal("hide")},
                         },

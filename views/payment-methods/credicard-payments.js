@@ -1,8 +1,25 @@
-const CredicardPay = ({ imagen,idDoc,bankName,cardHolder,etiqueta,documentType, typeP ,
+const CredicardPay = ({ imagen,idDoc,bankName,etiqueta, typeP ,
     verifyDisabled, nroTarjeta, expiracion, ccv, tipoCuenta, pin, clean }) => {
     const ojito = myPluginImage.eye_solid;
     const ojitoTarjeta = myPluginImage.eye_solid;
     const ojitoPin = myPluginImage.eye_solid;
+    const [cardHolder, setCardHolder] = React.useState(null);
+    const [documentType, setDocumentType] = React.useState(null);
+    const verifyData = () => {
+        if (!(cardHolder==null || cardHolder==undefined || cardHolder=="")) {
+            window.alert("");
+        }else{
+            setBodyModal("46948949");
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if (!(documentType==null || documentType==undefined || documentType=="")) {
+            window.alert("");
+        }else{
+            $("#msgWarning").modal("show");
+            return;
+        }
+    }
     const changeTypeInputShowCard = () => {
         window.alert("Testing button");
     };
@@ -10,11 +27,11 @@ const CredicardPay = ({ imagen,idDoc,bankName,cardHolder,etiqueta,documentType, 
         window.alert("Testing button");
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
-        React.createElement("div", { className: "row", style: { marginTop: '20px' } },
+        React.createElement("div", {className:"row", style:{ marginTop:'15px' }},
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'center' } },
                 imagen && React.createElement("img", { src: imagen, height: "40px", style: { objectFit: 'contain' } }),
                 bankName && React.createElement("h5", { className: "font-bold" }, bankName),
-                React.createElement("div", { className: "form-floating", style: { marginTop: '15px', marginBottom: '0px' } },
+                React.createElement("div", { className: "form-floating", style: { marginBottom: '0px' } },
                     React.createElement("input", {
                         type: "text",
                         id: "card_holder",
@@ -30,7 +47,7 @@ const CredicardPay = ({ imagen,idDoc,bankName,cardHolder,etiqueta,documentType, 
                 ),                
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
-                React.createElement("div", { className: "input-group", style: { marginTop: '15px', marginBottom: '0px' } },
+                React.createElement("div", { className: "input-group", style: { marginBottom: '0px' } },
                     React.createElement("select", {
                         className: "input-group-text",
                         id: "document_type_debito",
@@ -216,7 +233,7 @@ const CredicardPay = ({ imagen,idDoc,bankName,cardHolder,etiqueta,documentType, 
                     type: "button",
                     className: "btn btn btn-lg button-payment font-regular",
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
-                    onClick: () => sendData('PAY')
+                    onClick: () => verifyData('PAY')
                 }, "Pagar")
             )
         ),
