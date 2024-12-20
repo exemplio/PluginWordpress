@@ -1,8 +1,34 @@
-const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,clean ) => {  
-    const [idDocC2p, setIdDocC2p] = React.useState(null);
+const C2pPayment = (indice ) => {  
     const ojitoOperacion = myPluginImage.eye_solid;
+    const [idDocTypeValue, setIdDocType] = React.useState(null);
+    const [idDocC2pValue, setIdDocC2p] = React.useState(null);
+    const [prefixPhoneValue, setPrefixPhone] = React.useState(null);
+    const [phoneC2PValue, setPhoneC2P] = React.useState(null);
+    const [bancoSelectedValue, setBancoSelected] = React.useState(null);
+    const [otpValue, setOtp] = React.useState(null);
+    const idDocType = React.useRef(null);
+    const idDocC2p = React.useRef(null);
+    const prefixPhone = React.useRef(null);
+    const phoneC2P = React.useRef(null);
+    const bancoSelected = React.useRef(null);
+    const otp = React.useRef(null);
     const changeTypeInputShow = () => {
         window.alert("Testing button");
+    };
+    const verifyDataC2P = () => {
+        if (phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="") {
+            msgWarningBody.innerText="Debe ingresar el número de documento";
+            $("#msgWarning").modal("show");
+            return;
+        }
+    }
+    const clean = () => { 
+        setIdDocType("");
+        setIdDocC2p("");
+        setPrefixPhone("");
+        setPhoneC2P("");
+        setBancoSelected("");
+        setOtp("");
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{marginTop:'15px'}},
@@ -17,12 +43,12 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                         id: "id_doc_type",
                         name: "id_doc_type",
                         required: true,
-                        value: idDocType,
-                        onChange: (e) => setIdDocType(e.target.value)
+                        value: idDocC2pValue,
+                        onChange: (e) => setIdDocType(e.currentTarget.value)
                     },
-                        // listTypes.map((item, index) => (
-                        //     React.createElement("option", { key: index, value: item }, item)
-                        // ))
+                        getTypesIdDoc().map((item, index) => (
+                            React.createElement("option", { key: index, value: item }, item)
+                        ))
                     ),
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -32,11 +58,11 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                             inputMode: "numeric",
                             id: "idDocC2p",
                             name: "idDocC2p",
-                            onKeyPress: (e) => keypressNumbersInteger(e),
+                            onKeyPress: (e) => keypressNumeros(e),
                             style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
-                            value: idDocC2p,
-                            onChange: (e) => setIdDoc(e.target.value),
-                            onBlur: () => verifyDoc(idDoc)
+                            value: idDocC2pValue,
+                            onChange: (e) => setIdDocC2p(e.currentTarget.value),
+                            // onBlur: () => verifyDoc(idDoc)
                         }),
                         React.createElement("label", { htmlFor: "idDocC2p",className: "font-regular" }, "Nro. documento")
                     ),
@@ -46,15 +72,15 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                 React.createElement("div", { className: "input-group" },
                     React.createElement("select", {
                         className: "input-group-text",
-                        id: `prefijo_c2p-${indice}-${banco}`,
-                        name: `prefijo_c2p-${indice}-${banco}`,
+                        id: `prefijo_c2p`,
+                        name: `prefijo_c2p`,
                         required: true,
-                        value: prefixPhone,
-                        onChange: (e) => setPrefixPhone(e.target.value)
+                        value: prefixPhoneValue,
+                        onChange: (e) => setPrefixPhone(e.currentTarget.value)
                     },
-                        // listPrefixPhone.map((item3, index) => (
-                        //     React.createElement("option", { key: index, value: item3.value }, item3.to_show)
-                        // ))
+                        getPrefixArea().map((item3, index) => (
+                            React.createElement("option", { key: index, value: item3.value }, item3.to_show)
+                        ))
                     ),
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -64,10 +90,10 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                             inputMode: "numeric",
                             id: "phone_c2p",
                             name: "phone_c2p",
-                            onKeyPress: (e) => keypressNumbersInteger(e),
+                            onKeyPress: (e) => keypressNumeros(e),
                             style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
-                            value: phone,
-                            onChange: (e) => setPhone(e.target.value)
+                            value: phoneC2PValue,
+                            onChange: (e) => setPhoneC2P(e.currentTarget.value)
                         }),
                         React.createElement("label", { htmlFor: "phone_c2p",className: "font-regular" }, "Nro. Teléfono")
                     )
@@ -77,20 +103,20 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select",
-                        id: `banco_selected_c2p-${indice}-${banco}`,
-                        name: `banco_selected_c2p-${indice}-${banco}`,
+                        id: `banco_selected_c2p`,
+                        name: `banco_selected_c2p`,
                         required: true,
-                        value: bancoSelected,
+                        value: bancoSelectedValue,
                         onChange: (e) => {
-                            setBancoSelected(e.target.value);
-                            setTooltip(e.target.value);
+                            setBancoSelected(e.currentTarget.value);
+                            setTooltip(e.currentTarget.value);
                         }
                     },
-                        // bancos.map((banco, index) => (
-                        //     React.createElement("option", { key: index, value: banco.value }, `${banco.value} - ${banco?.to_show}`)
-                        // ))
+                        allBanks().map((item, index) => (
+                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name)
+                        ))
                     ),
-                    React.createElement("label", { htmlFor: `banco_selected-${indice}-${banco}`,className: "font-regular" }, "Banco emisor")
+                    React.createElement("label", { htmlFor: `banco_selected`,className: "font-regular" }, "Banco emisor")
                 ),
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -105,9 +131,9 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                             maxLength: "10",
                             style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' },
                             autoComplete: "off",
-                            value: otp,
-                            onChange: (e) => setOtp(e.target.value),
-                            onKeyPress: (e) => keypressNumbersInteger(e)
+                            value: otpValue,
+                            onChange: (e) => setOtp(e.currentTarget.value),
+                            onKeyPress: (e) => keypressNumeros(e)
                         }),
                         React.createElement("label", { htmlFor: `otp`, className: "d-none d-sm-inline-block font-regular" }, "Clave de operaciones especiales"),
                         React.createElement("label", { htmlFor: `otp`, className: "d-sm-none font-regular" }, "Clave")
@@ -116,7 +142,7 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                         type: "button",
                         className: "btn btn-outline-primary",
                         style: { width: '50px' },
-                        onClick: () => changeTypeInputShow(`clave_c2p-${indice}-${banco}`, 'ojito_operacion')
+                        onClick: () => changeTypeInputShow(`clave_c2p`, 'ojito_operacion')
                     },
                         React.createElement("img", { src: ojitoOperacion, height: "18px", width: "18px", alt: "Toggle visibility" })
                     ),
@@ -129,7 +155,7 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                     type: "button",
                     className: "btn btn-lg button-clean font-regular",
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
-                    onClick: () => sendData('PAY')
+                    onClick: () => clean()
                 }, "Limpiar")
             ),
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
@@ -137,7 +163,7 @@ const C2pPayment = (idDocType ,banco,prefixPhone,phone,bancoSelected,indice,otp,
                     type: "button",
                     className: "btn btn btn-lg button-payment font-regular",
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
-                    onClick: () => sendData('PAY')
+                    onClick: () => verifyDataC2P('PAY')
                 }, "Pagar")
             )
         ),

@@ -1,5 +1,77 @@
-const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) => {
-    const [phoneP2P, setUserValue] = React.useState(null);    
+const MobilePayment = (pay) => {
+    const [phoneP2PValue, setPhoneP2P] = React.useState(null);
+    const [idDocTypeValue, setIdDocType] = React.useState(null);
+    const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
+    const [prefixPhoneValue, setPrefixPhone] = React.useState(null);
+    const [payerPhoneValue, setPayerPhone] = React.useState(null);
+    const [bankValue, setBank] = React.useState(null);
+    const [referenceP2PValue, setP2PReference] = React.useState(null);
+    const phoneP2P = React.useRef(null);
+    const idDocType = React.useRef(null);
+    const payerIdDoc = React.useRef(null);
+    const prefixPhone = React.useRef(null);
+    const payerPhone = React.useRef(null);
+    const bank = React.useRef(null);
+    const reference = React.useRef(null);
+    const verifyDataP2P = () => {
+        if (phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="") {
+            msgWarningBody.innerText="Debe ingresar el número de documento";
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
+            msgWarningBody.innerText="Debe ingresar el tipo de documento";
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
+            msgWarningBody.innerText="Debe ingresar el número de documento";
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if(prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null"){
+            msgWarningBody.innerText="Debe ingresar el código de area del teléfono";
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if(payerPhoneValue==null || payerPhoneValue==undefined || payerPhoneValue=="" || payerPhoneValue=="null"){
+            var phone_p2p= payerPhoneValue.replaceAll('-','');             
+            if(phone_p2p.length!=7){
+                msgWarningBody.innerText="El número del teléfono esta incompleto";
+                $("#msgWarning").modal("show");
+                return;
+            }else{
+                if(!utils_keyNumber(phone_p2p)){
+                    msgWarningBody.innerText="El número del teléfono sólo acepta números";
+                    $("#msgWarning").modal("show");
+                    return;
+                }
+            }
+        }else{
+            msgWarningBody.innerText="Debe ingresar el número del teléfono";
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
+            msgWarningBody.innerText="Debe seleccionar el banco de origen";
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if(referenceP2PValue==null || referenceP2PValue==undefined || referenceP2PValue=="" || referenceP2PValue=="null"){
+            msgWarningBody.innerText="Debe ingresar el número de referencia";
+            $("#msgWarning").modal("show");
+            return;
+        }
+    }
+    const clean = () => { 
+        setPhoneP2P("");
+        setIdDocType("");
+        setPayerIdDoc("");
+        setPrefixPhone("");
+        setPayerPhone("");
+        setBank("");
+        setP2PReference("");
+    };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{ marginTop:'15px' }},
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -9,12 +81,12 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                         id: "id_doc_type",
                         name: "id_doc_type",
                         required: true,
-                        value: idDocType,
-                        onChange: (e) => setIdDocType(e.target.value)
+                        value: idDocTypeValue,
+                        onChange: (e) => setIdDocType(e.currentTarget.value)
                     },
-                        // listTypes.map((item, index) => (
-                        //     React.createElement("option", { key: index, value: item }, item)
-                        // ))
+                        getTypesIdDoc().map((item, index) => (
+                            React.createElement("option", { key: index, value: item }, item)
+                        ))
                     ),
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -24,10 +96,10 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                             inputMode: "numeric",
                             id: "id_doc",
                             name: "id_doc",
-                            onKeyPress: (e) => keypressNumbersInteger(e),
+                            onKeyPress: (e) => keypressNumeros(e),
                             style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
-                            value: idDoc,
-                            onChange: (e) => setIdDoc(e.target.value)
+                            value: payerIdDocValue,
+                            onChange: (e) => setPayerIdDoc(e.currentTarget.value)
                         }),
                         React.createElement("label", { htmlFor: "id_doc",className: "font-regular" }, "Nro. documento")
                     )
@@ -40,12 +112,12 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                         id: "prefix_phone",
                         name: "prefix_phone",
                         required: true,
-                        value: prefixPhone,
-                        onChange: (e) => setPrefixPhone(e.target.value)
+                        value: prefixPhoneValue,
+                        onChange: (e) => setPrefixPhone(e.currentTarget.value)
                     },
-                        // listPrefixPhone.map((item, index) => (
-                        //     React.createElement("option", { key: index, value: item.value }, item.to_show)
-                        // ))
+                        getPrefixArea().map((item, index) => (
+                            React.createElement("option", { key: index, value: item.value }, item.to_show)
+                        ))
                     ),
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -55,10 +127,10 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                             inputMode: "numeric",
                             id: "phoneP2P",
                             name: "phoneP2P",
-                            onKeyPress: (e) => keypressNumbersInteger(e),
+                            onKeyPress: (e) => keypressNumeros(e),
                             style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
-                            value: phoneP2P,
-                            onChange: (e) => setPhoneP2P(e.target.value)
+                            value: phoneP2PValue,
+                            onChange: (e) => setPhoneP2P(e.currentTarget.value)
                         }),
                         React.createElement("label", { htmlFor: "phoneP2P",className: "font-regular" }, "Nro. Teléfono")
                     )
@@ -71,11 +143,11 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                         value: bank,
                         name: "bank",
                         style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' },
-                        onChange: (e) => setBank(e.target.value)
+                        onChange: (e) => setBank(e.currentTarget.value)
                     },
-                        // listBanks.map((item, index) => (
-                        //     React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.to_show)
-                        // ))
+                        allBanks().map((item, index) => (
+                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name)
+                        ))
                     ),
                     React.createElement("label", { htmlFor: "bank", className: "d-none d-sm-inline-block font-regular" }, "Banco pagador"),
                     React.createElement("label", { htmlFor: "bank", className: "d-sm-none font-regular" }, "Banco pagador")
@@ -86,15 +158,15 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                     React.createElement("input", {
                         type: "text",
                         className: "form-control phone",
-                        onKeyPress: (e) => keypressNumbersInteger(e),
+                        onKeyPress: (e) => keypressNumeros(e),
                         inputMode: "numeric",
-                        id: "referencia",
-                        name: "referencia",
+                        id: "reference",
+                        name: "reference",
                         maxLength: "15",
-                        value: referencia,
-                        onChange: (e) => setReferencia(e.target.value)
+                        value: referenceP2PValue,
+                        onChange: (e) => setP2PReference(e.currentTarget.value)
                     }),
-                    React.createElement("label", { htmlFor: "referencia",className: "font-regular" }, "Referencia")
+                    React.createElement("label", { htmlFor: "reference",className: "font-regular" }, "Referencia")
                 )
             ),
         ),
@@ -104,7 +176,7 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                     type: "button",
                     className: "btn btn-lg button-clean font-regular",
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
-                    onClick: () => sendData('PAY')
+                    onClick: () => clean()
                 }, "Limpiar")
             ),
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
@@ -112,7 +184,7 @@ const MobilePayment = (idDocType,prefixPhone,idDoc,bank,referencia,clean,pay) =>
                     type: "button",
                     className: "btn btn btn-lg button-payment font-regular",
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
-                    onClick: () => sendData('PAY')
+                    onClick: () => verifyDataP2P('PAY')
                 }, "Pagar")
             )
         ),

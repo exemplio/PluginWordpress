@@ -1,11 +1,6 @@
 const settings = window.wc.wcSettings.getSetting("my_custom_gateway_data", {});
 const label = window.wp.htmlEntities.decodeEntities(settings.title) || window.wp.i18n.__("", "my-custom-gateway");
-const sendData = () => {
-    $("#msgInfo").modal("show");
-    // callServicesHttp('get-commision',null,null);
-};
 const Accordion = () => {
-    const [ bodyModal, setBodyModal] = React.useContext(null);
     return React.createElement("div", { className: "accordion", id: "accordionExample" },
         React.createElement("div", { className: "accordion-item" },
             React.createElement("h2", { className: "accordion-header font-regular", id: "headingTwo" },
@@ -105,7 +100,7 @@ const Content = () => {
     return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
         React.createElement("p", null, window.wp.htmlEntities.decodeEntities(settings.description || "")),
         React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
-        React.createElement(WarningModal, {label: "Modal",bodyText:bodyModal}),
+        React.createElement(WarningModal, {label: "Modal"}),
         React.createElement(InfoModal, {label: "Modal"}),
         React.createElement(ErrorModal, {label: "Modal"}),
     );
