@@ -1,24 +1,11 @@
-const MobilePayment = (pay) => {
-    const [phoneP2PValue, setPhoneP2P] = React.useState(null);
+const MobilePayment = () => {
     const [idDocTypeValue, setIdDocType] = React.useState(null);
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
-    const [prefixPhoneValue, setPrefixPhone] = React.useState(null);
-    const [payerPhoneValue, setPayerPhone] = React.useState(null);
+    const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
+    const [phoneP2PValue, setPhoneP2P] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceP2PValue, setP2PReference] = React.useState(null);
-    const phoneP2P = React.useRef(null);
-    const idDocType = React.useRef(null);
-    const payerIdDoc = React.useRef(null);
-    const prefixPhone = React.useRef(null);
-    const payerPhone = React.useRef(null);
-    const bank = React.useRef(null);
-    const reference = React.useRef(null);
     const verifyDataP2P = () => {
-        if (phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="") {
-            msgWarningBody.innerText="Debe ingresar el número de documento";
-            $("#msgWarning").modal("show");
-            return;
-        }
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             msgWarningBody.innerText="Debe ingresar el tipo de documento";
             $("#msgWarning").modal("show");
@@ -34,8 +21,8 @@ const MobilePayment = (pay) => {
             $("#msgWarning").modal("show");
             return;
         }
-        if(payerPhoneValue==null || payerPhoneValue==undefined || payerPhoneValue=="" || payerPhoneValue=="null"){
-            var phone_p2p= payerPhoneValue.replaceAll('-','');             
+        if(phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="" || phoneP2PValue=="null"){
+            var phone_p2p= phoneP2PValue.replaceAll('-','');             
             if(phone_p2p.length!=7){
                 msgWarningBody.innerText="El número del teléfono esta incompleto";
                 $("#msgWarning").modal("show");
@@ -67,8 +54,8 @@ const MobilePayment = (pay) => {
         setPhoneP2P("");
         setIdDocType("");
         setPayerIdDoc("");
-        setPrefixPhone("");
-        setPayerPhone("");
+        setPrefixPhone("414");
+        setPhoneP2P("");
         setBank("");
         setP2PReference("");
     };
@@ -140,9 +127,9 @@ const MobilePayment = (pay) => {
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select browser-default font-regular",
-                        value: bank,
                         name: "bank",
                         style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' },
+                        value: bankValue,
                         onChange: (e) => setBank(e.currentTarget.value)
                     },
                         allBanks().map((item, index) => (

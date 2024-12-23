@@ -1,8 +1,8 @@
 const C2pPayment = (indice ) => {  
     const ojitoOperacion = myPluginImage.eye_solid;
-    const [idDocTypeValue, setIdDocType] = React.useState(null);
+    const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [idDocC2pValue, setIdDocC2p] = React.useState(null);
-    const [prefixPhoneValue, setPrefixPhone] = React.useState(null);
+    const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
     const [phoneC2PValue, setPhoneC2P] = React.useState(null);
     const [bancoSelectedValue, setBancoSelected] = React.useState(null);
     const [otpValue, setOtp] = React.useState(null);
@@ -16,16 +16,70 @@ const C2pPayment = (indice ) => {
         window.alert("Testing button");
     };
     const verifyDataC2P = () => {
-        if (phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="") {
-            msgWarningBody.innerText="Debe ingresar el número de documento";
+        if (idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null") {
+            msgWarningBody.innerText="Debe ingresar el tipo de documento";
             $("#msgWarning").modal("show");
             return;
         }
+        if (idDocC2pValue==null || idDocC2pValue==undefined || idDocC2pValue=="" || idDocC2pValue=="null") {
+            msgWarningBody.innerText="Debe ingresar el número de documento";
+            $("#msgWarning").modal("show");
+            return;
+        }else{
+            setIdDocC2p(idDocC2pValue+"".trim().toUpperCase());
+            if(idDocTypeValue!="P"){
+                if(!utils_keyNumber(idDocC2pValue)){
+                    msgWarningBody.innerText="El formato del número de documento es incorrecto";
+                    $("#msgWarning").modal("show");
+                    return;
+                }
+            }
+        }
+        if (prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null") {
+            msgWarningBody.innerText="Debe ingresar el prefijo del teléfono";
+            $("#msgWarning").modal("show");
+            return;
+        }
+        if (phoneC2PValue==null || phoneC2PValue==undefined || phoneC2PValue=="" || phoneC2PValue=="null") {
+            msgWarningBody.innerText="Debe ingresar el número del teléfono";
+            $("#msgWarning").modal("show");
+            return;
+        }else{
+            var phone=(phoneC2PValue+"").trim().replace("-","");
+            if(phone.length!=7){
+                msgWarningBody.innerText="El número del teléfono esta incompleto";
+                $("#msgWarning").modal("show");
+                return;
+            }else{
+                if(!utils_keyNumber(phone)){
+                    msgWarningBody.innerText="El número del teléfono sólo acepta números";
+                    $("#msgWarning").modal("show");
+                    return;
+                }
+            }
+        }
+        if (bancoSelectedValue==null || bancoSelectedValue==undefined || bancoSelectedValue=="" || bancoSelectedValue=="null") {
+            msgWarningBody.innerText="Debe seleccionar el banco pagador";
+            $("#msgWarning").modal("show");
+            return;            
+        }
+        if (otpValue==null || otpValue==undefined || otpValue=="" || otpValue=="null") {
+            msgWarningBody.innerText="Debe ingresar el OTP";
+            $("#msgWarning").modal("show");
+            return;
+        }else{
+            setOtp((otpValue+"").trim());
+            if (otpValue.length<4) {
+                msgWarningBody.innerText="El OTP esta incompleto";
+                $("#msgWarning").modal("show");
+                return;
+            }
+        }
     }
     const clean = () => { 
-        setIdDocType("");
+        setIdDocType("V");
         setIdDocC2p("");
-        setPrefixPhone("");
+        setPrefixPhone("414");
         setPhoneC2P("");
         setBancoSelected("");
         setOtp("");
@@ -43,7 +97,7 @@ const C2pPayment = (indice ) => {
                         id: "id_doc_type",
                         name: "id_doc_type",
                         required: true,
-                        value: idDocC2pValue,
+                        value: idDocTypeValue,
                         onChange: (e) => setIdDocType(e.currentTarget.value)
                     },
                         getTypesIdDoc().map((item, index) => (
@@ -109,7 +163,7 @@ const C2pPayment = (indice ) => {
                         value: bancoSelectedValue,
                         onChange: (e) => {
                             setBancoSelected(e.currentTarget.value);
-                            setTooltip(e.currentTarget.value);
+                            // setTooltip(e.currentTarget.value);
                         }
                     },
                         allBanks().map((item, index) => (

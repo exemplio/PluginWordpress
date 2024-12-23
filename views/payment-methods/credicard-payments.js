@@ -1,8 +1,12 @@
 const CredicardPay = ({ imagen,bankName,etiqueta ,
     verifyDisabled }) => {
-    const ojito = myPluginImage.eye_solid;
-    const ojitoTarjeta = myPluginImage.eye_solid;
-    const ojitoPin = myPluginImage.eye_solid;
+    var msgErrorBody = document.getElementById("msgErrorBody");
+    var msgWarningBody = document.getElementById("msgWarningBody");
+    const eyeSolid= myPluginImage.eye_solid;
+    const eyeSlash= myPluginImage.eye_slash;
+    const [ojitoCcvValue, setOjitoCcv] = React.useState(eyeSolid);
+    const [ojitoTarjetaValue, setOjitoTarjeta] = React.useState(eyeSolid);
+    const [ojitoPinValue, setPinTarjeta] = React.useState(eyeSolid);
     const [cardHolderValue, setCardHolder] = React.useState(null);
     const [documentTypeValue, setDocumentType] = React.useState("V");
     const [idDocValue, setIdDoc] = React.useState(null);
@@ -15,17 +19,17 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
     const [pinValue, setPin] = React.useState(null);
     const [typePValue, setTypeP] = React.useState(null);
     const [numeroOriginalValue, setNumeroOriginal] = React.useState(null);
-    const cardHolder = React.useRef(null);
-    const documentType = React.useRef("V");
-    const idDoc = React.useRef(null);
-    const nroTarjeta = React.useRef(null);
-    const errorTarjeta = React.useRef(null);
-    const expiration = React.useRef(null);
-    const ccv = React.useRef(null);
-    const tipoCuenta = React.useRef(null);
-    const pin = React.useRef(null);
-    const typeP = React.useRef(null);
-    const numeroOriginal = React.useRef(null);
+    const [modalValue, setModalValue] = React.useState("PRUEBA");
+    const expiracion = React.useRef(null);
+
+    React.useEffect(() => {
+        if (modalValue=="PRUEBA") {
+            $(document).ready(function() {
+                $("#expiration").mask("00/00", {reverse: true});
+            });                                    
+        }
+    }, []);
+
     const changeDoc = () => {
 		let typeDoc = document.getElementById("documentType").value;
 		if(typeDoc == "V" || typeDoc == "E" || typeDoc == "J" || typeDoc == "G"){
@@ -37,110 +41,122 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
 		}
 	}
     const getCardInfo = (tarjeta) => {
-        // if(!(tarjetaValue==null || tarjetaValue==undefined || tarjetaValue=="" || tarjetaValue=="null")){
-        //     setTarjeta(tarjetaValue.replace(/\s+/g, ''));
-        //     this.nro_tarjeta=tarjetaValue;
-        // }
-        // let result={};
-        // showOtpCcr=false;
-        // showOtpBank=false;
-        // showButtonSend=false;
-        // tokenCcr=null;
-        // token=null; 
-        // phone=null;
-		// if(Boolean(tarjeta)){
-		// 	tarjeta=tarjeta+"".trim();
-		// 	if(tarjeta.length<13){
-        //         setErrorTarjeta("La tarjeta debe poseer al menos 13 dígitos");
-        //         $("#msgWarning").modal("show");
-		// 		return;
-		// 	}
-        //     if(!(tarjeta.indexOf("X")>-1)){
-        //         setNumeroOriginal=tarjeta;                
-        //         setNroTarjeta=this.enmascararTarjeta(tarjeta);
-        //         this.verifyDisabled=true;
-        //     }
-		// 	if(!utils_keyNumber(tarjeta)){
-        //         setErrorTarjeta("El formato del número de tarjeta es incorrecto");
-        //         $("#msgWarning").modal("show");
-		// 		return;
-		// 	}
-		// 	if(Boolean(this.collect_method)){
-		// 		this.collect_method.map((element)=>{
-		// 			if(element.hasOwnProperty("id")){
-		// 				if(Boolean(element.id)){
-		// 					this.imagen=null;
-		// 					this.bank_name=null;
-		// 					this.bank_code=null;
-		// 					setErrorTarjeta("");
-		// 					this.bank_type=null;
-		// 					let querys = "&product_name="+element?.product_name+"&collect_method_id="+element?.id;
-		// 					let mensajeAll = _("message_err_1");
-		// 					let request = this.service.callServicesHttp("get-card-info-v1", querys, {"card_number":tarjeta});
-		// 					request.subscribe(data => {
-		// 						if (data == null || data == undefined || data == "") {
-        //                             msgWarningBody.innerText=mensajeAll;
-        //                             $("#msgWarning").modal("show");
-		// 							return;
-		// 						} else {
-		// 							if (data.status_http == 200) {
-		// 								delete data['status_http'];
-		// 								this.formattedCardInfo(data);
-		// 								return;
-		// 							} else {
-		// 								if(data.message=="NO_BIN_FOUND_ASSOCIATED_WITH_THAT_CARD_NUMBER" && this.type=="TDC"){
-		// 									this.bank_type="INTERNATIONAL";
-		// 									showOtpCcr=true;
-		// 									showOtpBank=false;
-		// 								}else{
-        //                                     msgWarningBody.innerText=this.service.processMessageError(data, mensajeAll);
-        //                                     $("#msgWarning").modal("show");
-		// 									return;
-		// 								}
-		// 							}
-		// 						}
-		// 					}, err => {
-        //                         msgWarningBody.innerText=this.service.processError(err, mensajeAll);
-        //                         $("#msgWarning").modal("show");
-		// 						return;
-		// 					});
-		// 				}else{
-        //                     msgWarningBody.innerText="No se pueden realizar pagos con el método seleccionado";
-        //                     $("#msgWarning").modal("show");
-        //                     return;
-		// 				}
-		// 			}else{
-        //                 msgWarningBody.innerText="No se pueden realizar pagos con el método seleccionado";
-        //                 $("#msgWarning").modal("show");
-        //                 return;
-		// 			}
-		// 		})
-		// 	}else{
-        //         msgWarningBody.innerText="No se pueden realizar pagos con el método seleccionado";
-        //         $("#msgWarning").modal("show");
-        //         return;
-        //     }
-		// }
+        if(!(tarjetaValue==null || tarjetaValue==undefined || tarjetaValue=="" || tarjetaValue=="null")){
+            setTarjeta(tarjetaValue.replace(/\s+/g, ''));
+            this.nro_tarjeta=tarjetaValue;
+        }
+        let result={};
+        showOtpCcr=false;
+        showOtpBank=false;
+        showButtonSend=false;
+        tokenCcr=null;
+        token=null; 
+        phone=null;
+		if(Boolean(tarjeta)){
+			tarjeta=tarjeta+"".trim();
+			if(tarjeta.length<13){
+                msgErrorBody.innerText= "La tarjeta debe poseer al menos 13 dígitos";
+                $("#msgError").modal("show");
+				return;
+			}
+            if(!(tarjeta.indexOf("X")>-1)){
+                setNumeroOriginal(tarjeta);                
+                setNroTarjeta(enmascararTarjeta(tarjeta));
+                this.verifyDisabled=true;
+            }
+			if(!utils_keyNumber(tarjeta)){
+                msgErrorBody.innerText= "El formato del número de tarjeta es incorrecto";
+                $("#msgError").modal("show");
+				return;
+			}
+			// if(Boolean(this.collect_method)){
+			// 	this.collect_method.map((element)=>{
+					// if(element.hasOwnProperty("id")){
+						// if(Boolean(element.id)){
+                            let element={};
+							this.imagen=null;
+							this.bank_name=null;
+							this.bank_code=null;
+							// msgErrorBody("");
+							this.bank_type=null;
+							let mensajeAll = translate("message_err_1");
+							let query= {"card_number":tarjetaValue};
+                            callServicesHttp('verify-card',query,null).then((data) => {
+								if (data == null || data == undefined || data == "") {
+                                    msgErrorBody.innerText=mensajeAll;
+                                    $("#msgError").modal("show");
+									return;
+								} else {
+									if (data.status_http == 200) {
+										delete data['status_http'];
+										this.formattedCardInfo(data);
+										return;
+									} else {
+										if(data.message=="NO_BIN_FOUND_ASSOCIATED_WITH_THAT_CARD_NUMBER" && this.type=="TDC"){
+											this.bank_type="INTERNATIONAL";
+											showOtpCcr=true;
+											showOtpBank=false;
+										}else{
+                                            msgErrorBody.innerText=this.service.processMessageError(data, mensajeAll);
+                                            $("#msgError").modal("show");
+											return;
+										}
+									}
+								}
+							}, err => {
+                                msgErrorBody.innerText=this.service.processError(err, mensajeAll);
+                                $("#msgError").modal("show");
+								return;
+							});
+						// }else{
+                        //     msgErrorBody.innerText="No se pueden realizar pagos con el método seleccionado";
+                        //     $("#msgError").modal("show");
+                        //     return;
+						// }
+					// }else{
+                    //     msgErrorBody.innerText="No se pueden realizar pagos con el método seleccionado";
+                    //     $("#msgError").modal("show");
+                    //     return;
+					// }
+				// })
+			// }else{
+            //     msgErrorBody.innerText="No se pueden realizar pagos con el método seleccionado";
+            //     $("#msgError").modal("show");
+            //     return;
+            // }
+		}
+	}
+    const enmascararTarjeta = (data) => {
+		try{
+			var data1=data.substring(0,6)+"-";
+			for(var i=5;i <data.length-4;i++){
+				data1=data1+"X";
+			}
+			data1=data1+"-"+data.substring(data.length-4,data.length);
+			return data1;
+		}catch(Er){
+			return data;
+		}
 	}
     const verifyData = () => {
-        let msgWarningBody = document.getElementById("msgWarningBody");
-        if (cardHolderValue==null || cardHolderValue==undefined || cardHolderValue=="") {
+        setModalValue("Está seguro de realizar la transacción?");
+        if (cardHolderValue==null || cardHolderValue==undefined || cardHolderValue=="" || cardHolderValue=="null") {
             msgWarningBody.innerText="Debe ingresar el nombre del tarjetahabiente";
             $("#msgWarning").modal("show");
             return;
         }
-        if (documentTypeValue==null || documentTypeValue==undefined || documentTypeValue=="") {
+        if (documentTypeValue==null || documentTypeValue==undefined || documentTypeValue=="" || documentTypeValue=="null") {
             msgWarningBody.innerText="Debe ingresar el tipo de documento";
             $("#msgWarning").modal("show");
             return;
         }
-        if (idDocValue==null || idDocValue==undefined || idDocValue=="") {   
+        if (idDocValue==null || idDocValue==undefined || idDocValue=="" || idDocValue=="null") {   
             msgWarningBody.innerText="Debe ingresar el número de documento";         
             $("#msgWarning").modal("show");
             return;
         }else{
             setIdDoc(idDocValue+"".trim().toUpperCase());
-            if(documentType!="P"){
+            if(documentTypeValue!="P"){
                 if(!utils_keyNumber(idDocValue)){
                     msgWarningBody.innerText="El formato del número de documento es incorrecto";         
                     $("#msgWarning").modal("show");
@@ -148,18 +164,18 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                 }
             }
         }
-        if (nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="") {
-            msgWarningBody.innerText="Debe ingresar el número de tarjeta";         
-            $("#msgWarning").modal("show");
-            return;
-        }else{
-            if (errorTarjetaValue==null || errorTarjetaValue==undefined || errorTarjetaValue=="") {
-                msgWarningBody.innerText="La verificación de tarjeta dio el siguiente error: "+errorTarjetaValue;         
-                $("#msgWarning").modal("show");
-                return;
-            }
-        }
-        if (expirationValue==null || expirationValue==undefined || expirationValue=="") {
+        // if (nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="") {
+        //     msgWarningBody.innerText="Debe ingresar el número de tarjeta";         
+        //     $("#msgWarning").modal("show");
+        //     return;
+        // }else{
+        //     if (errorTarjetaValue==null || errorTarjetaValue==undefined || errorTarjetaValue=="") {
+        //         msgWarningBody.innerText="La verificación de tarjeta dio el siguiente error: "+errorTarjetaValue;         
+        //         $("#msgWarning").modal("show");
+        //         return;
+        //     }
+        // }
+        if (expirationValue==null || expirationValue==undefined || expirationValue=="" || expirationValue=="null") {
             msgWarningBody.innerText="Debe ingresar la fecha de expiración de la tarjeta";         
             $("#msgWarning").modal("show");
             return;
@@ -182,6 +198,11 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                 return;
             }
         }
+        if (pinValue==null || pinValue==undefined || pinValue=="") {
+            msgWarningBody.innerText="Debe ingresar el PIN";
+            $("#msgWarning").modal("show");
+            return;
+        }
         if (ccvValue==null || ccvValue==undefined || ccvValue=="") {
             msgWarningBody.innerText="Debe ingresar el ccv";
             $("#msgWarning").modal("show");
@@ -199,12 +220,51 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                 return;
             }
         }
+        $("#msgConfirm").modal("show");
+    }
+    const sendPayment = () => {
+        $("#msgConfirm").modal("hide");
     }
     const changeTypeInputShowCard = () => {
-        window.alert("Testing button");
-    };
-    const changeTypeInputShow = () => {
-        window.alert("Testing button");
+        if(!(this.nro_tarjeta==null || this.nro_tarjeta==undefined || this.nro_tarjeta=="" || 
+             this.nro_tarjeta=="undefined" || this.nro_tarjeta=="{}" || this.nro_tarjeta=={} || this.nro_tarjeta=="null")){
+            try{
+                if(this[variable]!=null){
+                    if(this[variable]=="assets/images/eye-solid.svg"){
+                        this[variable]="assets/images/eye-slash-solid.svg";
+                        document.getElementById(data).type="text";
+                    }else{
+                        this[variable]="assets/images/eye-solid.svg";
+                        document.getElementById(data).type="password";
+                    }
+                }
+            }catch(er){
+            }
+            if(data.indexOf("X")>-1){
+                this.verifyDisabled=false;
+                setNroTarjeta(numeroOriginalValue);
+            }else{
+                this.verifyDisabled=true;
+                setNroTarjeta(enmascararTarjeta(data));
+            }
+        }
+	}
+    //Funcion para cambiar un input de type password a text
+    const changeTypeInputShow = (data,variable,setParam) => {
+		if(!(data==null || data==undefined || data=="")){
+			try{
+				if(variable!=null){
+					if(variable.includes("images/eye-solid.svg")){
+						setParam(eyeSlash);
+						document.getElementById(data).type="text";
+					}else{
+						setParam(eyeSolid);
+						document.getElementById(data).type="password";
+					}
+				}
+			}catch(er){
+			}
+		}
     };
     const clean = () => { 
         setCardHolder("");
@@ -253,7 +313,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                     ))
                     ),
                     React.createElement("div", { className: "form-floating" },
-                        !typeP 
+                        !typePValue 
                             ? React.createElement("input", {
                                 type: "text",
                                 maxLength: "9",
@@ -262,7 +322,6 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                                 id: "id_doc",
                                 name: "id_doc",
                                 style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
-                                // value: idDoc,
                                 value: idDocValue,
                                 onChange: (e) => setIdDoc(e.currentTarget.value),
                                 onKeyPress: (e) => {
@@ -314,9 +373,9 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShowCard(nroTarjeta, 'ojito_tarjeta')
+                        onClick: () => changeTypeInputShowCard(nroTarjetaValue, 'ojito_tarjeta')
                     },
-                        React.createElement("img", { src: ojitoTarjeta, height: "18px", width: "18px", alt: "Toggle card visibility" })
+                        React.createElement("img", { src: ojitoTarjetaValue, height: "18px", width: "18px", alt: "Toggle card visibility" })
                     )
                 )
             ),
@@ -332,8 +391,11 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                             id: "expiration",
                             name: "expiration",
                             onKeyPress: (e) => keypressNumeros(e),
+                            onKeyUp: (e) => setExpiration(e.currentTarget.value),
                             value: expirationValue,
-                            onChange: (e) => setExpiration(e.currentTarget.value),
+                            onChange: (e) => {
+                                setExpiration(e.currentTarget.value);
+                            },
                             style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' }
                         }),
                         React.createElement("label", { htmlFor: "expiration", className: "font-regular" }, "Expiración")
@@ -356,9 +418,9 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShow('ccv', 'ojito')
+                        onClick: () => changeTypeInputShow('ccv', ojitoCcvValue, setOjitoCcv)
                     },
-                        React.createElement("img", { src: ojito, height: "18px", width: "18px", alt: "Toggle CCV visibility" })
+                        React.createElement("img", { src: ojitoCcvValue, height: "18px", width: "18px", alt: "Toggle CCV visibility" })
                     )
                 )
             ),
@@ -369,8 +431,8 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                         id: "tipoCuenta",
                         name: "tipoCuenta",
                         required: true,
-                        value: tipoCuenta,
-                        onChange: (e) => setTipoCuenta(e.target.value)
+                        value: tipoCuentaValue,
+                        onChange: (e) => setTipoCuenta(e.currentTarget.value)
                     },
                         getTypesAccount().map((item6, index) => (
                             React.createElement("option", { key: index, value: item6 }, item6)
@@ -383,7 +445,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                 React.createElement("div", { className: "input-group" },
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
-                            type: "text",
+                            type: "password",
                             maxLength: "6",
                             className: "form-control font-regular",
                             inputMode: "numeric",
@@ -400,9 +462,9 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShow('pin', 'ojito_pin')
+                        onClick: () => changeTypeInputShow('pin', ojitoPinValue, setPinTarjeta)
                     },
-                        React.createElement("img", { src: ojitoPin, height: "18px", width: "18px", alt: "Toggle PIN visibility" })
+                        React.createElement("img", { src: ojitoPinValue, height: "18px", width: "18px", alt: "Toggle PIN visibility" })
                     )
                 )
             ),
@@ -424,6 +486,33 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                     onClick: () => verifyData('PAY')
                 }, "Pagar")
             ),
+        ),
+        React.createElement('div', { id:"msgConfirm", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+            React.createElement('div', { className: 'modal-dialog', role: 'document' },
+                React.createElement('div', { className: 'modal-content' },
+                    React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
+                        React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirm").modal("hide")}, 'aria-label': 'Cerrar'},
+                            React.createElement('span', { 'aria-hidden': 'true' }, '×')
+                        )
+                    ),
+                    React.createElement('div', { className: 'modal-body'},
+                        React.createElement('p', '¿ Estás seguro que deseas procesar la transacción por un monto de:>Bs.'+ parseAmount('amount'))
+                    ),
+                    React.createElement('div', { className: 'modal-footer' },
+                        React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
+                                onClick: () => {$("#msgConfirm").modal("hide")},
+                            },
+                            React.createElement('span',{className: 'font-regular' }, 'Cerrar')
+                        ),
+                        React.createElement('button',{ type: 'button', className: 'btn btn-primary',
+                            onClick: () => sendPayment(),
+                        },
+                            React.createElement('span',{className: 'font-regular' }, 'Pagar')
+                        ),
+                    )
+                )
+            )
         ),
     );
 };

@@ -119,6 +119,24 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         null,
         true
       );
+      wp_register_script(
+        'jquery_mask_script',
+        plugin_dir_url(__FILE__) . 'js/jquery.mask.min.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
+      wp_register_script(
+        'messages_script',
+        plugin_dir_url(__FILE__) . 'js/messages.es.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
       wp_register_style(
           'bootstrap_css',
           plugin_dir_url(__FILE__) . 'css/bootstrap.min.css'
@@ -144,6 +162,8 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       wp_enqueue_script('indexjs_script');
       wp_enqueue_script('callservices_script');
       wp_enqueue_script('utils_script');
+      wp_enqueue_script('jquery_mask_script');
+      wp_enqueue_script('messages_script');
       wp_enqueue_style('bootstrap_css');
       wp_enqueue_style('styles_css');
   

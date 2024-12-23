@@ -316,3 +316,26 @@ function getTypesAccount(){
 function getPrefixArea(){
 	return [{to_show: "(414)", value:"414"},{to_show: "(424)", value:"424"},{to_show: "(412)", value:"412"},{to_show: "(416)", value:"416"},{to_show: "(426)", value:"426"}];
 }
+function translate(s) {
+    if (typeof(i18n)!='undefined' && i18n[s]) {
+       return i18n[s];
+     }
+     return s;
+}
+function parseAmount(n, p, ts, dp){
+    try {
+      var t = [];
+          if (typeof p  == 'undefined') p  = 2;
+          if (typeof ts == 'undefined') ts = '.';
+          if (typeof dp == 'undefined') dp = ',';
+        
+          n = Number(n).toFixed(p).split('.');
+          for (var iLen = n[0].length, i = iLen? iLen % 3 || 3 : 0, j = 0; i <= iLen; i+=3) {
+            t.push(n[0].substring(j, i));
+            j = i;
+          }
+          return t.join(ts) + (n[1]? dp + n[1] : '');
+    } catch (error) {
+      console.log(error);
+    }
+}
