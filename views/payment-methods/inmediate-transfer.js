@@ -24,6 +24,7 @@ const InmediateTransfer = () => {
             $("#msgWarning").modal("show");
             return;
         }
+        $("#msgConfirmIT").modal("show");
     }
     const clean = () => { 
         setIdDocType("V");
@@ -115,6 +116,33 @@ const InmediateTransfer = () => {
                     onClick: () => verifyDataP2P('PAY')
                 }, "Pagar")
             )
+        ),
+        React.createElement('div', { id:"msgConfirmIT", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+            React.createElement('div', { className: 'modal-dialog', role: 'document' },
+                React.createElement('div', { className: 'modal-content' },
+                    React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
+                        React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmIT").modal("hide")}, 'aria-label': 'Cerrar'},
+                            React.createElement('span', { 'aria-hidden': 'true' }, '×')
+                        )
+                    ),
+                    React.createElement('div', { className: 'modal-body'},
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción IT por un monto de:>Bs.'+ parseAmount('amount'))
+                    ),
+                    React.createElement('div', { className: 'modal-footer' },
+                        React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
+                                onClick: () => {$("#msgConfirmIT").modal("hide")},
+                            },
+                            React.createElement('span',{className: 'font-regular' }, 'Cerrar')
+                        ),
+                        React.createElement('button',{ type: 'button', className: 'btn btn-primary',
+                            onClick: () => sendPayment('msgConfirmIT'),
+                        },
+                            React.createElement('span',{className: 'font-regular' }, 'Pagar')
+                        ),
+                    ),
+                ),
+            ),
         ),
     );
 }

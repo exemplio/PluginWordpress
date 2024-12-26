@@ -75,6 +75,7 @@ const C2pPayment = (indice ) => {
                 return;
             }
         }
+        $("#msgConfirmC2P").modal("show");
     }
     const clean = () => { 
         setIdDocType("V");
@@ -219,6 +220,33 @@ const C2pPayment = (indice ) => {
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
                     onClick: () => verifyDataC2P('PAY')
                 }, "Pagar")
+            )
+        ),
+        React.createElement('div', { id:"msgConfirmC2P", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+            React.createElement('div', { className: 'modal-dialog', role: 'document' },
+                React.createElement('div', { className: 'modal-content' },
+                    React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
+                        React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmC2P").modal("hide")}, 'aria-label': 'Cerrar'},
+                            React.createElement('span', { 'aria-hidden': 'true' }, '×')
+                        )
+                    ),
+                    React.createElement('div', { className: 'modal-body'},
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción C2P por un monto de:>Bs.'+ parseAmount('amount'))
+                    ),
+                    React.createElement('div', { className: 'modal-footer' },
+                        React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
+                                onClick: () => {$("#msgConfirmC2P").modal("hide")},
+                            },
+                            React.createElement('span',{className: 'font-regular' }, 'Cerrar')
+                        ),
+                        React.createElement('button',{ type: 'button', className: 'btn btn-primary',
+                            onClick: () => sendPayment('msgConfirmC2P'),
+                        },
+                            React.createElement('span',{className: 'font-regular' }, 'Pagar')
+                        ),
+                    )
+                )
             )
         ),
     );

@@ -247,7 +247,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
             }
         }                    
         // this.checkCommision(data,"TDD",json)
-        $("#msgConfirm").modal("show");
+        $("#msgConfirmTDD").modal("show");
     }
     const changeTypeInputShowCard = (data,id,variable,setParam) => {
         if(!(nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="" || 
@@ -514,12 +514,12 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                 }, "Pagar")
             ),
         ),
-        React.createElement('div', { id:"msgConfirm", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { id:"msgConfirmTDD", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirm").modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmTDD").modal("hide")}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -528,12 +528,12 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {$("#msgConfirm").modal("hide")},
+                                onClick: () => {$("#msgConfirmTDD").modal("hide")},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment(),
+                            onClick: () => sendPayment('msgConfirmTDD'),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

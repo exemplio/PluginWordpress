@@ -54,11 +54,18 @@ const getMethods = async () => {
 }
 //Vista de la pasarela de pago
 const Accordion = () => {
-    const [TDCValidation, setTDCValidation] = React.useState(false);
-    const [TDDValidation, setTDDValidation] = React.useState(false);
-    const [P2PValidation, setP2PValidation] = React.useState(false);
-    const [C2PValidation, setC2PValidation] = React.useState(false);
-    const [ITValidation, setITValidation] = React.useState(false);
+    const [TDCValidation, setTDCValidation] = React.useState(true);
+    const [TDDValidation, setTDDValidation] = React.useState(true);
+    const [P2PValidation, setP2PValidation] = React.useState(true);
+    const [C2PValidation, setC2PValidation] = React.useState(true);
+    const [ITValidation, setITValidation] = React.useState(true);
+    const hideAllPayments = () => {
+        setTDCValidation(false);
+        setTDDValidation(false);
+        setP2PValidation(false);
+        setC2PValidation(false);
+        setITValidation(false);
+    };
     React.useEffect(() => {
         collectMethod.collect_methods.map((item) => {
             switch (item.product_name) {
@@ -68,10 +75,10 @@ const Accordion = () => {
                 case "TDD_API":
                     setTDDValidation(true);
                     break;
-                case "MOBILE_PAYMENT":
+                case "MOBILE_PAYMENT_SEARCH_API":
                     setP2PValidation(true);
                     break;
-                case "C2P":
+                case "MOBILE_PAYMENT":
                     setC2PValidation(true);
                     break;
                 case "IT":
@@ -192,8 +199,8 @@ const Content = () => {
         React.createElement(ErrorModal, {label: "Modal"}),
     );
 };
-const sendPayment = () => {
-    $("#msgConfirm").modal("hide");
+const sendPayment = (id) => {
+    $(`#${id}`).modal("hide");
     let mensajeAll = translate("message_err_1");
     let query = `?product_name=${collectMethod?.collect_methods[1].product_name}&payment_method_id=${collectMethod?.collect_methods[1].id}`;
     let data = jsonTosend;
@@ -203,9 +210,9 @@ const sendPayment = () => {
             $("#msgError").modal("show");
             return;                             
         }else{
-            this.cleanP2P();
-            closeAll();
-            this.showReciboPartial(response);
+            // this.cleanP2P();
+            // closeAll();
+            // this.showReciboPartial(response);
         }
     });        
 }
