@@ -1,5 +1,6 @@
-const CredicardPay = ({ imagen,bankName,etiqueta ,
-    verifyDisabled }) => {
+var jsonTosend = {};
+
+const CredicardPay = ({ imagen,bankName,etiqueta }) => {
     var msgErrorBody = document.getElementById("msgErrorBody");
     var msgWarningBody = document.getElementById("msgWarningBody");
     const eyeSolid= myPluginImage.eye_solid;
@@ -15,11 +16,16 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
     const [expirationValue, setExpiration] = React.useState(null);
     const [ccvValue, setCcv] = React.useState(null);
     const [tarjetaValue, setTarjeta] = React.useState(null);
-    const [tipoCuentaValue, setTipoCuenta] = React.useState(null);
+    const [tipoCuentaValue, setTipoCuenta] = React.useState("PRINCIPAL");
     const [pinValue, setPin] = React.useState(null);
     const [typePValue, setTypeP] = React.useState(null);
     const [numeroOriginalValue, setNumeroOriginal] = React.useState(null);
     const [modalValue, setModalValue] = React.useState("PRUEBA");
+    const [verifyDisabled, setVerifyDisabled] = React.useState(false);
+    const [showOtpCcr, setShowOtpCcr] = React.useState(false);
+    const [showOtpBank, setShowOtpBank] = React.useState(false);
+    const [showButtonSend, setShowButtonSend] = React.useState(false);
+    const [tokenCcr, setTokenCcr] = React.useState(false);
     const expiracion = React.useRef(null);
 
     React.useEffect(() => {
@@ -43,13 +49,13 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
     const getCardInfo = (tarjeta) => {
         if(!(tarjetaValue==null || tarjetaValue==undefined || tarjetaValue=="" || tarjetaValue=="null")){
             setTarjeta(tarjetaValue.replace(/\s+/g, ''));
-            this.nro_tarjeta=tarjetaValue;
+            setTarjeta(tarjetaValue);
         }
         let result={};
-        showOtpCcr=false;
-        showOtpBank=false;
-        showButtonSend=false;
-        tokenCcr=null;
+        setShowOtpCcr(false);
+        setShowOtpBank(false);
+        setShowButtonSend(false);
+        setTokenCcr(null);
         token=null; 
         phone=null;
 		if(Boolean(tarjeta)){
@@ -62,7 +68,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
             if(!(tarjeta.indexOf("X")>-1)){
                 setNumeroOriginal(tarjeta);                
                 setNroTarjeta(enmascararTarjeta(tarjeta));
-                this.verifyDisabled=true;
+                setVerifyDisabled(true);
             }
 			if(!utils_keyNumber(tarjeta)){
                 msgErrorBody.innerText= "El formato del número de tarjeta es incorrecto";
@@ -80,8 +86,9 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
 							// msgErrorBody("");
 							this.bank_type=null;
 							let mensajeAll = translate("message_err_1");
-							let query= {"card_number":tarjetaValue};
-                            callServicesHttp('verify-card',query,null).then((data) => {
+                            let query = `?product_name=${collectMethod?.collect_methods[1].product_name}&collect_method_id=${collectMethod?.collect_methods[1].id}&channel_id=${getChannelId()}`;
+							let body= {"card_number":tarjeta};
+                            callServicesHttp('verify-card',query,body).then((data) => {
 								if (data == null || data == undefined || data == "") {
                                     msgErrorBody.innerText=mensajeAll;
                                     $("#msgError").modal("show");
@@ -94,17 +101,17 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
 									} else {
 										if(data.message=="NO_BIN_FOUND_ASSOCIATED_WITH_THAT_CARD_NUMBER" && this.type=="TDC"){
 											this.bank_type="INTERNATIONAL";
-											showOtpCcr=true;
-											showOtpBank=false;
+											setShowOtpCcr(true);
+											setShowOtpBank(false);
 										}else{
-                                            msgErrorBody.innerText=this.service.processMessageError(data, mensajeAll);
+                                            msgErrorBody.innerText=processMessageError(data, mensajeAll);
                                             $("#msgError").modal("show");
 											return;
 										}
 									}
 								}
 							}, err => {
-                                msgErrorBody.innerText=this.service.processError(err, mensajeAll);
+                                msgErrorBody.innerText=processError(err, mensajeAll);
                                 $("#msgError").modal("show");
 								return;
 							});
@@ -124,18 +131,6 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
             //     $("#msgError").modal("show");
             //     return;
             // }
-		}
-	}
-    const enmascararTarjeta = (data) => {
-		try{
-			var data1=data.substring(0,6)+"-";
-			for(var i=5;i <data.length-4;i++){
-				data1=data1+"X";
-			}
-			data1=data1+"-"+data.substring(data.length-4,data.length);
-			return data1;
-		}catch(Er){
-			return data;
 		}
 	}
     const verifyData = () => {
@@ -220,32 +215,62 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                 return;
             }
         }
+        jsonTosend= {
+            product_name: collectMethod?.collect_methods[1].product_name,
+            // collect_method_id: data?.collect_method?.id,
+            inventory_type: this.inventory,
+            // amount: data.amount,
+            payment: {
+                reason:	'Pago de servicios CREDICARD PAGOS',
+                currency: "VES",
+                payer_name: cardHolderValue,
+                // card_bank_code: data.code,
+                debit_card:{
+                    card_number: tarjetaValue,
+                    // expiration_month: month,
+                    // expiration_year: year,
+                    holder_name: cardHolderValue,
+                    holder_id_doc: idDocValue,
+                    holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                    card_type: "TDD",
+                    cvc: ccvValue,
+                    account_type: tipoCuentaValue.toUpperCase(),
+                    pin: pinValue,
+                    currency: "VES",
+                    // bank_card_validation:{
+                    //     bank_code: data.bank_card_validation.bank_code,
+                    //     phone: data.bank_card_validation.phone,
+                    //     // rif: data.bank_card_validation.rif,
+                    //     token: data.bank_card_validation.token,
+                    // }
+                }
+            }
+        }                    
+        // this.checkCommision(data,"TDD",json)
         $("#msgConfirm").modal("show");
     }
-    const sendPayment = () => {
-        $("#msgConfirm").modal("hide");
-    }
-    const changeTypeInputShowCard = () => {
-        if(!(this.nro_tarjeta==null || this.nro_tarjeta==undefined || this.nro_tarjeta=="" || 
-             this.nro_tarjeta=="undefined" || this.nro_tarjeta=="{}" || this.nro_tarjeta=={} || this.nro_tarjeta=="null")){
+    const changeTypeInputShowCard = (data,id,variable,setParam) => {
+        if(!(nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="" || 
+             nroTarjetaValue=="undefined" || nroTarjetaValue=="{}" || nroTarjetaValue=={} || nroTarjetaValue=="null")){
             try{
-                if(this[variable]!=null){
-                    if(this[variable]=="assets/images/eye-solid.svg"){
-                        this[variable]="assets/images/eye-slash-solid.svg";
-                        document.getElementById(data).type="text";
-                    }else{
-                        this[variable]="assets/images/eye-solid.svg";
-                        document.getElementById(data).type="password";
-                    }
-                }
+				if(variable!=null){
+					if(variable.includes("images/eye-solid.svg")){
+						setParam(eyeSlash);
+						document.getElementById(id).type="text";
+					}else{
+						setParam(eyeSolid);
+						// document.getElementById(id).type="password";
+					}
+				}
             }catch(er){
             }
             if(data.indexOf("X")>-1){
-                this.verifyDisabled=false;
+                setVerifyDisabled(false);
                 setNroTarjeta(numeroOriginalValue);
             }else{
-                this.verifyDisabled=true;
+                setVerifyDisabled(true);
                 setNroTarjeta(enmascararTarjeta(data));
+                
             }
         }
 	}
@@ -274,6 +299,8 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
         setExpiration("");
         setCcv("");
         setPin("");
+        setTipoCuenta("PRINCIPAL");
+        setVerifyDisabled(false);
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{ marginTop:'15px' }},
@@ -365,7 +392,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                             disabled: verifyDisabled,
                             value: nroTarjetaValue,
                             onChange: (e) => setNroTarjeta(e.currentTarget.value),
-                            onBlur: () => getCardInfo(nroTarjetaValue)
+                            onBlur: (e) => getCardInfo(nroTarjetaValue)
                         }),
                         React.createElement("label", { htmlFor: "nroTarjeta", className: "font-regular" }, "Nro. Tarjeta")
                     ),
@@ -373,7 +400,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShowCard(nroTarjetaValue, 'ojito_tarjeta')
+                        onClick: () => changeTypeInputShowCard(nroTarjetaValue,'nroTarjeta', ojitoTarjetaValue, setOjitoTarjeta)
                     },
                         React.createElement("img", { src: ojitoTarjetaValue, height: "18px", width: "18px", alt: "Toggle card visibility" })
                     )
@@ -497,7 +524,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta ,
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', '¿ Estás seguro que deseas procesar la transacción por un monto de:>Bs.'+ parseAmount('amount'))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de:>Bs.'+ parseAmount('amount'))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

@@ -339,3 +339,22 @@ function parseAmount(n, p, ts, dp){
       console.log(error);
     }
 }
+function addZeros(number, length){
+    var n = '' + number;
+          while (n.length < length) {
+              n = '0' + n;
+          }
+          return  n;
+}
+function enmascararTarjeta (data){
+    try{
+        var data1=data.substring(0,6)+"-";
+        for(var i=5;i <data.length-4;i++){
+            data1=data1+"X";
+        }
+        data1=data1+"-"+data.substring(data.length-4,data.length);
+        return data1;
+    }catch(Er){
+        return data;
+    }
+}

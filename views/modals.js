@@ -9,7 +9,7 @@ const WarningModal = ({ bodyText }) => {
                     )
                 ),
                 React.createElement('div', { className: 'modal-body'},                    
-                    React.createElement('p', { id:"msgWarningBody" })
+                    React.createElement('p', { id:"msgWarningBody" },'')
                 ),
                 React.createElement('div', { className: 'modal-footer' },
                     React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

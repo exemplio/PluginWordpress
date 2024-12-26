@@ -2,26 +2,25 @@ function getStatic(){
 	return "http://static.paguetodo.com/"
 }
 function getApi(){
-	// return "https://apid.paguetodo.com/demo/" //--> demo
-	return "https://api.paguetodo.com/" //-> prod
-}
-function publicationId(){
-	// return "b1c56cf0-9ac3-11ee-866e-7b010f4ef64e" //--> demo
-	return "fab387e0-9b76-11ee-8046-dbcd9dc27827" //-> prod
-}
-function getEnlaceApi(){
-	return "deeglev2";
+	return "https://apid.paguetodo.com/demo" //--> demo
+	// return "https://api.paguetodo.com/" //-> prod
 }
 function getEnlaceApiV1(){
 	return "deegle";
 }
+function getEnlaceApiV2(){
+	return "deeglev2";
+}
+function getEnlaceApiV3(){
+	return "deeglev3";
+}
 function getClient(){
-	// return "c9d12787-38cb-4681-b883-e5551275b34d"; //--> demo
-	return "44e4ea99-7fa0-4c0a-a7f1-8c43ce7f6989"; //-> prod
+	return "c9d12787-38cb-4681-b883-e5551275b34d"; //--> demo
+	// return "44e4ea99-7fa0-4c0a-a7f1-8c43ce7f6989"; //-> prod
 }
 function getPaguetodoId(){
-	// return "47509b4b-52cf-4c5b-89f9-081479fcca41"; //--> demo
-	return "c6d8d516-4076-469d-b858-c40fa3873694"; //-> prod
+	return "47509b4b-52cf-4c5b-89f9-081479fcca41"; //--> demo
+	// return "c6d8d516-4076-469d-b858-c40fa3873694"; //-> prod
 }
 function colectorPhone(){
 	return "4242591178";
@@ -29,9 +28,24 @@ function colectorPhone(){
 function getDemo(){
 	return "https://demo.paguetodo.com/";
 }
-function getPaguetodoOpen(){
-	return 'deegle_open';
+function getClientId(){
+	return "81cf87e0-c3a0-11ef-80eb-dbe25000dd95";
 }
+function getClientSecret(){
+	return "9752b938-b265-482c-91ae-e06e256fe44e";
+}
+function getChannelId(){
+	return "d75ffc20-c3ba-11ef-be7c-fdd381be1ffd";
+}
+
+function getRealm(){
+	return "cuyawa";
+}
+
+function getBusinessId(){
+	return "b67e2ad0-e9ce-11ed-8c19-2b5dd2b86c6a";
+}
+
 function publicKeyPay(){
 	return "-----BEGIN PUBLIC KEY-----"+
 	"MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAlZsOvWornKePU+ssZl3V"+

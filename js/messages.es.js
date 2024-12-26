@@ -127,5 +127,8 @@
 	"duplicated_pay":"Pago duplicado",
 	"mobile_payment_search_api":"Pago móvil",
 	"movistar_sales_order_must_have_the_same_client_type_as_publication":"La orden debe ser del mismo tipo que la publicación",
-	"bank_invalid_token":"Token bancario inválido"
+	"bank_invalid_token":"Token bancario inválido",
+	"deegle_pay_collect_channel_not_found":"Canal de pago no encontrado",
+	"invalid_credentials":"Credenciales inválidas",
+	"payment_method_not_found":"Método de pago no encontrado",
 };

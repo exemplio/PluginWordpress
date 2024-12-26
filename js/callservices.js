@@ -1,79 +1,78 @@
 var _url = getApi();
 var loading = loading;
 var timeout="120000";
-var enlace_auth='';
-var enlace_api='';
-var enlace1=getEnlaceApi();
-var enlace_deegle=getEnlaceApiV1();
-var url_open=getPaguetodoOpen();
+var enlace1=getEnlaceApiV1();
+var enlace2=getEnlaceApiV2();
+var enlace3 = getEnlaceApiV3();
 
-async function callServices(url, method, headers, data){
-	await fetch(
-			url,
-		{				
-			type: method,
-			headers: headers,
-			processData: false,
-			data: JSON.stringify(data),
-			contentType: "application/json; charset=UTF-8",
-			showLoader: true,
-			success: function(response) {
-				resolve(response);
-			},
-			error: function(response) {
-				reject(response);						
-				console.log(processError(response,"Error"))
-			}
-		});			
+function getBearerToken(){
+	return JSON.parse(localStorage.getItem('authorize-credentials'))?.access_token;
 }
 
-function callServicesHttp(ser,querys,data){
+async function callServices(url, method, headers, body, auth){
+	if(auth){
+		headers['Authorization']='bearer '+ getBearerToken();
+	}
+	try {
+		const response = await fetch(
+				url,
+			{				
+				method: method,
+				headers: headers,
+				processData: false,
+				body: method!= "GET" ? JSON.stringify(body) : null,
+				contentType: "application/json; charset=UTF-8",
+				showLoader: true,
+			})
+			if (!response.ok) {
+				// throw new Error('Network response was not ok');
+			}
+			const data = await response.json();
+			return data;	
+	} catch (error) {
+		console.error('Error:', error);
+        throw error;
+	}
+}
+
+async function callServicesHttp(ser,querys,data){
 	let request=null;
 	var headers = {
-		'App-Id': getClient(),
-		'X-Paguetodo-Id': getPaguetodoId()
+		'Content-Type': 'application/json',
 	};
 	switch(ser){
+		case 'get-credentials':{
+			request=await callServices(_url+`/oauth/authorize?client_id=${getClientId()}&client_secret=${getClientSecret()}`,"POST",headers,'',false);
+			return request;
+		}break;
+		case 'get-collect-channel':{
+			request=await callServices(_url+`/payco/collect_channel_info?realm=${getRealm()}&business_id=${getBusinessId()}&channel_id=${getChannelId()}`+querys,"GET",headers,data,true);			
+			return request;
+		}break;
 		case 'get-commision':{
-			request=callServices(_url+url_open+'/movistar_sales_open/credicard_pagos/card_holder_commission'+querys,"POST",headers,data);
+			request=callServices(_url+'/payco/card_holder_commission'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'verify-card':{
-			request=callServices(_url+url_open+'/movistar_sales_open/credicard_pagos/card_info'+querys,"POST",headers,data);
+			request=callServices(_url+'/payco/card_info'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-bank-token':{
-			request=callServices(_url+url_open+'/movistar_sales_open/credicard_pagos/send_bank_token'+querys,"POST",headers,data);
+			request=callServices(_url+'/payco/send_bank_token'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-token-with-card':{
-			request=callServices(_url+url_open+'/movistar_sales_open/credicard_pagos/send_token_with_card'+querys,"POST",headers,data);
+			request=callServices(_url+'/payco/send_token_with_card'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-mercantil-token':{
-			request=callServices(_url+url_open+'/movistar_sales_open/mercantil_send_otp'+querys,"POST",headers,data);
+			request=callServices(_url+'/payco/mercantil_send_otp'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'payment':{
-			request=callServices(_url+url_open+'/movistar_sales_open/payment'+querys,"POST",headers,data);
+			request=callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
 			return request;
 		}break;
-		case 'create-order':{
-			request=callServices(_url+url_open+'/movistar_sales_open'+querys,"POST",headers,data);
-			return request;
-		}break;
-		case 'confirm-order':{
-			request=callServices(_url+url_open+'/movistar_sales_open/confirm_order'+querys,"PUT",headers);
-			return request;
-		}break;
-		case 'get-order-movistar':{
-			request=callServices(_url+url_open+'/movistar_sales_open/order'+querys,"GET",headers);
-			return request;
-		}break; 
-		case 'update-mercadolibre-id':{
-			request=callServices(_url+url_open+'/movistar_sales_open/change_order_external_id_open'+querys,"PUT",headers);
-			return request;
-		}break; 
 		default:{
 		}
 	}

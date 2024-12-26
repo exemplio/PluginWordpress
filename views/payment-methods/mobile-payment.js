@@ -1,5 +1,5 @@
 const MobilePayment = () => {
-    const [idDocTypeValue, setIdDocType] = React.useState(null);
+    const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
     const [phoneP2PValue, setPhoneP2P] = React.useState(null);
@@ -22,6 +22,10 @@ const MobilePayment = () => {
             return;
         }
         if(phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="" || phoneP2PValue=="null"){
+            msgWarningBody.innerText="Debe ingresar el número del teléfono";
+            $("#msgWarning").modal("show");
+            return;
+        }else{
             var phone_p2p= phoneP2PValue.replaceAll('-','');             
             if(phone_p2p.length!=7){
                 msgWarningBody.innerText="El número del teléfono esta incompleto";
@@ -34,10 +38,6 @@ const MobilePayment = () => {
                     return;
                 }
             }
-        }else{
-            msgWarningBody.innerText="Debe ingresar el número del teléfono";
-            $("#msgWarning").modal("show");
-            return;
         }
         if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
             msgWarningBody.innerText="Debe seleccionar el banco de origen";
@@ -53,7 +53,7 @@ const MobilePayment = () => {
     const clean = () => { 
         setPhoneP2P("");
         setIdDocType("");
-        setPayerIdDoc("");
+        setPayerIdDoc("V");
         setPrefixPhone("414");
         setPhoneP2P("");
         setBank("");
