@@ -1,5 +1,7 @@
-const C2pPayment = ({ metodoColeccion }) => {  
-    const ojitoOperacion = myPluginImage.eye_solid;
+const C2pPayment = ({ metodoColeccion,banco }) => {  
+    let msgErrorBody = document.getElementById("msgErrorBody");
+    let msgWarningBody = document.getElementById("msgWarningBody");
+    const [ojitoOperacion, setOjitoOperacion] = React.useState(eyeSolid);
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [idDocC2pValue, setIdDocC2p] = React.useState(null);
     const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
@@ -12,9 +14,22 @@ const C2pPayment = ({ metodoColeccion }) => {
     const phoneC2P = React.useRef(null);
     const bancoSelected = React.useRef(null);
     const otp = React.useRef(null);
-    metodoColeccion=metodoColeccion[0];
-    const changeTypeInputShow = () => {
-        window.alert("Testing button");
+    //Funcion para cambiar un input de type password a text
+    const changeTypeInputShow = (data,variable,setParam) => {
+		if(!(data==null || data==undefined || data=="")){
+			try{
+				if(variable!=null){
+					if(variable.includes("images/eye-solid.svg")){
+						setParam(eyeSlash);
+						document.getElementById(data).type="text";
+					}else{
+						setParam(eyeSolid);
+						document.getElementById(data).type="password";
+					}
+				}
+			}catch(er){
+			}
+		}
     };
     const verifyDataC2P = () => {
         if (idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null") {
@@ -100,10 +115,10 @@ const C2pPayment = ({ metodoColeccion }) => {
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{marginTop:'15px'}},
-            // React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
-            //     React.createElement("img", { src: `assets/images/png/${banco}.png`, height: "40px", style: { objectFit: 'contain' } }),
-            //     React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco)
-            // ),
+            React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
+                React.createElement("img", { src: `${myPluginImage.bancaribe}`, style: { objectFit: 'contain', height: "40px" } }),
+                React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco)
+            ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("select", {
@@ -180,6 +195,7 @@ const C2pPayment = ({ metodoColeccion }) => {
                             // setTooltip(e.currentTarget.value);
                         }
                     },
+                    React.createElement("option", { value: "", disabled: true, selected: true }, ""),
                         allBanks().map((item, index) => (
                             React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name)
                         ))
@@ -191,7 +207,7 @@ const C2pPayment = ({ metodoColeccion }) => {
                 React.createElement("div", { className: "input-group" },
                     React.createElement("div", { className: "form-floating", style: { width: 'calc(100% - 50px)' } },
                         React.createElement("input", {
-                            type: "text",
+                            type: "password",
                             className: "form-control",
                             inputMode: "numeric",
                             id: `otp`,
@@ -210,7 +226,7 @@ const C2pPayment = ({ metodoColeccion }) => {
                         type: "button",
                         className: "btn btn-outline-primary",
                         style: { width: '50px' },
-                        onClick: () => changeTypeInputShow(`clave_c2p`, 'ojito_operacion')
+                        onClick: () => changeTypeInputShow('otp', ojitoOperacion, setOjitoOperacion)
                     },
                         React.createElement("img", { src: ojitoOperacion, height: "18px", width: "18px", alt: "Toggle visibility" })
                     ),

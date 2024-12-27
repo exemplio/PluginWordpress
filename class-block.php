@@ -39,6 +39,15 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         true
       );
       wp_register_script(
+        'loading_script',
+        plugin_dir_url(__FILE__) . 'views/loading.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
+      wp_register_script(
         'credicard_payments_script',
         plugin_dir_url(__FILE__) . 'views/payment-methods/credicard-payments.js',
         [
@@ -137,6 +146,24 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         null,
         true
       );
+      wp_register_script(
+        'jsbn_script',
+        plugin_dir_url(__FILE__) . 'js/jsbn.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
+      wp_register_script(
+        'rsa_script',
+        plugin_dir_url(__FILE__) . 'js/rsa.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
       wp_register_style(
           'bootstrap_css',
           plugin_dir_url(__FILE__) . 'css/bootstrap.min.css'
@@ -147,15 +174,43 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       );
       $eye_solid = plugin_dir_url(__FILE__) . 'images/eye-solid.svg';
       $eye_slash = plugin_dir_url(__FILE__) . 'images/eye-slash-solid.svg';
+      $loading = plugin_dir_url(__FILE__) . 'images/loading.gif';
+      $credicard = plugin_dir_url(__FILE__) . 'images/png/credicard.png';
+      $visa = plugin_dir_url(__FILE__) . 'images/png/visa.png';
+      $maestro = plugin_dir_url(__FILE__) . 'images/png/maestro.png';
+      $venezuela = plugin_dir_url(__FILE__) . 'images/png/venezuela.png';
+      $bancaribe = plugin_dir_url(__FILE__) . 'images/png/bancaribe.png';
+      $mibanco = plugin_dir_url(__FILE__) . 'images/png/mibanco.png';
+      $bancrecer = plugin_dir_url(__FILE__) . 'images/png/bancrecer.png';
+      $bancamiga = plugin_dir_url(__FILE__) . 'images/png/bancamiga.png';
+      $banfanb = plugin_dir_url(__FILE__) . 'images/png/banfanb.png';
+      $tesoro = plugin_dir_url(__FILE__) . 'images/png/tesoro.png';
+      $bicentenario = plugin_dir_url(__FILE__) . 'images/png/bicentenario.png';
+      $bfc = plugin_dir_url(__FILE__) . 'images/png/bfc.png';
+
       wp_localize_script('my_custom_gateway-blocks-integration', 'myPluginImage', [
         'eye_solid' => $eye_solid,
         'eye_slash' => $eye_slash,
+        'loading' => $loading,
+        'credicard' => $credicard,
+        'visa' => $visa,
+        'maestro' => $maestro,
+        'venezuela' => $venezuela,
+        'bancaribe' => $bancaribe,
+        'mibanco' => $mibanco,
+        'bancrecer' => $bancrecer,
+        'bancamiga' => $bancamiga,
+        'banfanb' => $banfanb,
+        'tesoro' => $tesoro,
+        'bicentenario' => $bicentenario,
+        'bfc' => $bfc,
       ]);
       wp_enqueue_script('my_custom_gateway-blocks-integration');
       wp_enqueue_script('credicard_payments_script');
       wp_enqueue_script('inmediate_transfer_script');
       wp_enqueue_script('mobile_payment_script');
       wp_enqueue_script('c2p_script');
+      wp_enqueue_script('loading_script');
       wp_enqueue_script('modals_script');
       wp_enqueue_script('bootstrap_script');
       wp_enqueue_script('jquery_script');
@@ -164,6 +219,8 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       wp_enqueue_script('utils_script');
       wp_enqueue_script('jquery_mask_script');
       wp_enqueue_script('messages_script');
+      wp_enqueue_script('jsbn_script');
+      wp_enqueue_script('rsa_script');
       wp_enqueue_style('bootstrap_css');
       wp_enqueue_style('styles_css');
   

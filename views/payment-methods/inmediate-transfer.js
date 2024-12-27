@@ -1,4 +1,6 @@
-const InmediateTransfer = ({ metodoColeccion }) => { 
+const InmediateTransfer = ({ metodoColeccion }) => {
+    let msgErrorBody = document.getElementById("msgErrorBody");
+    let msgWarningBody = document.getElementById("msgWarningBody");
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
@@ -75,13 +77,14 @@ const InmediateTransfer = ({ metodoColeccion }) => {
                         value: bankValue,
                         onChange: (e) => setBank(e.currentTarget.value)
                     },
+                    React.createElement("option", { value: "", disabled: true, selected: true }, ""),
                         allBanks().map((item, index) => (
                             React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name)
                         ))
                     ),
                     React.createElement("label", { htmlFor: "bank", className: "d-none d-sm-inline-block font-regular" }, "Banco pagador"),
                     React.createElement("label", { htmlFor: "bank", className: "d-sm-none font-regular" }, "Banco pagador")
-                )
+                ),
             ),
             React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },

@@ -1,4 +1,6 @@
 const MobilePayment = ({ metodoColeccion }) => {
+    let msgErrorBody = document.getElementById("msgErrorBody");
+    let msgWarningBody = document.getElementById("msgWarningBody");
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
@@ -66,8 +68,8 @@ const MobilePayment = ({ metodoColeccion }) => {
     }
     const clean = () => { 
         setPhoneP2P("");
-        setIdDocType("");
-        setPayerIdDoc("V");
+        setIdDocType("V");
+        setPayerIdDoc("");
         setPrefixPhone("414");
         setPhoneP2P("");
         setBank("");
@@ -146,6 +148,7 @@ const MobilePayment = ({ metodoColeccion }) => {
                         value: bankValue,
                         onChange: (e) => setBank(e.currentTarget.value)
                     },
+                    React.createElement("option", { value: "", disabled: true, selected: true }, ""),
                         allBanks().map((item, index) => (
                             React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name)
                         ))

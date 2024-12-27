@@ -2,6 +2,8 @@ const settings = window.wc.wcSettings.getSetting("my_custom_gateway_data", {});
 const label = window.wp.htmlEntities.decodeEntities(settings.title) || window.wp.i18n.__("", "my-custom-gateway");
 var collectMethod = JSON.parse(localStorage.getItem("collect-methods"));
 var jsonTosend = {};
+const eyeSolid= myPluginImage.eye_solid;
+const eyeSlash= myPluginImage.eye_slash;
 
 // Obtener credenciales
 const getCredentials = async () => {
@@ -218,6 +220,7 @@ const Content = () => {
     return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
         React.createElement("p", null, window.wp.htmlEntities.decodeEntities(settings.description || "")),
         React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
+        React.createElement(Loading, {label: "Modal"}),
         React.createElement(WarningModal, {label: "Modal"}),
         React.createElement(InfoModal, {label: "Modal"}),
         React.createElement(ErrorModal, {label: "Modal"}),

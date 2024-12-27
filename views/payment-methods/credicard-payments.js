@@ -1,8 +1,18 @@
 const CredicardPay = ({ metodoColeccion }) => {
-    var msgErrorBody = document.getElementById("msgErrorBody");
-    var msgWarningBody = document.getElementById("msgWarningBody");
-    const eyeSolid= myPluginImage.eye_solid;
-    const eyeSlash= myPluginImage.eye_slash;
+    let credicard = myPluginImage.credicard;
+    let visa = myPluginImage.visa;
+    let maestro = myPluginImage.maestro;
+    let venezuela = myPluginImage.venezuela;
+    let bancaribe = myPluginImage.bancaribe;
+    let mibanco = myPluginImage.mibanco;
+    let bancrecer = myPluginImage.bancrecer;
+    let bancamiga = myPluginImage.bancamiga;
+    let banfanb = myPluginImage.banfanb;
+    let tesoro = myPluginImage.tesoro;
+    let bicentenario = myPluginImage.bicentenario;
+    let bfc = myPluginImage.bfc;
+    let msgErrorBody = document.getElementById("msgErrorBody");
+    let msgWarningBody = document.getElementById("msgWarningBody");
     const [ojitoCcvValue, setOjitoCcv] = React.useState(eyeSolid);
     const [ojitoTarjetaValue, setOjitoTarjeta] = React.useState(eyeSolid);
     const [ojitoPinValue, setPinTarjeta] = React.useState(eyeSolid);
@@ -118,6 +128,7 @@ const CredicardPay = ({ metodoColeccion }) => {
 	}
     const verifyData = () => {
         setModalValue("Está seguro de realizar la transacción?");
+        let pinToSend;
         if (cardHolderValue==null || cardHolderValue==undefined || cardHolderValue=="" || cardHolderValue=="null") {
             msgWarningBody.innerText="Debe ingresar el nombre del tarjetahabiente";
             $("#msgWarning").modal("show");
@@ -181,7 +192,23 @@ const CredicardPay = ({ metodoColeccion }) => {
                 msgWarningBody.innerText="Debe ingresar el PIN";
                 $("#msgWarning").modal("show");
                 return;
-            }            
+            }else{
+                setPin((pinValue+"").trim());
+                if(pinValue.length==4 || pinValue.length==6){
+                    if(utils_keyNumber(pinValue)){
+                        var $key = RSA.getPublicKey(publicKeyPay());
+                        pinToSend=RSA.encrypt(pinValue, $key);
+                    }else{
+                        msgWarningBody.innerText="Formato del pin incorrecto deben ser de 4-6 números";
+                        $("#msgWarning").modal("show");
+                        return;
+                    }
+                }else{
+                    msgWarningBody.innerText="La longitud del PIN es incorrecta debe ser 4-6 números";
+                    $("#msgWarning").modal("show");
+                    return;
+                }  
+            }
         }
         if (ccvValue==null || ccvValue==undefined || ccvValue=="") {
             msgWarningBody.innerText="Debe ingresar el ccv";
@@ -200,38 +227,67 @@ const CredicardPay = ({ metodoColeccion }) => {
                 return;
             }
         }
-        jsonTosend= {
-            product_name: metodoColeccion.product_name,
-            collect_method_id: metodoColeccion.id,
-            // amount: data.amount,
-            payment: {
-                reason:	'Pago de servicios CREDICARD PAGOS',
-                currency: "VES",
-                payer_name: cardHolderValue,
-                // card_bank_code: data.code,
-                debit_card:{
-                    card_number: tarjetaValue,
-                    expiration_month: month,
-                    expiration_year: year,
-                    holder_name: cardHolderValue,
-                    holder_id_doc: idDocValue,
-                    holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                    card_type: "TDD",
-                    cvc: ccvValue,
-                    account_type: tipoCuentaValue.toUpperCase(),
-                    pin: pinValue,
-                    currency: "VES",
-                    // bank_card_validation:{
-                    //     bank_code: data.bank_card_validation.bank_code,
-                    //     phone: data.bank_card_validation.phone,
-                    //     // rif: data.bank_card_validation.rif,
-                    //     token: data.bank_card_validation.token,
-                    // }
-                }
-            }
-        }                    
+        switch (metodoColeccion.product_name) {
+            case 'TDC_API':
+                jsonTosend= {
+                    product_name: metodoColeccion.product_name,
+                    collect_method_id: metodoColeccion.id,
+                    amount: 30,
+                    payment: {
+                        reason:	'Pago de servicios CREDICARD PAGOS',
+                        currency: "VES",
+                        payer_name: cardHolderValue,
+                        // card_bank_code: data.code,
+                        debit_card:{
+                            card_number: numeroOriginalValue,
+                            expiration_month: month,
+                            expiration_year: year,
+                            holder_name: cardHolderValue,
+                            holder_id_doc: idDocValue,
+                            holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                            card_type: "TDD",
+                            cvc: ccvValue,
+                            account_type: tipoCuentaValue.toUpperCase(),
+                            pin: pinToSend,
+                            currency: "VES",
+                            // bank_card_validation:{
+                            //     bank_code: data.bank_card_validation.bank_code,
+                            //     phone: data.bank_card_validation.phone,
+                            //     // rif: data.bank_card_validation.rif,
+                            //     token: data.bank_card_validation.token,
+                            // }
+                        }
+                    }
+                }   
+            case 'TDC_API':
+                jsonTosend= {
+                    payment: {
+                        reason: "Pago de servicios CREDICARD PAGOS",
+                        currency: "VED",
+                        payer_name: cardHolderValue,
+                        product_name: metodoColeccion.product_name,
+                        card_bank_code: "0102",
+                        credit_card: {
+                            card_number: numeroOriginalValue,
+                            expiration_month: month,
+                            expiration_year: year,
+                            holder_name: cardHolderValue,
+                            holder_id_doc: "RIF",
+                            holder_id: idDocValue,
+                            cvc: ccvValue
+                        }
+                    },
+                    collect_method_id: metodoColeccion.id,
+                    product_name: metodoColeccion.product_name,
+                    payment_method: metodoColeccion.payment_method,
+                    amount: 30                      
+                }     
+            default:
+                break;
+        }
+            
         // this.checkCommision(data,"TDD",json)
-        $("#msgConfirmTDD").modal("show");
+        $(`#msgConfirmTDD${metodoColeccion.product_name}`).modal("show");
     }
     const changeTypeInputShowCard = (data,id,variable,setParam) => {
         if(!(nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="" || 
@@ -284,6 +340,7 @@ const CredicardPay = ({ metodoColeccion }) => {
         setCcv("");
         setPin("");
         setTipoCuenta("PRINCIPAL");
+        setDocumentType("V");
         setVerifyDisabled(false);
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
@@ -400,7 +457,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                             className: "form-control font-regular",
                             inputMode: "numeric",
                             id: `expiration${metodoColeccion?.product_name}`,
-                            name: "expiration",
+                            name: `expiration${metodoColeccion?.product_name}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             onKeyUp: (e) => setExpiration(e.currentTarget.value),
                             value: expirationValue,
@@ -409,7 +466,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                             },
                             style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' }
                         }),
-                        React.createElement("label", { htmlFor: "expiration", className: "font-regular" }, "Expiración")
+                        React.createElement("label", { htmlFor: `expiration${metodoColeccion?.product_name}`, className: "font-regular" }, "Expiración")
                     ),
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -417,23 +474,23 @@ const CredicardPay = ({ metodoColeccion }) => {
                             maxLength: "4",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: "ccv",
-                            name: "ccv",
+                            id: `ccv${metodoColeccion?.product_name}`,
+                            name: `ccv${metodoColeccion?.product_name}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             value: ccvValue,
                             onChange: (e) => setCcv(e.currentTarget.value),
                         }),
-                        React.createElement("label", { htmlFor: "ccv"}, "CCV")
+                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.product_name}`}, "CCV")
                     ),
                     React.createElement("button", {
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShow('ccv', ojitoCcvValue, setOjitoCcv)
+                        onClick: () => changeTypeInputShow(`ccv${metodoColeccion?.product_name}`, ojitoCcvValue, setOjitoCcv)
                     },
                         React.createElement("img", { src: ojitoCcvValue, height: "18px", width: "18px", alt: "Toggle CCV visibility" })
-                    )
-                )
+                    ),
+                ),
             ),
             metodoColeccion.product_name=='TDD_API' && React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
@@ -498,12 +555,34 @@ const CredicardPay = ({ metodoColeccion }) => {
                 }, "Pagar")
             ),
         ),
-        React.createElement('div', { id:"msgConfirmTDD", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+            React.createElement("label", { className: 'font-bold' }, "Procesado por: "),
+            React.createElement("img", { src: credicard, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
+        ),
+        metodoColeccion.product_name=='TDD_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+            React.createElement("label", { className: 'font-bold' }, "Bancos aliados: "),
+            React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: venezuela, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: bancaribe, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: mibanco, height: "40px" , className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: bancrecer, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: bancamiga, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: banfanb, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: tesoro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: bicentenario, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: bfc, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+        ),
+        metodoColeccion.product_name=='TDC_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+            React.createElement("label", { className: 'font-bold' }, "Marcas aliados: "),
+            React.createElement("img", { src: visa, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+        ),
+        React.createElement('div', { id:`msgConfirmTDD${metodoColeccion.product_name}`, className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmTDD").modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$(`#msgConfirmTDD${metodoColeccion.product_name}`).modal("hide")}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -512,12 +591,12 @@ const CredicardPay = ({ metodoColeccion }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {$("#msgConfirmTDD").modal("hide")},
+                                onClick: () => {$(`#msgConfirmTDD${metodoColeccion.product_name}`).modal("hide")},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmTDD', metodoColeccion),
+                            onClick: () => sendPayment(`msgConfirmTDD${metodoColeccion.product_name}`, metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

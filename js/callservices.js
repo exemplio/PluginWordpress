@@ -1,5 +1,4 @@
 var _url = getApi();
-var loading = loading;
 var timeout="120000";
 var enlace1=getEnlaceApiV1();
 var enlace2=getEnlaceApiV2();
@@ -22,20 +21,21 @@ async function callServices(url, method, headers, body, auth){
 				processData: false,
 				body: method!= "GET" ? JSON.stringify(body) : null,
 				contentType: "application/json; charset=UTF-8",
-				showLoader: true,
 			})
 			if (!response.ok) {
-				// throw new Error('Network response was not ok');
 			}
+			HideLoading();
 			const data = await response.json();
 			return data;	
 	} catch (error) {
+		HideLoading();
 		console.error('Error:', error);
         throw error;
 	}
 }
 
 async function callServicesHttp(ser,querys,data){
+	ActiveLoading();
 	let request=null;
 	var headers = {
 		'Content-Type': 'application/json',
