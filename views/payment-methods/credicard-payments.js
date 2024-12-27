@@ -1,6 +1,4 @@
-var jsonTosend = {};
-
-const CredicardPay = ({ imagen,bankName,etiqueta }) => {
+const CredicardPay = ({ metodoColeccion }) => {
     var msgErrorBody = document.getElementById("msgErrorBody");
     var msgWarningBody = document.getElementById("msgWarningBody");
     const eyeSolid= myPluginImage.eye_solid;
@@ -26,12 +24,15 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
     const [showOtpBank, setShowOtpBank] = React.useState(false);
     const [showButtonSend, setShowButtonSend] = React.useState(false);
     const [tokenCcr, setTokenCcr] = React.useState(false);
+    const [imagen, setImagen] = React.useState(false);
+    const [bankName, setBankName] = React.useState(false);
+    const [etiqueta, setEtiqueta] = React.useState(false);
     const expiracion = React.useRef(null);
-
+    metodoColeccion=metodoColeccion[0];    
     React.useEffect(() => {
         if (modalValue=="PRUEBA") {
             $(document).ready(function() {
-                $("#expiration").mask("00/00", {reverse: true});
+                $(`#expiration${metodoColeccion?.product_name}`).mask("00/00", {reverse: true});
             });                                    
         }
     }, []);
@@ -75,62 +76,44 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                 $("#msgError").modal("show");
 				return;
 			}
-			// if(Boolean(this.collect_method)){
-			// 	this.collect_method.map((element)=>{
-					// if(element.hasOwnProperty("id")){
-						// if(Boolean(element.id)){
-                            let element={};
-							this.imagen=null;
-							this.bank_name=null;
-							this.bank_code=null;
-							// msgErrorBody("");
-							this.bank_type=null;
-							let mensajeAll = translate("message_err_1");
-                            let query = `?product_name=${collectMethod?.collect_methods[1].product_name}&collect_method_id=${collectMethod?.collect_methods[1].id}&channel_id=${getChannelId()}`;
-							let body= {"card_number":tarjeta};
-                            callServicesHttp('verify-card',query,body).then((data) => {
-								if (data == null || data == undefined || data == "") {
-                                    msgErrorBody.innerText=mensajeAll;
-                                    $("#msgError").modal("show");
-									return;
-								} else {
-									if (data.status_http == 200) {
-										delete data['status_http'];
-										this.formattedCardInfo(data);
-										return;
-									} else {
-										if(data.message=="NO_BIN_FOUND_ASSOCIATED_WITH_THAT_CARD_NUMBER" && this.type=="TDC"){
-											this.bank_type="INTERNATIONAL";
-											setShowOtpCcr(true);
-											setShowOtpBank(false);
-										}else{
-                                            msgErrorBody.innerText=processMessageError(data, mensajeAll);
-                                            $("#msgError").modal("show");
-											return;
-										}
-									}
-								}
-							}, err => {
-                                msgErrorBody.innerText=processError(err, mensajeAll);
+			if(Boolean(metodoColeccion)){
+                let element={};
+                setImagen(null);
+                this.bank_name=null;
+                this.bank_code=null;
+                // msgErrorBody("");
+                this.bank_type=null;
+                let mensajeAll = translate("message_err_1");
+                let query = `?product_name=${metodoColeccion.product_name}&collect_method_id=${metodoColeccion.id}&channel_id=${getChannelId()}`;
+                let body= {"card_number":tarjeta};
+                callServicesHttp('verify-card',query,body).then((data) => {
+                    if (data == null || data == undefined || data == "") {
+                        msgErrorBody.innerText=mensajeAll;
+                        $("#msgError").modal("show");
+                        return;
+                    } else {
+                        if (data.status_http == 200) {
+                            delete data['status_http'];
+                            this.formattedCardInfo(data);
+                            return;
+                        } else {
+                            if(data.message=="NO_BIN_FOUND_ASSOCIATED_WITH_THAT_CARD_NUMBER" && this.type=="TDC"){
+                                this.bank_type="INTERNATIONAL";
+                                setShowOtpCcr(true);
+                                setShowOtpBank(false);
+                            }else{
+                                msgErrorBody.innerText=processMessageError(data, mensajeAll);
                                 $("#msgError").modal("show");
-								return;
-							});
-						// }else{
-                        //     msgErrorBody.innerText="No se pueden realizar pagos con el método seleccionado";
-                        //     $("#msgError").modal("show");
-                        //     return;
-						// }
-					// }else{
-                    //     msgErrorBody.innerText="No se pueden realizar pagos con el método seleccionado";
-                    //     $("#msgError").modal("show");
-                    //     return;
-					// }
-				// })
-			// }else{
-            //     msgErrorBody.innerText="No se pueden realizar pagos con el método seleccionado";
-            //     $("#msgError").modal("show");
-            //     return;
-            // }
+                                return;
+                            }
+                        }
+                    }
+                }, err => {
+                    msgErrorBody.innerText=processError(err, mensajeAll);
+                    $("#msgError").modal("show");
+                    return;
+                });
+            }
 		}
 	}
     const verifyData = () => {
@@ -193,10 +176,12 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                 return;
             }
         }
-        if (pinValue==null || pinValue==undefined || pinValue=="") {
-            msgWarningBody.innerText="Debe ingresar el PIN";
-            $("#msgWarning").modal("show");
-            return;
+        if (metodoColeccion.product_name=='TDD_API') {
+            if (pinValue==null || pinValue==undefined || pinValue=="") {
+                msgWarningBody.innerText="Debe ingresar el PIN";
+                $("#msgWarning").modal("show");
+                return;
+            }            
         }
         if (ccvValue==null || ccvValue==undefined || ccvValue=="") {
             msgWarningBody.innerText="Debe ingresar el ccv";
@@ -216,9 +201,8 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
             }
         }
         jsonTosend= {
-            product_name: collectMethod?.collect_methods[1].product_name,
-            // collect_method_id: data?.collect_method?.id,
-            inventory_type: this.inventory,
+            product_name: metodoColeccion.product_name,
+            collect_method_id: metodoColeccion.id,
             // amount: data.amount,
             payment: {
                 reason:	'Pago de servicios CREDICARD PAGOS',
@@ -227,8 +211,8 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                 // card_bank_code: data.code,
                 debit_card:{
                     card_number: tarjetaValue,
-                    // expiration_month: month,
-                    // expiration_year: year,
+                    expiration_month: month,
+                    expiration_year: year,
                     holder_name: cardHolderValue,
                     holder_id_doc: idDocValue,
                     holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
@@ -415,7 +399,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                             maxLength: "5",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: "expiration",
+                            id: `expiration${metodoColeccion?.product_name}`,
                             name: "expiration",
                             onKeyPress: (e) => keypressNumeros(e),
                             onKeyUp: (e) => setExpiration(e.currentTarget.value),
@@ -451,7 +435,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                     )
                 )
             ),
-            React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            metodoColeccion.product_name=='TDD_API' && React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select browser-default font-regular",
@@ -468,7 +452,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                     React.createElement("label", { htmlFor: "tipoCuenta", className: "font-regular", style: { marginBottom: '0px' } }, "Tipo cuenta")
                 )
             ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex", style: { marginBottom: '15px' } },
+            metodoColeccion.product_name=='TDD_API' && React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -533,7 +517,7 @@ const CredicardPay = ({ imagen,bankName,etiqueta }) => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmTDD'),
+                            onClick: () => sendPayment('msgConfirmTDD', metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

@@ -1,10 +1,11 @@
-const MobilePayment = () => {
+const MobilePayment = ({ metodoColeccion }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
     const [phoneP2PValue, setPhoneP2P] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceP2PValue, setP2PReference] = React.useState(null);
+    metodoColeccion=metodoColeccion[0];
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             msgWarningBody.innerText="Debe ingresar el tipo de documento";
@@ -49,6 +50,18 @@ const MobilePayment = () => {
             $("#msgWarning").modal("show");
             return;
         }
+        jsonTosend= {            
+            product_name: metodoColeccion?.product_name,
+            collect_method_id: metodoColeccion?.id,
+            // amount: 10,
+            bank_account_id: metodoColeccion?.bank_account_id,
+            payment: {
+                payer_id_doc: payerIdDocValue,
+                payer_phone: phoneP2PValue,
+                reference: referenceP2PValue,
+                // amount: 10
+            }
+        }      
         $("#msgConfirmP2P").modal("show");
     }
     const clean = () => { 
@@ -195,7 +208,7 @@ const MobilePayment = () => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmP2P'),
+                            onClick: () => sendPayment('msgConfirmP2P',metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

@@ -1,6 +1,7 @@
 const settings = window.wc.wcSettings.getSetting("my_custom_gateway_data", {});
 const label = window.wp.htmlEntities.decodeEntities(settings.title) || window.wp.i18n.__("", "my-custom-gateway");
 var collectMethod = JSON.parse(localStorage.getItem("collect-methods"));
+var jsonTosend = {};
 
 // Obtener credenciales
 const getCredentials = async () => {
@@ -19,7 +20,7 @@ const getCredentials = async () => {
             }else{
                 localStorage.setItem('authorize-credentials', JSON.stringify(data));
                 return;
-            }                         
+            }
         }
     }, err => {
         msgErrorBody.innerText=processError(err, mensajeAll);
@@ -54,11 +55,11 @@ const getMethods = async () => {
 }
 //Vista de la pasarela de pago
 const Accordion = () => {
-    const [TDCValidation, setTDCValidation] = React.useState(true);
-    const [TDDValidation, setTDDValidation] = React.useState(true);
-    const [P2PValidation, setP2PValidation] = React.useState(true);
-    const [C2PValidation, setC2PValidation] = React.useState(true);
-    const [ITValidation, setITValidation] = React.useState(true);
+    const [TDCValidation, setTDCValidation] = React.useState(false);
+    const [TDDValidation, setTDDValidation] = React.useState(false);
+    const [P2PValidation, setP2PValidation] = React.useState(false);
+    const [C2PValidation, setC2PValidation] = React.useState(false);
+    const [ITValidation, setITValidation] = React.useState(false);
     const hideAllPayments = () => {
         setTDCValidation(false);
         setTDDValidation(false);
@@ -67,7 +68,7 @@ const Accordion = () => {
         setITValidation(false);
     };
     React.useEffect(() => {
-        collectMethod.collect_methods.map((item) => {
+        collectMethod?.collect_methods.map((item) => {
             switch (item.product_name) {
                 case "TDC_API":
                     setTDCValidation(true);
@@ -75,13 +76,13 @@ const Accordion = () => {
                 case "TDD_API":
                     setTDDValidation(true);
                     break;
-                case "MOBILE_PAYMENT_SEARCH_API":
+                case "MOBILE_PAYMENT_SEARCH":
                     setP2PValidation(true);
                     break;
                 case "MOBILE_PAYMENT":
                     setC2PValidation(true);
                     break;
-                case "IT":
+                case "TRANSFER_PAYMENT_SEARCH":
                     setITValidation(true);
                     break;
                 default:
@@ -89,96 +90,119 @@ const Accordion = () => {
             }
         });
     }, []); 
-        return React.createElement("div", { className: "accordion", id: "accordionExample" },
-            TDDValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTwo" },
+        return React.createElement("div", { className: "accordion", id: "accordion" },
+            TDCValidation && React.createElement("div", { className: "accordion-item" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTDC" },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
                         "data-bs-toggle": "collapse",
-                        "data-bs-target": "#collapseOne",
+                        "data-bs-target": "#collapseTDC",
                         "aria-expanded": "false",
-                        "aria-controls": "collapseOne"
+                        "aria-controls": "collapseTDC"
+                    }, "CREDICARDPAGOS CRÉDITO")
+                ),
+                React.createElement("div", {
+                    id: "collapseTDC",
+                    className: "accordion-collapse collapse",
+                    "aria-labelledby": "headingTDC",
+                    "data-bs-parent": "#accordion"
+                },
+                    React.createElement("div", { className: "accordion-body" },
+                        React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
+                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "TDC_API") })
+                    )
+                )
+            ),
+            TDDValidation && React.createElement("div", { className: "accordion-item" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTDD" },
+                    React.createElement("button", {
+                        className: "accordion-button collapsed",
+                        type: "button",
+                        "data-bs-toggle": "collapse",
+                        "data-bs-target": "#collapseTDD",
+                        "aria-expanded": "false",
+                        "aria-controls": "collapseTDD"
                     }, "CREDICARDPAGOS DÉBITO")
                 ),
                 React.createElement("div", {
-                    id: "collapseOne",
+                    id: "collapseTDD",
                     className: "accordion-collapse collapse",
-                    "aria-labelledby": "headingTwo",
-                    "data-bs-parent": "#accordionExample"
+                    "aria-labelledby": "headingTDD",
+                    "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number" })
+                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "TDD_API") } )
                     )
                 )
             ),
             P2PValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTwo" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingP2P" },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
                         "data-bs-toggle": "collapse",
-                        "data-bs-target": "#collapseTwo",
+                        "data-bs-target": "#collapseP2P",
                         "aria-expanded": "false",
-                        "aria-controls": "collapseTwo"
+                        "aria-controls": "collapseP2P"
                     }, "PAGO MÓVIL")
                 ),
                 React.createElement("div", {
-                    id: "collapseTwo",
+                    id: "collapseP2P",
                     className: "accordion-collapse collapse",
-                    "aria-labelledby": "headingTwo",
-                    "data-bs-parent": "#accordionExample"
+                    "aria-labelledby": "headingP2P",
+                    "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { id: "my_custom_gateway_card_number_2", label: "Card Number" })
+                        React.createElement(MobilePayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH") })
                     )
                 )
             ),
             C2PValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingThree" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingC2P" },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
                         "data-bs-toggle": "collapse",
-                        "data-bs-target": "#collapseThree",
+                        "data-bs-target": "#collapseC2P",
                         "aria-expanded": "false",
-                        "aria-controls": "collapseThree"
+                        "aria-controls": "collapseC2P"
                     }, "PAGO C2P BANCARIBE")
                 ),
                 React.createElement("div", {
-                    id: "collapseThree",
+                    id: "collapseC2P",
                     className: "accordion-collapse collapse",
-                    "aria-labelledby": "headingThree",
-                    "data-bs-parent": "#accordionExample"
+                    "aria-labelledby": "headingC2P",
+                    "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago C2P"),
-                        React.createElement(C2pPayment, { id: "my_custom_gateway_card_number_2", label: "Card Number" })
+                        React.createElement(C2pPayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT") })
                     )
                 )
             ),
             ITValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingFour" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingIT" },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
                         "data-bs-toggle": "collapse",
-                        "data-bs-target": "#collapseFour",
+                        "data-bs-target": "#collapseIT",
                         "aria-expanded": "false",
-                        "aria-controls": "collapseFour"
+                        "aria-controls": "collapseIT"
                     }, "TRANSFERENCIA INMEDIATA")
                 ),
                 React.createElement("div", {
-                    id: "collapseFour",
+                    id: "collapseIT",
                     className: "accordion-collapse collapse",
-                    "aria-labelledby": "headingFour",
-                    "data-bs-parent": "#accordionExample"
+                    "aria-labelledby": "headingIT",
+                    "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia inmediata"),
-                        React.createElement(InmediateTransfer, { id: "my_custom_gateway_card_number_2", label: "Card Number" })
+                        React.createElement(InmediateTransfer, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH") })
                     )
                 )
             ),
@@ -199,10 +223,10 @@ const Content = () => {
         React.createElement(ErrorModal, {label: "Modal"}),
     );
 };
-const sendPayment = (id) => {
+const sendPayment = (id,metodoColeccion) => {
     $(`#${id}`).modal("hide");
     let mensajeAll = translate("message_err_1");
-    let query = `?product_name=${collectMethod?.collect_methods[1].product_name}&payment_method_id=${collectMethod?.collect_methods[1].id}`;
+    let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
     let data = jsonTosend;
     callServicesHttp('payment', query, data).then((response) => {            
         if (Boolean(response.code)) {

@@ -1,4 +1,4 @@
-const C2pPayment = (indice ) => {  
+const C2pPayment = ({ metodoColeccion }) => {  
     const ojitoOperacion = myPluginImage.eye_solid;
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [idDocC2pValue, setIdDocC2p] = React.useState(null);
@@ -12,6 +12,7 @@ const C2pPayment = (indice ) => {
     const phoneC2P = React.useRef(null);
     const bancoSelected = React.useRef(null);
     const otp = React.useRef(null);
+    metodoColeccion=metodoColeccion[0];
     const changeTypeInputShow = () => {
         window.alert("Testing button");
     };
@@ -73,6 +74,18 @@ const C2pPayment = (indice ) => {
                 msgWarningBody.innerText="El OTP esta incompleto";
                 $("#msgWarning").modal("show");
                 return;
+            }
+        }
+        jsonTosend= {                        
+            product_name: metodoColeccion.product_name,
+            collect_method_id: metodoColeccion.id,
+            // amount: 10,
+            bank_account_id: metodoColeccion.bank_account_id,
+            payment: {
+                payer_phone: phoneC2PValue,
+                payer_bank_code: bancoSelected,
+                payer_id_doc: idDocC2pValue,
+                otp: otpValue
             }
         }
         $("#msgConfirmC2P").modal("show");
@@ -241,7 +254,7 @@ const C2pPayment = (indice ) => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmC2P'),
+                            onClick: () => sendPayment('msgConfirmC2P',metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

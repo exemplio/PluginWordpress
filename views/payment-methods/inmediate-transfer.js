@@ -1,8 +1,9 @@
-const InmediateTransfer = () => { 
+const InmediateTransfer = ({ metodoColeccion }) => { 
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceValue, setReference] = React.useState(null);
+    metodoColeccion=metodoColeccion[0];
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             msgWarningBody.innerText="Debe ingresar el tipo de documento";
@@ -136,7 +137,7 @@ const InmediateTransfer = () => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmIT'),
+                            onClick: () => sendPayment('msgConfirmIT',metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),
