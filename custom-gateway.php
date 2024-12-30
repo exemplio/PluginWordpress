@@ -14,26 +14,8 @@ function woocommerce_myplugin(){
         return; // if the WC payment gateway class 
 
     include(plugin_dir_path(__FILE__) . 'class-gateway.php');
+    // include(plugin_dir_path(__FILE__) . 'get-amount.php');
 }
-
-// Get amount from the cart
-add_action('woocommerce_payment_gateways', 'get_amount', 0);
-function get_amount(){
-
-    // global $product;
-    $sku = '948dbadc-d9ee-47ed-a48b-7d0ef0671ed5';
-    $product_id = wc_get_product_id_by_sku($sku);
-    $product = wc_get_product($product_id);
-    // $product = $product->get_description();
-    echo "<script>console.log(" . $product . ");</script>";
-    if ($product) {
-        echo "<script>console.log('Product ID: $product->get_id()');</script>";
-    } else {
-        echo "<script>console.log('No product found with ID: $product_id');</script>";        
-    }
-
-}
-
 
 add_filter('woocommerce_payment_gateways', 'add_my_custom_gateway');
 
