@@ -23,6 +23,7 @@ async function callServices(url, method, headers, body, auth){
 				contentType: "application/json; charset=UTF-8",
 			})
 			if (!response.ok) {
+				HideLoading();
 			}
 			HideLoading();
 			const data = await response.json();

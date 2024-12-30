@@ -1,6 +1,5 @@
 const C2pPayment = ({ metodoColeccion,banco }) => {  
-    let msgErrorBody = document.getElementById("msgErrorBody");
-    let msgWarningBody = document.getElementById("msgWarningBody");
+    let bank_image = myPluginImage.bancaribe;
     const [ojitoOperacion, setOjitoOperacion] = React.useState(eyeSolid);
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [idDocC2pValue, setIdDocC2p] = React.useState(null);
@@ -14,6 +13,7 @@ const C2pPayment = ({ metodoColeccion,banco }) => {
     const phoneC2P = React.useRef(null);
     const bancoSelected = React.useRef(null);
     const otp = React.useRef(null);
+    metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     //Funcion para cambiar un input de type password a text
     const changeTypeInputShow = (data,variable,setParam) => {
 		if(!(data==null || data==undefined || data=="")){
@@ -33,69 +33,69 @@ const C2pPayment = ({ metodoColeccion,banco }) => {
     };
     const verifyDataC2P = () => {
         if (idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null") {
-            msgWarningBody.innerText="Debe ingresar el tipo de documento";
+            sendModalValue("msgWarningBody","Debe ingresar el tipo de documento");
             $("#msgWarning").modal("show");
             return;
         }
         if (idDocC2pValue==null || idDocC2pValue==undefined || idDocC2pValue=="" || idDocC2pValue=="null") {
-            msgWarningBody.innerText="Debe ingresar el número de documento";
+            sendModalValue("msgWarningBody","Debe ingresar el número de documento");
             $("#msgWarning").modal("show");
             return;
         }else{
             setIdDocC2p(idDocC2pValue+"".trim().toUpperCase());
             if(idDocTypeValue!="P"){
                 if(!utils_keyNumber(idDocC2pValue)){
-                    msgWarningBody.innerText="El formato del número de documento es incorrecto";
+                    sendModalValue("msgWarningBody","El formato del número de documento es incorrecto");
                     $("#msgWarning").modal("show");
                     return;
                 }
             }
         }
         if (prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null") {
-            msgWarningBody.innerText="Debe ingresar el prefijo del teléfono";
+            sendModalValue("msgWarningBody","Debe ingresar el prefijo del teléfono");
             $("#msgWarning").modal("show");
             return;
         }
         if (phoneC2PValue==null || phoneC2PValue==undefined || phoneC2PValue=="" || phoneC2PValue=="null") {
-            msgWarningBody.innerText="Debe ingresar el número del teléfono";
+            sendModalValue("msgWarningBody","Debe ingresar el número del teléfono");
             $("#msgWarning").modal("show");
             return;
         }else{
             var phone=(phoneC2PValue+"").trim().replace("-","");
             if(phone.length!=7){
-                msgWarningBody.innerText="El número del teléfono esta incompleto";
+                sendModalValue("msgWarningBody","El número del teléfono esta incompleto");
                 $("#msgWarning").modal("show");
                 return;
             }else{
                 if(!utils_keyNumber(phone)){
-                    msgWarningBody.innerText="El número del teléfono sólo acepta números";
+                    sendModalValue("msgWarningBody","El número del teléfono sólo acepta números");
                     $("#msgWarning").modal("show");
                     return;
                 }
             }
         }
         if (bancoSelectedValue==null || bancoSelectedValue==undefined || bancoSelectedValue=="" || bancoSelectedValue=="null") {
-            msgWarningBody.innerText="Debe seleccionar el banco pagador";
+            sendModalValue("msgWarningBody","Debe seleccionar el banco pagador");
             $("#msgWarning").modal("show");
             return;            
         }
         if (otpValue==null || otpValue==undefined || otpValue=="" || otpValue=="null") {
-            msgWarningBody.innerText="Debe ingresar el OTP";
+            sendModalValue("msgWarningBody","Debe ingresar el OTP");
             $("#msgWarning").modal("show");
             return;
         }else{
             setOtp((otpValue+"").trim());
             if (otpValue.length<4) {
-                msgWarningBody.innerText="El OTP esta incompleto";
+                sendModalValue("msgWarningBody","El OTP esta incompleto");
                 $("#msgWarning").modal("show");
                 return;
             }
         }
         jsonTosend= {                        
-            product_name: metodoColeccion.product_name,
-            collect_method_id: metodoColeccion.id,
-            // amount: 10,
-            bank_account_id: metodoColeccion.bank_account_id,
+            product_name: metodoColeccion?.product_name,
+            collect_method_id: metodoColeccion?.id,
+            amount: 10,
+            bank_account_id: metodoColeccion?.bank_account_id,
             payment: {
                 payer_phone: phoneC2PValue,
                 payer_bank_code: bancoSelected,
@@ -116,7 +116,7 @@ const C2pPayment = ({ metodoColeccion,banco }) => {
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{marginTop:'15px'}},
             React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
-                React.createElement("img", { src: `${myPluginImage.bancaribe}`, style: { objectFit: 'contain', height: "40px" } }),
+                React.createElement("img", { src: bank_image, style: { objectFit: 'contain', height: "40px" } }),
                 React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco)
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -233,6 +233,10 @@ const C2pPayment = ({ metodoColeccion,banco }) => {
                 ),
             ),
         ),
+        React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+            React.createElement("label", { className: 'font-bold', style: {marginRight:'10px'} }, "Procesado por: "),
+            React.createElement("img", { src: bank_image, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
+        ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
@@ -261,7 +265,7 @@ const C2pPayment = ({ metodoColeccion,banco }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción C2P por un monto de:>Bs.'+ parseAmount('amount'))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount('amount'))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

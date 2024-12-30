@@ -1,10 +1,8 @@
-const MobilePayment = ({ metodoColeccion }) => {
+const OnlineTransfer = ({ metodoColeccion }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
-    const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
-    const [phoneP2PValue, setPhoneP2P] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
-    const [referenceP2PValue, setP2PReference] = React.useState(null);
+    const [referenceValue, setReference] = React.useState(null);
     metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
@@ -17,61 +15,35 @@ const MobilePayment = ({ metodoColeccion }) => {
             $("#msgWarning").modal("show");
             return;
         }
-        if(prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el código de area del teléfono");
-            $("#msgWarning").modal("show");
-            return;
-        }
-        if(phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="" || phoneP2PValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el número del teléfono");
-            $("#msgWarning").modal("show");
-            return;
-        }else{
-            var phone_p2p= phoneP2PValue.replaceAll('-','');             
-            if(phone_p2p.length!=7){
-                sendModalValue("msgWarningBody","El número del teléfono esta incompleto");
-                $("#msgWarning").modal("show");
-                return;
-            }else{
-                if(!utils_keyNumber(phone_p2p)){
-                    sendModalValue("msgWarningBody","El número del teléfono sólo acepta números");
-                    $("#msgWarning").modal("show");
-                    return;
-                }
-            }
-        }
         if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
             sendModalValue("msgWarningBody","Debe seleccionar el banco de origen");
             $("#msgWarning").modal("show");
             return;
         }
-        if(referenceP2PValue==null || referenceP2PValue==undefined || referenceP2PValue=="" || referenceP2PValue=="null"){
+        if(referenceValue==null || referenceValue==undefined || referenceValue=="" || referenceValue=="null"){
             sendModalValue("msgWarningBody","Debe ingresar el número de referencia");
             $("#msgWarning").modal("show");
             return;
         }
-        jsonTosend= {            
+        jsonTosend= {                        
             product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
             amount: 10,
             bank_account_id: metodoColeccion?.bank_account_id,
             payment: {
-                payer_id_doc: payerIdDocValue,
-                payer_phone: phoneP2PValue,
-                reference: referenceP2PValue,
-                amount: 10
+                // payer_phone: phoneC2PValue,
+                // payer_bank_code: bancoSelected,
+                // payer_id_doc: idDocC2pValue,
+                // otp: otpValue
             }
-        }      
-        $("#msgConfirmP2P").modal("show");
+        }
+        $("#msgConfirmOT").modal("show");
     }
     const clean = () => { 
-        setPhoneP2P("");
         setIdDocType("V");
         setPayerIdDoc("");
-        setPrefixPhone("414");
-        setPhoneP2P("");
         setBank("");
-        setP2PReference("");
+        setReference("");
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{ marginTop:'15px' }},
@@ -107,37 +79,6 @@ const MobilePayment = ({ metodoColeccion }) => {
                 )
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
-                React.createElement("div", { className: "input-group" },
-                    React.createElement("select", {
-                        className: "input-group-text",
-                        id: "prefix_phone",
-                        name: "prefix_phone",
-                        required: true,
-                        value: prefixPhoneValue,
-                        onChange: (e) => setPrefixPhone(e.currentTarget.value)
-                    },
-                        getPrefixArea().map((item, index) => (
-                            React.createElement("option", { key: index, value: item.value }, item.to_show)
-                        ))
-                    ),
-                    React.createElement("div", { className: "form-floating" },
-                        React.createElement("input", {
-                            type: "text",
-                            maxLength: "7",
-                            className: "form-control",
-                            inputMode: "numeric",
-                            id: "phoneP2P",
-                            name: "phoneP2P",
-                            onKeyPress: (e) => keypressNumeros(e),
-                            style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
-                            value: phoneP2PValue,
-                            onChange: (e) => setPhoneP2P(e.currentTarget.value)
-                        }),
-                        React.createElement("label", { htmlFor: "phoneP2P",className: "font-regular" }, "Nro. Teléfono")
-                    )
-                )
-            ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select browser-default font-regular",
@@ -153,9 +94,9 @@ const MobilePayment = ({ metodoColeccion }) => {
                     ),
                     React.createElement("label", { htmlFor: "bank", className: "d-none d-sm-inline-block font-regular" }, "Banco pagador"),
                     React.createElement("label", { htmlFor: "bank", className: "d-sm-none font-regular" }, "Banco pagador")
-                )
+                ),
             ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("input", {
                         type: "text",
@@ -165,8 +106,8 @@ const MobilePayment = ({ metodoColeccion }) => {
                         id: "reference",
                         name: "reference",
                         maxLength: "15",
-                        value: referenceP2PValue,
-                        onChange: (e) => setP2PReference(e.currentTarget.value)
+                        value: referenceValue,
+                        onChange: (e) => setReference(e.currentTarget.value)
                     }),
                     React.createElement("label", { htmlFor: "reference",className: "font-regular" }, "Referencia")
                 )
@@ -190,12 +131,12 @@ const MobilePayment = ({ metodoColeccion }) => {
                 }, "Pagar")
             )
         ),
-        React.createElement('div', { id:"msgConfirmP2P", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { id:"msgConfirmOT", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmP2P").modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmOT").modal("hide")}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -204,18 +145,18 @@ const MobilePayment = ({ metodoColeccion }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {$("#msgConfirmP2P").modal("hide")},
+                                onClick: () => {$("#msgConfirmOT").modal("hide")},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmP2P',metodoColeccion),
+                            onClick: () => sendPayment('msgConfirmOT',metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),
-                    )
-                )
-            )
+                    ),
+                ),
+            ),
         ),
     );
 }

@@ -112,7 +112,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "TDC_API") })
+                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDC_API") })
                     )
                 )
             ),
@@ -135,7 +135,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "TDD_API") } )
+                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDD_API") } )
                     )
                 )
             ),
@@ -158,7 +158,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH") })
+                        React.createElement(MobilePayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH") })
                     )
                 )
             ),
@@ -181,7 +181,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago C2P"),
-                        React.createElement(C2pPayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT") })
+                        React.createElement(C2pPayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT") })
                     )
                 )
             ),
@@ -194,7 +194,7 @@ const Accordion = () => {
                         "data-bs-target": "#collapseIT",
                         "aria-expanded": "false",
                         "aria-controls": "collapseIT"
-                    }, "TRANSFERENCIA INMEDIATA")
+                    }, "TRANSFERENCIA ONLINE")
                 ),
                 React.createElement("div", {
                     id: "collapseIT",
@@ -203,8 +203,8 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement("h5", { className: "font-bold", }, "Transferencia inmediata"),
-                        React.createElement(InmediateTransfer, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH") })
+                        React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
+                        React.createElement(OnlineTransfer, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH") })
                     )
                 )
             ),
@@ -219,11 +219,11 @@ const Content = () => {
     }, []); 
     return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
         React.createElement("p", null, window.wp.htmlEntities.decodeEntities(settings.description || "")),
-        React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
-        React.createElement(Loading, {label: "Modal"}),
         React.createElement(WarningModal, {label: "Modal"}),
         React.createElement(InfoModal, {label: "Modal"}),
         React.createElement(ErrorModal, {label: "Modal"}),
+        React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
+        React.createElement(Loading, {label: "Modal"}),
     );
 };
 const sendPayment = (id,metodoColeccion) => {

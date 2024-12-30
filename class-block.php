@@ -57,8 +57,8 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         true
       );
       wp_register_script(
-        'inmediate_transfer_script',
-        plugin_dir_url(__FILE__) . 'views/payment-methods/inmediate-transfer.js',
+        'online_transfer_script',
+        plugin_dir_url(__FILE__) . 'views/payment-methods/online-transfer.js',
         [
             'my_custom_gateway-blocks-integration',
         ],
@@ -207,7 +207,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       ]);
       wp_enqueue_script('my_custom_gateway-blocks-integration');
       wp_enqueue_script('credicard_payments_script');
-      wp_enqueue_script('inmediate_transfer_script');
+      wp_enqueue_script('online_transfer_script');
       wp_enqueue_script('mobile_payment_script');
       wp_enqueue_script('c2p_script');
       wp_enqueue_script('loading_script');
