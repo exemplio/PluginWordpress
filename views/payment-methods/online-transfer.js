@@ -6,35 +6,34 @@ const OnlineTransfer = ({ metodoColeccion }) => {
     metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el tipo de documento");
+            sendModalValue("msgWarning","Debe ingresar el tipo de documento");
             $("#msgWarning").modal("show");
             return;
         }
         if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el número de documento");
+            sendModalValue("msgWarning","Debe ingresar el número de documento");
             $("#msgWarning").modal("show");
             return;
         }
         if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
-            sendModalValue("msgWarningBody","Debe seleccionar el banco de origen");
+            sendModalValue("msgWarning","Debe seleccionar el banco de origen");
             $("#msgWarning").modal("show");
             return;
         }
         if(referenceValue==null || referenceValue==undefined || referenceValue=="" || referenceValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el número de referencia");
+            sendModalValue("msgWarning","Debe ingresar el número de referencia");
             $("#msgWarning").modal("show");
             return;
         }
         jsonTosend= {                        
             product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
-            amount: 10,
+            amount: cartTotal,
             bank_account_id: metodoColeccion?.bank_account_id,
             payment: {
-                // payer_phone: phoneC2PValue,
-                // payer_bank_code: bancoSelected,
-                // payer_id_doc: idDocC2pValue,
-                // otp: otpValue
+                payer_id_doc: payerIdDocValue,
+                reference: referenceValue,
+                amount: cartTotal
             }
         }
         $("#msgConfirmOT").modal("show");
@@ -141,7 +140,7 @@ const OnlineTransfer = ({ metodoColeccion }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount('amount'))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(cartTotal))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

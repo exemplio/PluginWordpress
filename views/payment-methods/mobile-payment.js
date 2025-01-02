@@ -8,58 +8,58 @@ const MobilePayment = ({ metodoColeccion }) => {
     metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el tipo de documento");
+            sendModalValue("msgWarning","Debe ingresar el tipo de documento");
             $("#msgWarning").modal("show");
             return;
         }
         if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el número de documento");
+            sendModalValue("msgWarning","Debe ingresar el número de documento");
             $("#msgWarning").modal("show");
             return;
         }
         if(prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el código de area del teléfono");
+            sendModalValue("msgWarning","Debe ingresar el código de area del teléfono");
             $("#msgWarning").modal("show");
             return;
         }
         if(phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="" || phoneP2PValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el número del teléfono");
+            sendModalValue("msgWarning","Debe ingresar el número del teléfono");
             $("#msgWarning").modal("show");
             return;
         }else{
             var phone_p2p= phoneP2PValue.replaceAll('-','');             
             if(phone_p2p.length!=7){
-                sendModalValue("msgWarningBody","El número del teléfono esta incompleto");
+                sendModalValue("msgWarning","El número del teléfono esta incompleto");
                 $("#msgWarning").modal("show");
                 return;
             }else{
                 if(!utils_keyNumber(phone_p2p)){
-                    sendModalValue("msgWarningBody","El número del teléfono sólo acepta números");
+                    sendModalValue("msgWarning","El número del teléfono sólo acepta números");
                     $("#msgWarning").modal("show");
                     return;
                 }
             }
         }
         if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
-            sendModalValue("msgWarningBody","Debe seleccionar el banco de origen");
+            sendModalValue("msgWarning","Debe seleccionar el banco de origen");
             $("#msgWarning").modal("show");
             return;
         }
         if(referenceP2PValue==null || referenceP2PValue==undefined || referenceP2PValue=="" || referenceP2PValue=="null"){
-            sendModalValue("msgWarningBody","Debe ingresar el número de referencia");
+            sendModalValue("msgWarning","Debe ingresar el número de referencia");
             $("#msgWarning").modal("show");
             return;
         }
         jsonTosend= {            
             product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
-            amount: 10,
+            amount: cartTotal,
             bank_account_id: metodoColeccion?.bank_account_id,
             payment: {
                 payer_id_doc: payerIdDocValue,
                 payer_phone: phoneP2PValue,
                 reference: referenceP2PValue,
-                amount: 10
+                amount: cartTotal
             }
         }      
         $("#msgConfirmP2P").modal("show");
@@ -200,7 +200,7 @@ const MobilePayment = ({ metodoColeccion }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount('amount'))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(cartTotal))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

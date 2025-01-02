@@ -84,14 +84,14 @@ const CredicardPay = ({ metodoColeccion }) => {
                 $("#msgError").modal("show");
 				return;
 			}
-			if(Boolean(metodoColeccion)){
+			// if(Boolean(metodoColeccion)){
                 let element={};
                 setImagen(null);
                 this.bank_name=null;
                 this.bank_code=null;
                 this.bank_type=null;
                 let mensajeAll = translate("message_err_1");
-                let query = `?product_name=${metodoColeccion?.product_name}&collect_method_id=${metodoColeccion.id}&channel_id=${getChannelId()}`;
+                let query = `?product_name=${metodoColeccion?.product_name}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
                 let body= {"card_number":tarjeta};
                 callServicesHttp('verify-card',query,body).then((data) => {
                     if (data == null || data == undefined || data == "") {
@@ -120,73 +120,73 @@ const CredicardPay = ({ metodoColeccion }) => {
                     $("#msgError").modal("show");
                     return;
                 });
-            }
+            // }
 		}
 	}
     const verifyData = () => {
         setModalValue("Está seguro de realizar la transacción?");
         let pinToSend;
         if (cardHolderValue==null || cardHolderValue==undefined || cardHolderValue=="" || cardHolderValue=="null") {
-            sendModalValue("msgWarningBody","Debe ingresar el nombre del tarjetahabiente");
+            sendModalValue("msgWarning","Debe ingresar el nombre del tarjetahabiente");
             $("#msgWarning").modal("show");
             return;
         }
         if (documentTypeValue==null || documentTypeValue==undefined || documentTypeValue=="" || documentTypeValue=="null") {
-            sendModalValue("msgWarningBody","Debe ingresar el tipo de documento");
+            sendModalValue("msgWarning","Debe ingresar el tipo de documento");
             $("#msgWarning").modal("show");
             return;
         }
         if (idDocValue==null || idDocValue==undefined || idDocValue=="" || idDocValue=="null") {   
-            sendModalValue("msgWarningBody","Debe ingresar el número de documento");         
+            sendModalValue("msgWarning","Debe ingresar el número de documento");         
             $("#msgWarning").modal("show");
             return;
         }else{
             setIdDoc(idDocValue+"".trim().toUpperCase());
             if(documentTypeValue!="P"){
                 if(!utils_keyNumber(idDocValue)){
-                    sendModalValue("msgWarningBody","El formato del número de documento es incorrecto");         
+                    sendModalValue("msgWarning","El formato del número de documento es incorrecto");         
                     $("#msgWarning").modal("show");
                     return;
                 }
             }
         }
         if (nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="") {
-            sendModalValue("msgWarningBody","Debe ingresar el número de tarjeta");         
+            sendModalValue("msgWarning","Debe ingresar el número de tarjeta");         
             $("#msgWarning").modal("show");
             return;
         }else{
             if (errorTarjetaValue==null || errorTarjetaValue==undefined || errorTarjetaValue=="") {
-                sendModalValue("msgWarningBody","La verificación de tarjeta dio el siguiente error: ")+errorTarjetaValue;         
+                sendModalValue("msgWarning","La verificación de tarjeta dio el siguiente error: ")+errorTarjetaValue;         
                 $("#msgWarning").modal("show");
                 return;
             }
         }
         if (expirationValue==null || expirationValue==undefined || expirationValue=="" || expirationValue=="null") {
-            sendModalValue("msgWarningBody","Debe ingresar la fecha de expiración de la tarjeta");         
+            sendModalValue("msgWarning","Debe ingresar la fecha de expiración de la tarjeta");         
             $("#msgWarning").modal("show");
             return;
         }else{
             if(expirationValue.length<4){
-                sendModalValue("msgWarningBody","La fecha de expiración tiene formato incorrecto");         
+                sendModalValue("msgWarning","La fecha de expiración tiene formato incorrecto");         
                 $("#msgWarning").modal("show");
                 return;
             }
             month=parseInt(expirationValue.split("/")[0]);
             if(month<1 || month>12){
-                sendModalValue("msgWarningBody","El mes de expiración de la tarjeta tiene formato incorrecto");         
+                sendModalValue("msgWarning","El mes de expiración de la tarjeta tiene formato incorrecto");         
                 $("#msgWarning").modal("show");
                 return;
             }
             year=parseInt(expirationValue.split("/")[1]);
             if(!Boolean(year)){
-                sendModalValue("msgWarningBody","El año de expiración de la tarjeta tiene formato incorrecto");         
+                sendModalValue("msgWarning","El año de expiración de la tarjeta tiene formato incorrecto");         
                 $("#msgWarning").modal("show");
                 return;
             }
         }
         if (metodoColeccion?.product_name=='TDD_API') {
             if (pinValue==null || pinValue==undefined || pinValue=="") {
-                sendModalValue("msgWarningBody","Debe ingresar el PIN");
+                sendModalValue("msgWarning","Debe ingresar el PIN");
                 $("#msgWarning").modal("show");
                 return;
             }else{
@@ -196,30 +196,30 @@ const CredicardPay = ({ metodoColeccion }) => {
                         var $key = RSA.getPublicKey(publicKeyPay());
                         pinToSend=RSA.encrypt(pinValue, $key);
                     }else{
-                        sendModalValue("msgWarningBody","Formato del pin incorrecto deben ser de 4-6 números");
+                        sendModalValue("msgWarning","Formato del pin incorrecto deben ser de 4-6 números");
                         $("#msgWarning").modal("show");
                         return;
                     }
                 }else{
-                    sendModalValue("msgWarningBody","La longitud del PIN es incorrecta debe ser 4-6 números");
+                    sendModalValue("msgWarning","La longitud del PIN es incorrecta debe ser 4-6 números");
                     $("#msgWarning").modal("show");
                     return;
                 }  
             }
         }
         if (ccvValue==null || ccvValue==undefined || ccvValue=="") {
-            sendModalValue("msgWarningBody","Debe ingresar el ccv");
+            sendModalValue("msgWarning","Debe ingresar el ccv");
             $("#msgWarning").modal("show");
             return;
         }else{
             setCcv(ccvValue+"".trim());
             if(!utils_keyNumber(ccvValue)){
-                sendModalValue("msgWarningBody","El formato del cvv es incorrecto, se aceptan sólo números y debe ser 3 o 4 caracteres");
+                sendModalValue("msgWarning","El formato del cvv es incorrecto, se aceptan sólo números y debe ser 3 o 4 caracteres");
                 $("#msgWarning").modal("show");
                 return;
             }
             if(ccvValue.length<3 || ccvValue.length>4){
-                sendModalValue("msgWarningBody","El formato del cvv es incorrecto, se aceptan sólo números y debe ser 3 o 4 caracteres");
+                sendModalValue("msgWarning","El formato del cvv es incorrecto, se aceptan sólo números y debe ser 3 o 4 caracteres");
                 $("#msgWarning").modal("show");
                 return;
             }
@@ -229,7 +229,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                 jsonTosend= {
                     product_name: metodoColeccion?.product_name,
                     collect_method_id: metodoColeccion.id,
-                    amount: 30,
+                    amount: cartTotal,
                     payment: {
                         reason:	'Pago de servicios CREDICARD PAGOS',
                         currency: "VES",
@@ -277,7 +277,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                     collect_method_id: metodoColeccion.id,
                     product_name: metodoColeccion?.product_name,
                     payment_method: metodoColeccion.payment_method,
-                    amount: 30                      
+                    amount: cartTotal                      
                 }     
             default:
                 break;
@@ -291,7 +291,7 @@ const CredicardPay = ({ metodoColeccion }) => {
 		let request=null;
 		let data={
 			card_number:parametros.card_number,
-			amount:json.amount,
+			amount:cartTotal,
 			currency:"VED",
 			card_type:type,
 			bank_type:bankName,
@@ -312,7 +312,7 @@ const CredicardPay = ({ metodoColeccion }) => {
 				$("#msgError").modal("show");
 				return;
 			} else{
-				this.amount_to_pay = data.amount;
+				this.amount_to_pay = cartTotal;
 				this.pay(json)
 			}
 		}, err => {
@@ -619,7 +619,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount('amount'))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(cartTotal))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

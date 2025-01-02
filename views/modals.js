@@ -1,5 +1,5 @@
 function sendModalValue(id,msg){
-    document.getElementById(id).innerHTML=msg;
+    document.getElementById(`${id}Body`).innerText=msg;
     return;
 }
 

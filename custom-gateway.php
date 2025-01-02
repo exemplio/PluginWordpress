@@ -14,7 +14,33 @@ function woocommerce_myplugin(){
         return; // if the WC payment gateway class 
 
     include(plugin_dir_path(__FILE__) . 'class-gateway.php');
-    // include(plugin_dir_path(__FILE__) . 'get-amount.php');
+}
+
+add_action('woocommerce_payment_gateways', 'get_amount');
+function get_amount(){
+    $response = [];
+    if (WC()->cart !== null) {
+        if ( ! WC()->cart->is_empty() ) {
+            $cart_items = WC()->cart->get_cart();    
+            foreach ( $cart_items as $cart_item_key => $cart_item ) {
+                $product_id = $cart_item['product_id'];
+                $quantity = $cart_item['quantity'];    
+                $product = wc_get_product( $product_id );
+                if ( $product ) {
+                    $response[] = [
+                        'quantity' => $quantity,
+                        'price' => $product->get_price(),
+                        'total' => 0,
+                    ];
+                }
+            }
+            echo "<script>var cartItems= ". json_encode($response) .";</script>";
+            echo "<script>var cartTotal= ". WC()->cart->total .";</script>";
+        } else {
+            $response = ['message' => 'Your cart is empty.'];
+            echo "<script>var cartItems= ". json_encode($response) .";</script>";
+        }
+    }
 }
 
 add_filter('woocommerce_payment_gateways', 'add_my_custom_gateway');

@@ -11,12 +11,12 @@ const getCredentials = async () => {
     var mensajeAll = "Error al obtener los métodos de colección";
     callServicesHttp('get-credentials',query,null).then((data) => {        
         if (data == null || data == undefined || data == "") {
-            msgErrorBody.innerText=mensajeAll;
+            sendModalValue("msgError",mensajeAll);
             $("#msgError").modal("show");
             return;
         } else {
             if (!(data.code==null || data.code==undefined || data.code=="")) {
-                msgErrorBody.innerText=mensajeAll;
+                sendModalValue("msgError",mensajeAll);
                 $("#msgError").modal("show");
                 return;                
             }else{
@@ -25,7 +25,7 @@ const getCredentials = async () => {
             }
         }
     }, err => {
-        msgErrorBody.innerText=processError(err, mensajeAll);
+        sendModalValue("msgError",processError(err, mensajeAll));
         $("#msgError").modal("show");
         return;
     });
@@ -36,12 +36,12 @@ const getMethods = async () => {
     var mensajeAll = "Error al obtener los métodos de colección";
     callServicesHttp('get-collect-channel',query,null).then((data) => {        
         if (data == null || data == undefined || data == "") {
-            msgErrorBody.innerText=mensajeAll;
+            sendModalValue("msgError",mensajeAll);
             $("#msgError").modal("show");
             return;
         } else {
             if (!(data.code==null || data.code==undefined || data.code=="")) {
-                msgErrorBody.innerText=mensajeAll;
+                sendModalValue("msgError",mensajeAll);
                 $("#msgError").modal("show");
                 return;                
             }else{
@@ -50,7 +50,7 @@ const getMethods = async () => {
             }                         
         }
     }, err => {
-        msgErrorBody.innerText=processError(err, mensajeAll);
+        sendModalValue("msgError",processError(err, mensajeAll));
         $("#msgError").modal("show");
         return;
     });
@@ -61,7 +61,7 @@ const Accordion = () => {
     const [TDDValidation, setTDDValidation] = React.useState(false);
     const [P2PValidation, setP2PValidation] = React.useState(false);
     const [C2PValidation, setC2PValidation] = React.useState(false);
-    const [ITValidation, setITValidation] = React.useState(false);
+    const [OTValidation, setITValidation] = React.useState(false);
     const hideAllPayments = () => {
         setTDCValidation(false);
         setTDDValidation(false);
@@ -185,7 +185,7 @@ const Accordion = () => {
                     )
                 )
             ),
-            ITValidation && React.createElement("div", { className: "accordion-item" },
+            OTValidation && React.createElement("div", { className: "accordion-item" },
                 React.createElement("h2", { className: "accordion-header font-regular", id: "headingIT" },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
@@ -233,7 +233,7 @@ const sendPayment = (id,metodoColeccion) => {
     let data = jsonTosend;
     callServicesHttp('payment', query, data).then((response) => {            
         if (Boolean(response.code)) {
-            msgErrorBody.innerText=processMessageError(response,mensajeAll);
+            sendModalValue("msgError",processMessageError(response,mensajeAll));
             $("#msgError").modal("show");
             return;                             
         }else{
