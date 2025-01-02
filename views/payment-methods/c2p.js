@@ -7,12 +7,6 @@ const C2pPayment = ({ metodoColeccion,banco }) => {
     const [phoneC2PValue, setPhoneC2P] = React.useState(null);
     const [bancoSelectedValue, setBancoSelected] = React.useState(null);
     const [otpValue, setOtp] = React.useState(null);
-    const idDocType = React.useRef(null);
-    const idDocC2p = React.useRef(null);
-    const prefixPhone = React.useRef(null);
-    const phoneC2P = React.useRef(null);
-    const bancoSelected = React.useRef(null);
-    const otp = React.useRef(null);
     metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     //Funcion para cambiar un input de type password a text
     const changeTypeInputShow = (data,variable,setParam) => {

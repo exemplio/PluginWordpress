@@ -35,7 +35,6 @@ const CredicardPay = ({ metodoColeccion }) => {
     const [imagen, setImagen] = React.useState(false);
     const [bankName, setBankName] = React.useState(false);
     const [etiqueta, setEtiqueta] = React.useState(false);
-    const expiracion = React.useRef(null);
     metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     React.useEffect(() => {
         if (modalValue=="PRUEBA") {

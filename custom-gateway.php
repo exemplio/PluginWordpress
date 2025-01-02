@@ -34,11 +34,11 @@ function get_amount(){
                     ];
                 }
             }
-            echo "<script>var cartItems= ". json_encode($response) .";</script>";
-            echo "<script>var cartTotal= ". WC()->cart->total .";</script>";
+            echo "<script>const cartItems= ". json_encode($response) .";</script>";
+            echo "<script>const cartTotal= ". WC()->cart->total .";</script>";
         } else {
             $response = ['message' => 'Your cart is empty.'];
-            echo "<script>var cartItems= ". json_encode($response) .";</script>";
+            echo "<script>const cartItems= ". json_encode($response) .";</script>";
         }
     }
 }
