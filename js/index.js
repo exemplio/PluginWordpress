@@ -29,10 +29,12 @@ function getDemo(){
 	return "https://demo.paguetodo.com/";
 }
 function getClientId(){
-	return "81cf87e0-c3a0-11ef-80eb-dbe25000dd95";
+	// return "81cf87e0-c3a0-11ef-80eb-dbe25000dd95"; //--> old
+	return "d2e955e0-ca01-11ef-8fe1-c7505347a928"; //--> new
 }
 function getClientSecret(){
-	return "9752b938-b265-482c-91ae-e06e256fe44e";
+	// return "9752b938-b265-482c-91ae-e06e256fe44e"; //--> old
+	return "0f5b91ff-3ff9-4f0a-bcf6-8171e3914204"; //--> new
 }
 function getChannelId(){
 	return "d75ffc20-c3ba-11ef-be7c-fdd381be1ffd";

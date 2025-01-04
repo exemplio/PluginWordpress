@@ -212,8 +212,8 @@ const Accordion = () => {
 };
 const Content = () => {
     React.useEffect(() => {
-        getCredentials();
         setTimeout(() => {
+            getCredentials();
             getMethods();
         }, 300);
     }, []); 
