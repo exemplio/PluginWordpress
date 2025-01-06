@@ -75,3 +75,28 @@ const ErrorModal = ({ bodyText }) => {
         )
     );
 };
+
+const MsgModal = ({ bodyText }) => {
+    return React.createElement('div', { id:"msgToken", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { className: 'modal-dialog', role: 'document' },
+            React.createElement('div', { className: 'modal-content' },
+                React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
+                    React.createElement('h5',{ className: 'modal-title font-regular', style: { color:'#2196F3' } },'Proceso satisfactorio'),
+                    React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgToken").modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('span', { 'aria-hidden': 'true' }, '×')
+                    )
+                ),
+                React.createElement('div', { className: 'modal-body'},
+                    React.createElement('p', 'Token enviado con exito')
+                ),
+                React.createElement('div', { className: 'modal-footer' },
+                    React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
+                            onClick: () => {$("#msgToken").modal("hide")},
+                        },
+                        React.createElement('span',{className: 'font-regular' }, 'Cerrar')
+                    )
+                )
+            )
+        )
+    );
+};

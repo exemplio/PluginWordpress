@@ -1,6 +1,6 @@
 const settings = window.wc.wcSettings.getSetting("my_custom_gateway_data", {});
 const label = window.wp.htmlEntities.decodeEntities(settings.title) || window.wp.i18n.__("", "my-custom-gateway");
-var collectMethod = JSON.parse(localStorage.getItem("collect-methods"));
+const collectMethod = JSON.parse(localStorage.getItem("collect-methods"));
 var jsonTosend = {};
 const eyeSolid= myPluginImage.eye_solid;
 const eyeSlash= myPluginImage.eye_slash;
@@ -9,18 +9,19 @@ const eyeSlash= myPluginImage.eye_slash;
 const getCredentials = async () => {
     let query = "";
     var mensajeAll = "Error al obtener los métodos de colección";
-    callServicesHttp('get-credentials',query,null).then((data) => {        
-        if (data == null || data == undefined || data == "") {
-            sendModalValue("msgError",mensajeAll);
+    callServicesHttp('get-credentials',query,"").then((response) => {        
+        if (response == null || response == undefined || response == "") {
+            sendModalValue("msgError",processMessageError(response, mensajeAll));
             $("#msgError").modal("show");
             return;
         } else {
-            if (!(data.code==null || data.code==undefined || data.code=="")) {
-                sendModalValue("msgError",mensajeAll);
+            if (!(response.code==null || response.code==undefined || response.code=="")) {
+                sendModalValue("msgError",processMessageError(response, mensajeAll));
                 $("#msgError").modal("show");
-                return;                
+                return;
             }else{
-                localStorage.setItem('authorize-credentials', JSON.stringify(data));
+                localStorage.setItem('authorize-credentials', JSON.stringify(response));
+                getMethods();
                 return;
             }
         }
@@ -34,18 +35,18 @@ const getCredentials = async () => {
 const getMethods = async () => {
     let query = "";
     var mensajeAll = "Error al obtener los métodos de colección";
-    callServicesHttp('get-collect-channel',query,null).then((data) => {        
-        if (data == null || data == undefined || data == "") {
-            sendModalValue("msgError",mensajeAll);
+    callServicesHttp('get-collect-channel',query,null).then((response) => {        
+        if (response == null || response == undefined || response == "") {
+            sendModalValue("msgError",processMessageError(response, mensajeAll));
             $("#msgError").modal("show");
             return;
         } else {
-            if (!(data.code==null || data.code==undefined || data.code=="")) {
-                sendModalValue("msgError",mensajeAll);
+            if (!(response.code==null || response.code==undefined || response.code=="")) {
+                sendModalValue("msgError",processMessageError(response, mensajeAll));
                 $("#msgError").modal("show");
                 return;                
             }else{
-                localStorage.setItem('collect-methods', JSON.stringify(data));
+                localStorage.setItem('collect-methods', JSON.stringify(response));
                 return;
             }                         
         }
@@ -214,7 +215,6 @@ const Content = () => {
     React.useEffect(() => {
         setTimeout(() => {
             getCredentials();
-            getMethods();
         }, 300);
     }, []); 
     return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
@@ -228,7 +228,7 @@ const Content = () => {
 };
 const sendPayment = (id,metodoColeccion) => {
     $(`#${id}`).modal("hide");
-    let mensajeAll = translate("message_err_1");
+    let mensajeAll = "Error al realizar el pago";
     let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
     let data = jsonTosend;
     callServicesHttp('payment', query, data).then((response) => {            

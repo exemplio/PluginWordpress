@@ -22,9 +22,9 @@ async function callServices(url, method, headers, body, auth){
 				body: method!= "GET" ? JSON.stringify(body) : null,
 				contentType: "application/json; charset=UTF-8",
 			})
-			if (!response.ok) {
-				HideLoading();
-			}
+			// if (!response.ok) {
+			// 	HideLoading();
+			// }
 			HideLoading();
 			const data = await response.json();
 			return data;	
@@ -51,27 +51,27 @@ async function callServicesHttp(ser,querys,data){
 			return request;
 		}break;
 		case 'get-commision':{
-			request=callServices(_url+'/payco/card_holder_commission'+querys,"POST",headers,data,true);
+			request=await callServices(_url+'/payco/card_holder_commission'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'verify-card':{
-			request=callServices(_url+'/payco/card_info'+querys,"POST",headers,data,true);
+			request=await callServices(_url+'/payco/card_info'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-bank-token':{
-			request=callServices(_url+'/payco/send_bank_token'+querys,"POST",headers,data,true);
+			request=await callServices(_url+'/payco/send_bank_token'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-token-with-card':{
-			request=callServices(_url+'/payco/send_token_with_card'+querys,"POST",headers,data,true);
+			request=await callServices(_url+'/payco/send_token_with_card'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-mercantil-token':{
-			request=callServices(_url+'/payco/mercantil_send_otp'+querys,"POST",headers,data,true);
+			request=await callServices(_url+'/payco/mercantil_send_otp'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'payment':{
-			request=callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
+			request=await callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		default:{
