@@ -2,7 +2,6 @@ function sendModalValue(id,msg){
     document.getElementById(`${id}Body`).innerText=msg;
     return;
 }
-
 const WarningModal = ({ bodyText }) => {
     return React.createElement('div', { id:"msgWarning", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
@@ -75,7 +74,6 @@ const ErrorModal = ({ bodyText }) => {
         )
     );
 };
-
 const MsgModal = ({ bodyText }) => {
     return React.createElement('div', { id:"msgToken", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
@@ -87,11 +85,35 @@ const MsgModal = ({ bodyText }) => {
                     )
                 ),
                 React.createElement('div', { className: 'modal-body'},
-                    React.createElement('p', 'Token enviado con exito')
+                    React.createElement('p', null,'Token enviado con exito')
                 ),
                 React.createElement('div', { className: 'modal-footer' },
                     React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
                             onClick: () => {$("#msgToken").modal("hide")},
+                        },
+                        React.createElement('span',{className: 'font-regular' }, 'Cerrar')
+                    )
+                )
+            )
+        )
+    );
+};
+const WarningP2P = ({ bodyText }) => {
+    return React.createElement('div', { id:"msgWarningP2P", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { className: 'modal-dialog', role: 'document' },
+            React.createElement('div', { className: 'modal-content' },
+                React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
+                    React.createElement('h5',{ className: 'modal-title font-regular', style: { color:'#FFC107' } },'Alerta'),
+                    React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgWarningP2P").modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('span', { 'aria-hidden': 'true' }, '×')
+                    )
+                ),
+                React.createElement('div', { className: 'modal-body'},                    
+                    React.createElement('p', null,'El monto a pagar debe ser exacto, para que su orden sea procesada de forma efectiva')
+                ),
+                React.createElement('div', { className: 'modal-footer' },
+                    React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
+                            onClick: () => {$("#msgWarningP2P").modal("hide")},
                         },
                         React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                     )

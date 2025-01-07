@@ -1,4 +1,4 @@
-const CredicardPay = ({ metodoColeccion }) => {
+const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     let credicard = myPluginImage.credicard;
     let visa = myPluginImage.visa;
     let maestro = myPluginImage.maestro;
@@ -245,7 +245,6 @@ const CredicardPay = ({ metodoColeccion }) => {
                 cvc: data?.cvc,
                 currency: "VES",
                 bank_card_validation: {
-                //   bank_code: bankCode,
                   phone: "4264375458",
                   rif: data?.holder_id,
                 }
@@ -974,7 +973,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                     value: tokenBank,
                     onChange: (e) => setTokenBank(e.target.value),
                     inputMode: "numeric",
-                    onKeyPress: (e) => keypressNumbersInteger(e)
+                    onKeyPress: (e) => keypressNumeros(e)
                 }),
                 React.createElement("label", { htmlFor: `token${metodoColeccion?.product_name}` }, "Token")
             )
@@ -1028,7 +1027,7 @@ const CredicardPay = ({ metodoColeccion }) => {
             React.createElement("img", { src: banfanb, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: tesoro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: bicentenario, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
-            React.createElement("img", { src: bfc, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            // React.createElement("img", { src: bfc, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
         metodoColeccion?.product_name=='TDC_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             React.createElement("label", { className: 'font-bold' }, "Marcas aliados: "),
@@ -1054,7 +1053,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment(`msgConfirmCredicard${metodoColeccion?.product_name}`, metodoColeccion),
+                            onClick: () => paymentFun(`msgConfirmCredicard${metodoColeccion?.product_name}`, metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

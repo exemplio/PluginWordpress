@@ -1,10 +1,11 @@
-const MobilePayment = ({ metodoColeccion }) => {
+const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
     const [phoneP2PValue, setPhoneP2P] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceP2PValue, setP2PReference] = React.useState(null);
+    let bank_image = myPluginImage.bancaribe;
     metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
@@ -61,7 +62,7 @@ const MobilePayment = ({ metodoColeccion }) => {
                 reference: referenceP2PValue,
                 amount: cartTotal
             }
-        }      
+        }
         $("#msgConfirmP2P").modal("show");
     }
     const clean = () => { 
@@ -74,6 +75,17 @@ const MobilePayment = ({ metodoColeccion }) => {
         setP2PReference("");
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
+        React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
+            React.createElement("img", { src: bank_image, style: { objectFit: 'contain', height: "40px" } }),
+            React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco),
+            React.createElement("h4", { className: "font-bold", style: { textTransform: 'uppercase' } }, "REALIZAR PAGO MÓVIL A:"),
+            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "Número de teléfono:" + "(414) 319-6228"),
+            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "RIF: J403399646"),
+            React.createElement("label", { className: "font-regular" }, "Si tiene problemas para validar su pago, pase el capture con su RIF al siguiente correo: operaciones@paguetodo.com"),
+        ),
+        React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center', marginTop: '40px' } },
+            React.createElement("h4", { className: "font-bold", style: { textTransform: 'uppercase' } }, "COLOQUE LOS DATOS DEL PAGO MÓVIL:"),
+        ),
         React.createElement("div", {className:"row", style:{ marginTop:'15px' }},
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
@@ -173,6 +185,10 @@ const MobilePayment = ({ metodoColeccion }) => {
             ),
         ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
+            React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+                React.createElement("label", { className: 'font-bold', style: {marginRight:'10px'} }, "Procesado por: "),
+                React.createElement("img", { src: bank_image, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
+            ),
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
                     type: "button",
@@ -209,7 +225,7 @@ const MobilePayment = ({ metodoColeccion }) => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmP2P',metodoColeccion),
+                            onClick: () => paymentFun('msgConfirmP2P',metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

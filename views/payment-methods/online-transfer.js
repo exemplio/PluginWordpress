@@ -1,4 +1,4 @@
-const OnlineTransfer = ({ metodoColeccion }) => {
+const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
@@ -149,7 +149,7 @@ const OnlineTransfer = ({ metodoColeccion }) => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmOT',metodoColeccion),
+                            onClick: () => paymentFun('msgConfirmOT',metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

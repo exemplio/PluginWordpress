@@ -11,7 +11,8 @@ const Accordion = () => {
     const [TDDValidation, setTDDValidation] = React.useState(false);
     const [P2PValidation, setP2PValidation] = React.useState(false);
     const [C2PValidation, setC2PValidation] = React.useState(false);
-    const [OTValidation, setITValidation] = React.useState(false);
+    const [OTValidation, setOTValidation] = React.useState(false);
+    const [ReceiptValidation, setReceiptValidation] = React.useState(false);
     // Obtener credenciales
     const getCredentials = async () => {
         let query = "";
@@ -74,7 +75,7 @@ const Accordion = () => {
                                         setC2PValidation(true);
                                         break;
                                     case "TRANSFER_PAYMENT_SEARCH":
-                                        setITValidation(true);
+                                        setOTValidation(true);
                                         break;
                                     default:
                                         break
@@ -90,6 +91,41 @@ const Accordion = () => {
             $("#msgError").modal("show");
             return;
         });
+    }
+    const sendPayment = (id,metodoColeccion) => {
+        $(`#${id}`).modal("hide");
+        let mensajeAll = "Error al realizar el pago";
+        let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
+        let data = jsonTosend;
+        callServicesHttp('payment', query, data).then((response) => {            
+            if (!(Boolean(response.code))) {
+                sendModalValue("msgError",processMessageError(response,mensajeAll));
+                $("#msgError").modal("show");
+                return;                             
+            }else{
+                CloseAccordion();
+                ShowReceipt();
+            }
+        });        
+    };
+    // Abrir modal de los acordiones
+    const OpenAccordionModal = () => {
+        $("#msgWarningP2P").modal("show");
+        return;
+    }
+    // Cerrar todos los acordiones
+    const CloseAccordion = () => {
+        setTDCValidation(false),
+        setTDDValidation(false),
+        setP2PValidation(false),
+        setC2PValidation(false),
+        setOTValidation(false)
+        return;
+    }
+    // Mostrar recibo
+    const ShowReceipt = () => {
+        setReceiptValidation(true)
+        return;
     }
     React.useEffect(() => {
         if (!(localStorage.getItem('collect-methods')==undefined)) {        
@@ -119,7 +155,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDC_API") })
+                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDC_API"), paymentFun: sendPayment })
                     )
                 )
             ),
@@ -142,7 +178,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDD_API") } )
+                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDD_API"), paymentFun: sendPayment } )
                     )
                 )
             ),
@@ -154,7 +190,8 @@ const Accordion = () => {
                         "data-bs-toggle": "collapse",
                         "data-bs-target": "#collapseP2P",
                         "aria-expanded": "false",
-                        "aria-controls": "collapseP2P"
+                        "aria-controls": "collapseP2P",
+                        onClick: () => OpenAccordionModal()
                     }, "PAGO MÓVIL")
                 ),
                 React.createElement("div", {
@@ -165,7 +202,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH") })
+                        React.createElement(MobilePayment, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment  })
                     )
                 )
             ),
@@ -178,7 +215,7 @@ const Accordion = () => {
                         "data-bs-target": "#collapseC2P",
                         "aria-expanded": "false",
                         "aria-controls": "collapseC2P"
-                    }, "PAGO C2P BANCARIBE")
+                    }, "PAGO C2P")
                 ),
                 React.createElement("div", {
                     id: "collapseC2P",
@@ -187,8 +224,8 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement("h5", { className: "font-bold", }, "Pago C2P"),
-                        React.createElement(C2pPayment, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT") })
+                        React.createElement("h5", { className: "font-bold", }, "Pago C2P Bancaribe"),
+                        React.createElement(C2pPayment, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT"), paymentFun: sendPayment })
                     )
                 )
             ),
@@ -211,28 +248,12 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
-                        React.createElement(OnlineTransfer, { id: "my_custom_gateway_card_number_2", label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH") })
+                        React.createElement(OnlineTransfer, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH"), paymentFun: sendPayment })
                     )
                 )
             ),
+            ReceiptValidation && React.createElement(Receipt, { label: "Card Number", metodoColeccion: "", paymentFun: sendPayment }),
         );
-};
-const sendPayment = (id,metodoColeccion) => {
-    $(`#${id}`).modal("hide");
-    let mensajeAll = "Error al realizar el pago";
-    let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
-    let data = jsonTosend;
-    callServicesHttp('payment', query, data).then((response) => {            
-        if (Boolean(response.code)) {
-            sendModalValue("msgError",processMessageError(response,mensajeAll));
-            $("#msgError").modal("show");
-            return;                             
-        }else{
-            // this.cleanP2P();
-            // closeAll();
-            // this.showReciboPartial(response);
-        }
-    });        
 };
 const Content = () => {
     return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
@@ -241,6 +262,7 @@ const Content = () => {
         React.createElement(InfoModal, {label: "Modal"}),
         React.createElement(ErrorModal, {label: "Modal"}),
         React.createElement(MsgModal, {label: "Modal"}),
+        React.createElement(WarningP2P, {label: "Modal"}),
         React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
         React.createElement(Loading, {label: "Modal"}),
     );

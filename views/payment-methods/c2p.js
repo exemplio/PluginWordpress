@@ -1,4 +1,4 @@
-const C2pPayment = ({ metodoColeccion,banco }) => {  
+const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {  
     let bank_image = myPluginImage.bancaribe;
     const [ojitoOperacion, setOjitoOperacion] = React.useState(eyeSolid);
     const [idDocTypeValue, setIdDocType] = React.useState("V");
@@ -268,7 +268,7 @@ const C2pPayment = ({ metodoColeccion,banco }) => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => sendPayment('msgConfirmC2P',metodoColeccion),
+                            onClick: () => paymentFun('msgConfirmC2P',metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

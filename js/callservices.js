@@ -22,11 +22,10 @@ async function callServices(url, method, headers, body, auth){
 				body: method!= "GET" ? JSON.stringify(body) : null,
 				contentType: "application/json; charset=UTF-8",
 			})
-			if (!response.ok) {
-				HideLoading();
-				return processResponse(response);
-			}
 			HideLoading();
+			if (!response.ok) {
+				return processResponse("JSON",response);
+			}
 			return await response.json();				
 	} catch (error) {
 		HideLoading();

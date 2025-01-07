@@ -75,6 +75,15 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         true
       );
       wp_register_script(
+        'receipt_script',
+        plugin_dir_url(__FILE__) . 'views/receipt.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
+      wp_register_script(
         'modals_script',
         plugin_dir_url(__FILE__) . 'views/modals.js',
         [
@@ -209,6 +218,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       wp_enqueue_script('credicard_payments_script');
       wp_enqueue_script('online_transfer_script');
       wp_enqueue_script('mobile_payment_script');
+      wp_enqueue_script('receipt_script');
       wp_enqueue_script('c2p_script');
       wp_enqueue_script('loading_script');
       wp_enqueue_script('modals_script');
