@@ -22,12 +22,12 @@ async function callServices(url, method, headers, body, auth){
 				body: method!= "GET" ? JSON.stringify(body) : null,
 				contentType: "application/json; charset=UTF-8",
 			})
-			// if (!response.ok) {
-			// 	HideLoading();
-			// }
+			if (!response.ok) {
+				HideLoading();
+				return processResponse(response);
+			}
 			HideLoading();
-			const data = await response.json();
-			return data;	
+			return await response.json();				
 	} catch (error) {
 		HideLoading();
 		console.error('Error:', error);
@@ -76,6 +76,78 @@ async function callServicesHttp(ser,querys,data){
 		}break;
 		default:{
 		}
+	}
+}
+
+function processResponse(format,res){
+	var status=null;
+	if(res.hasOwnProperty('status')){
+	   status=res.status;
+		if(status==202 || status=="202" || status=="403" || status==403){
+			var aux = res.json();
+			if(aux.hasOwnProperty("message")){
+				if(!(aux.message==undefined || aux.message==null || aux.message=="")){
+					if(aux.message=="UNAUTHORIZED_SESSION" || aux.message=="SESSION_CLOSED" 
+					|| aux.message=="SESSION_EXPIRED" || aux.message=="SESSION_NOT_FOUND" || aux.message=="INVALID_AUTHORIZATION" ){
+						// doLogout();
+						// alert(_(aux.message).toUpperCase());
+						// window.location.href=redirectUri();
+					}
+				}
+			}	
+		}else{
+			if(status==401 || status==403){
+					window.location.href=getLoginUri();
+			}
+		}
+	}
+	if (format == "JSON") {
+		try {
+			var status=null;
+			if(res.hasOwnProperty('status')){
+				status=res.status;
+			}
+			res = res.json();
+			try{
+				var valor=Array.isArray(res);
+				if(valor){
+					var aux=res;
+					res={
+						body:aux,
+						status_http:status
+					};
+				}else{
+					res.status_http=status; 
+				}
+			}catch(err1){
+				console.log('Error al procesar',err1);
+			}
+			res.status_http=status;
+			return res;
+		} catch (err) {
+			res = {
+				status_http:500,
+				message:"ERROR",
+				typeSys: 'ERROR',
+				value: 'NOT_JSON'
+			};
+			return res;
+		}
+	}else {
+		if(format=="CSV"){
+			 try {
+				res = res._body;
+				return res.toString();
+			} catch (err) {
+				res = "Error";
+				return res;
+			}
+		}else{
+			console.log('res',res);
+			res=res._body.blob();
+			return res
+		}
+	   
 	}
 }
 

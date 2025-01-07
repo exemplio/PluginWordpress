@@ -5,57 +5,6 @@ var jsonTosend = {};
 const eyeSolid= myPluginImage.eye_solid;
 const eyeSlash= myPluginImage.eye_slash;
 
-// Obtener credenciales
-const getCredentials = async () => {
-    let query = "";
-    var mensajeAll = "Error al obtener los métodos de colección";
-    callServicesHttp('get-credentials',query,"").then((response) => {        
-        if (response == null || response == undefined || response == "") {
-            sendModalValue("msgError",processMessageError(response, mensajeAll));
-            $("#msgError").modal("show");
-            return;
-        } else {
-            if (!(response.code==null || response.code==undefined || response.code=="")) {
-                sendModalValue("msgError",processMessageError(response, mensajeAll));
-                $("#msgError").modal("show");
-                return;
-            }else{
-                localStorage.setItem('authorize-credentials', JSON.stringify(response));
-                getMethods();
-                return;
-            }
-        }
-    }, err => {
-        sendModalValue("msgError",processError(err, mensajeAll));
-        $("#msgError").modal("show");
-        return;
-    });
-}
-// Obtener metodos de pago
-const getMethods = async () => {
-    let query = "";
-    var mensajeAll = "Error al obtener los métodos de colección";
-    callServicesHttp('get-collect-channel',query,null).then((response) => {        
-        if (response == null || response == undefined || response == "") {
-            sendModalValue("msgError",processMessageError(response, mensajeAll));
-            $("#msgError").modal("show");
-            return;
-        } else {
-            if (!(response.code==null || response.code==undefined || response.code=="")) {
-                sendModalValue("msgError",processMessageError(response, mensajeAll));
-                $("#msgError").modal("show");
-                return;                
-            }else{
-                localStorage.setItem('collect-methods', JSON.stringify(response));
-                return;
-            }                         
-        }
-    }, err => {
-        sendModalValue("msgError",processError(err, mensajeAll));
-        $("#msgError").modal("show");
-        return;
-    });
-}
 //Vista de la pasarela de pago
 const Accordion = () => {
     const [TDCValidation, setTDCValidation] = React.useState(false);
@@ -63,35 +12,92 @@ const Accordion = () => {
     const [P2PValidation, setP2PValidation] = React.useState(false);
     const [C2PValidation, setC2PValidation] = React.useState(false);
     const [OTValidation, setITValidation] = React.useState(false);
-    const hideAllPayments = () => {
-        setTDCValidation(false);
-        setTDDValidation(false);
-        setP2PValidation(false);
-        setC2PValidation(false);
-        setITValidation(false);
-    };
-    React.useEffect(() => {
-        collectMethod?.collect_methods.map((item) => {
-            switch (item.product_name) {
-                case "TDC_API":
-                    setTDCValidation(true);
-                    break;
-                case "TDD_API":
-                    setTDDValidation(true);
-                    break;
-                case "MOBILE_PAYMENT_SEARCH":
-                    setP2PValidation(true);
-                    break;
-                case "MOBILE_PAYMENT":
-                    setC2PValidation(true);
-                    break;
-                case "TRANSFER_PAYMENT_SEARCH":
-                    setITValidation(true);
-                    break;
-                default:
-                    break
+    // Obtener credenciales
+    const getCredentials = async () => {
+        let query = "";
+        var mensajeAll = "Error al obtener los métodos de colección";
+        callServicesHttp('get-credentials',query,"").then((response) => {        
+            if (response == null || response == undefined || response == "") {
+                sendModalValue("msgError",processMessageError(response, mensajeAll));
+                $("#msgError").modal("show");
+                return;
+            } else {
+                if (!(response.code==null || response.code==undefined || response.code=="")) {
+                    sendModalValue("msgError",processMessageError(response, mensajeAll));
+                    $("#msgError").modal("show");
+                    return;
+                }else{
+                    localStorage.setItem('authorize-credentials', JSON.stringify(response));
+                    getMethods();
+                    return;
+                }
             }
+        }, err => {
+            sendModalValue("msgError",processError(err, mensajeAll));
+            $("#msgError").modal("show");
+            return;
         });
+    }
+    // Obtener metodos de pago
+    const getMethods = async () => {
+        let query = "";
+        var mensajeAll = "Error al obtener los métodos de colección";
+        callServicesHttp('get-collect-channel',query,null).then((response) => {        
+            if (response == null || response == undefined || response == "") {
+                sendModalValue("msgError",processMessageError(response, mensajeAll));
+                $("#msgError").modal("show");
+                return;
+            } else {
+                if (!(response.code==null || response.code==undefined || response.code=="")) {
+                    sendModalValue("msgError",processMessageError(response, mensajeAll));
+                    $("#msgError").modal("show");
+                    return;                
+                }else{
+                    localStorage.setItem('collect-methods', JSON.stringify(response));
+                    if(Boolean(response)){
+                        if (cartTotal==undefined) {
+                            var cartTotal = 0;
+                        }
+                        if(response.hasOwnProperty('collect_methods')){
+                            response?.collect_methods.map((item) => {
+                                switch (item.product_name) {
+                                    case "TDC_API":
+                                        setTDCValidation(true);
+                                        break;
+                                    case "TDD_API":
+                                        setTDDValidation(true);
+                                        break;
+                                    case "MOBILE_PAYMENT_SEARCH":
+                                        setP2PValidation(true);
+                                        break;
+                                    case "MOBILE_PAYMENT":
+                                        setC2PValidation(true);
+                                        break;
+                                    case "TRANSFER_PAYMENT_SEARCH":
+                                        setITValidation(true);
+                                        break;
+                                    default:
+                                        break
+                                }
+                            });                
+                        }
+                    }
+                    return;
+                }                         
+            }
+        }, err => {
+            sendModalValue("msgError",processError(err, mensajeAll));
+            $("#msgError").modal("show");
+            return;
+        });
+    }
+    React.useEffect(() => {
+        if (!(localStorage.getItem('collect-methods')==undefined)) {        
+            localStorage.getItem('removeItem')
+        }
+        setTimeout(() => {
+            getCredentials();
+        }, 300);
     }, []); 
         return React.createElement("div", { className: "accordion", id: "accordion" },
             TDCValidation && React.createElement("div", { className: "accordion-item" },
@@ -211,21 +217,6 @@ const Accordion = () => {
             ),
         );
 };
-const Content = () => {
-    React.useEffect(() => {
-        setTimeout(() => {
-            getCredentials();
-        }, 300);
-    }, []); 
-    return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
-        React.createElement("p", null, window.wp.htmlEntities.decodeEntities(settings.description || "")),
-        React.createElement(WarningModal, {label: "Modal"}),
-        React.createElement(InfoModal, {label: "Modal"}),
-        React.createElement(ErrorModal, {label: "Modal"}),
-        React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
-        React.createElement(Loading, {label: "Modal"}),
-    );
-};
 const sendPayment = (id,metodoColeccion) => {
     $(`#${id}`).modal("hide");
     let mensajeAll = "Error al realizar el pago";
@@ -242,7 +233,18 @@ const sendPayment = (id,metodoColeccion) => {
             // this.showReciboPartial(response);
         }
     });        
-}
+};
+const Content = () => {
+    return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
+        React.createElement("p", null, window.wp.htmlEntities.decodeEntities(settings.description || "")),
+        React.createElement(WarningModal, {label: "Modal"}),
+        React.createElement(InfoModal, {label: "Modal"}),
+        React.createElement(ErrorModal, {label: "Modal"}),
+        React.createElement(MsgModal, {label: "Modal"}),
+        React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
+        React.createElement(Loading, {label: "Modal"}),
+    );
+};
 const Block_Gateway = {
     name: "my_custom_gateway",
     label: label,

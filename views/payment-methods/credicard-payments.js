@@ -11,6 +11,7 @@ const CredicardPay = ({ metodoColeccion }) => {
     let tesoro = myPluginImage.tesoro;
     let bicentenario = myPluginImage.bicentenario;
     let bfc = myPluginImage.bfc;
+    let regex = /^\d+$/;
     const [ojitoCcvValue, setOjitoCcv] = React.useState(eyeSolid);
     const [ojitoTarjetaValue, setOjitoTarjeta] = React.useState(eyeSolid);
     const [ojitoPinValue, setPinTarjeta] = React.useState(eyeSolid);
@@ -31,7 +32,7 @@ const CredicardPay = ({ metodoColeccion }) => {
     const [showOtpCcr, setShowOtpCcr] = React.useState(false);
     const [showOtpBank, setShowOtpBank] = React.useState(false);
     const [showButtonSend, setShowButtonSend] = React.useState(false);
-    const [tokenCcr, setTokenCcr] = React.useState(false);
+    const [tokenCcr, setTokenCcr] = React.useState("");
     const [tokenBank, setTokenBank] = React.useState(false);
     const [bankImage, setBankImage] = React.useState("");
     const [bankName, setBankName] = React.useState("");
@@ -71,7 +72,7 @@ const CredicardPay = ({ metodoColeccion }) => {
         setShowOtpCcr(false);
         setShowOtpBank(false);
         setShowButtonSend(false);
-        setTokenCcr(null);
+        setTokenCcr("0,00");
         token=null; 
         phone=null;
 		if(Boolean(tarjeta)){
@@ -164,12 +165,24 @@ const CredicardPay = ({ metodoColeccion }) => {
                         }
                     }
 				}else{
+                    if (metodoColeccion?.type=="TDD") {
+                        sendModalValue("msgWarning",translate("message_warning_1"));
+                        setErrorTarjeta(translate("message_warning_1"));
+                        $("#msgWarning").modal("show");
+                        return;
+                    }
 					setBankType("INTERNATIONAL");
                     setShowOtpCcr(true);
                     setShowOtpBank(false);
                     setRowClass('col-lg-4 col-md-4 col-sm-4 col-12');
 				}
 			}else{
+                if (metodoColeccion?.type=="TDD") {
+                    sendModalValue("msgWarning",translate("message_warning_1"));
+                    setErrorTarjeta(translate("message_warning_1"));
+                    $("#msgWarning").modal("show");
+                    return;
+                }
 				setBankType("INTERNATIONAL");
                 setShowOtpCcr(true);
                 setShowOtpBank(false);
@@ -208,7 +221,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                 $("#msgError").modal("show");
                 return;
             } else{					
-                this.msg.infoToken();
+                $("#msgToken").modal("show");
                 return;
             }
         }, err => {                
@@ -218,28 +231,25 @@ const CredicardPay = ({ metodoColeccion }) => {
         });		
 	}
     //Enviar token de CCR
-    const sendTokenCcr = () => {
+    const sendTokenCcr = (data) => {
         let body = {};   
         body= {
-            debit_card:{
-                card_number: "6861002287163551143",
-                expiration_month: 12,
-                expiration_year: 99,
-                holder_name: "string",
+            "credit_card": {
+                card_number: data?.card_number,
+                expiration_month: data?.expiration_month,
+                expiration_year: data?.expiration_year,
+                holder_name: data?.holder_name,
                 holder_id_doc: "RIF",
-                holder_id: "G319582550",
-                card_type: "string",
-                cvc: "220",
-                account_type: "PRINCIPAL",
-                pin: "string",
-                currency: "string",
+                holder_id: data?.holder_id,
+                card_type: metodoColeccion?.type,
+                cvc: data?.cvc,
+                currency: "VES",
                 bank_card_validation: {
-                  bank_code: "7125",
-                  phone: "4269050369",
-                  rif: "PUSX07ZO6G",
-                  token: "8057153939978757214455626472053251121560923866935481202136564301720936904865677633"
+                //   bank_code: bankCode,
+                  phone: "4264375458",
+                  rif: data?.holder_id,
                 }
-            }            
+            }         
         };
         let result={};
         let querys = `?product_name=${metodoColeccion?.product_name}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
@@ -265,7 +275,7 @@ const CredicardPay = ({ metodoColeccion }) => {
             return;
         });
 	}
-    const verifyData = () => {
+    const verifyData = (action) => {
         setModalValue("Está seguro de realizar la transacción?");
         let pinToSend;
         if (cardHolderValue==null || cardHolderValue==undefined || cardHolderValue=="" || cardHolderValue=="null") {
@@ -369,37 +379,9 @@ const CredicardPay = ({ metodoColeccion }) => {
         switch (metodoColeccion?.product_name) {
             case 'TDD_API':
                 if (showOtpCcr) {
-                    jsonTosend= {
-                        product_name: metodoColeccion?.product_name,
-                        collect_method_id: metodoColeccion.id,
-                        amount: cartTotal,
-                        payment: {
-                            reason:	'Pago de servicios CREDICARD PAGOS',
-                            currency: "VES",
-                            payer_name: cardHolderValue,
-                            card_bank_code: bankCode,
-                            debit_card:{
-                                card_number: numeroOriginalValue,
-                                expiration_month: month,
-                                expiration_year: year,
-                                holder_name: cardHolderValue,
-                                holder_id_doc: "RIF",
-                                holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                                card_type: "TDD",
-                                cvc: ccvValue,
-                                account_type: tipoCuentaValue.toUpperCase(),
-                                pin: pinToSend,
-                                currency: "VES",
-                                bank_card_validation: {
-                                    bank_code: bankCode,
-                                    phone: "4241209806",
-                                    rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                                    token: tokenCcr
-                                }
-                            }
-                        }
-                    };
-                    sendTokenCcr();
+                    sendModalValue("msgWarning",translate("message_warning_1"));
+                    setErrorTarjeta(translate("message_warning_1"));
+                    $("#msgWarning").modal("show");
                     return;
                 }else if(showOtpBank){
                     jsonTosend= {
@@ -418,7 +400,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                                 holder_name: cardHolderValue,
                                 holder_id_doc: "RIF",
                                 holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                                card_type: "TDD",
+                                card_type: metodoColeccion?.type,
                                 cvc: ccvValue,
                                 account_type: tipoCuentaValue.toUpperCase(),
                                 pin: pinToSend,
@@ -448,7 +430,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                                 holder_name: cardHolderValue,
                                 holder_id_doc: "RIF",
                                 holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                                card_type: "TDD",
+                                card_type: metodoColeccion?.type,
                                 cvc: ccvValue,
                                 account_type: tipoCuentaValue.toUpperCase(),
                                 pin: pinToSend,
@@ -457,10 +439,10 @@ const CredicardPay = ({ metodoColeccion }) => {
                         }
                     };
                 }
-                checkCommision("TDD");
+                checkCommision(metodoColeccion?.type);
                 break;
             case 'TDC_API':
-                if (showOtpCcr) {              
+                if (showOtpCcr) {
                     jsonTosend= {
                         payment: {
                             reason: "Pago de servicios CREDICARD PAGOS",
@@ -474,7 +456,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                                 expiration_year: year,
                                 holder_name: cardHolderValue,
                                 holder_id_doc: "RIF",
-                                holder_id: idDocValue,
+                                holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
                                 cvc: ccvValue,
                                 bank_card_validation: {
                                     bank_code: bankCode,
@@ -489,8 +471,10 @@ const CredicardPay = ({ metodoColeccion }) => {
                         payment_method: metodoColeccion.payment_method,
                         amount: cartTotal                      
                     };
-                    sendTokenCcr();
-                    return;
+                    if (action=='TOKEN') {
+                        sendTokenCcr(jsonTosend?.payment?.credit_card);
+                        return;                        
+                    }
                 }else{
                     jsonTosend= {
                         payment: {
@@ -505,7 +489,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                                 expiration_year: year,
                                 holder_name: cardHolderValue,
                                 holder_id_doc: "RIF",
-                                holder_id: idDocValue,
+                                holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
                                 cvc: ccvValue,                        
                             }
                         },
@@ -562,6 +546,142 @@ const CredicardPay = ({ metodoColeccion }) => {
 			return;
 		});
 	}
+    const devolverEvent = (event) =>{
+        if(!(event==null || event==undefined || event=="")){
+            if(event.keyCode==8){
+                if(tokenCcr!=null){
+                    if(tokenCcr==""){
+                        setTokenCcr("0,00");
+                    }else{
+                        if(tokenCcr.length==3){
+                            setTokenBank("0,"+tokenCcr.charAt(0)+tokenCcr.charAt(2));
+                        }
+                    }
+                }else{
+                    setTokenBank("0,00");
+                }
+            }
+        }
+    }
+    const keyDown = (event) =>{
+        if(!(event==null || event==undefined || event=="")){
+            if(event.keyCode==37 || event.keyCode==38){
+                return false;
+            }
+        }
+    }
+    const getEventMonto = (event) =>{
+        if(!(event==null || event==undefined || event=="")){
+            if(regex.test(event.key)){
+                if(tokenCcr!=null){
+                    if(tokenCcr.length==4){
+                        if(tokenCcr=="0,00"){
+                            if(event.key==0 || event.key=="0"){
+                                return false;
+                            }else{
+                                setTokenCcr("0,0"+event.key);
+                                return false;
+                            }
+                        }else{
+                            if(tokenCcr.substring(0,3)=="0,0"){
+                                setTokenCcr("0,"+tokenCcr.charAt(tokenCcr.length-1)+event.key);
+                                return false;
+                            }else{
+                                if(tokenCcr.charAt(0)=="0" || tokenCcr.charAt(0)==0){
+                                    setTokenCcr(tokenCcr.charAt(2)+","+tokenCcr.charAt(3)+event.key);
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }else{
+                return false;
+            }
+        }
+    }
+    const moveCursorToEnd = () =>{
+        var el=document.getElementById(`token_ccr${metodoColeccion?.product_name}`);
+        if (typeof el.selectionStart == "number") {
+            el.selectionStart = el.selectionEnd = el.value.length;
+        } else if (typeof el.createTextRange != "undefined") {
+            el.focus();
+            var range = el.createTextRange();
+            range.collapse(false);
+            range.select();
+        }
+    }
+    const changeAmount = () =>{
+        if(!(tokenCcr==null || tokenCcr==undefined || tokenCcr=="")){
+            if(tokenCcr.length==1){
+                setTokenCcr("0,0"+tokenCcr);
+            }else{
+                if(tokenCcr.length==2){
+                    setTokenCcr("0,"+tokenCcr);
+                }
+            }
+        }
+    }
+    const inputEvent = (event) =>{
+        if(!(event==null || event==undefined || event=="")){
+            if(!(event.data==null || event.data==undefined || event.data=="")){
+                if(regex.test(event.data)){
+                    if(tokenCcr!=null){
+                        if(tokenCcr.length==4){
+                            if(tokenCcr=="0,00"){
+                                if(event.data==0 || event.data=="0"){
+                                    document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,00";
+                                    return false;
+                                }else{
+                                    document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,0"+event.data;
+                                    return false;
+                                }
+                            }else{
+                                if(tokenCcr.substring(0,3)=="0,0"){
+                                    document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,"+tokenCcr.charAt(tokenCcr.length-1)+event.data;
+                                    return false;
+                                }else{
+                                    if(tokenCcr.charAt(0)=="0" || tokenCcr.charAt(0)==0){
+                                        document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value=tokenCcr.charAt(2)+","+tokenCcr.charAt(3)+event.data;
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }else{
+                    return false;
+                }
+            }else{
+                if(event.inputType=="deleteContentBackward"){
+                        if(tokenCcr!=null){
+                        if(tokenCcr==""){
+                            document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,00";
+                        }else{
+                            if(tokenCcr.length==3){
+                                document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,"+tokenCcr.charAt(0)+tokenCcr.charAt(2);
+                            }
+                        }
+                    }else{
+                        document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,00";
+                    }
+                }
+            }
+        }
+    }
+    const setMaskMonto = () =>{
+		$(`#token_ccr${metodoColeccion?.product_name}`).mask("#.##0,00", {reverse: true});	
+		var el=document.getElementById(`token_ccr${metodoColeccion?.product_name}`);
+		if (typeof el.selectionStart == "number") {
+			el.selectionStart = el.selectionEnd = el.value.length;
+		} else if (typeof el.createTextRange != "undefined") {
+			el.focus();
+			var range = el.createTextRange();
+			range.collapse(false);
+			range.select();
+		}
+	}
+    //Funcion para cambiar un input de type password a text de la tarjeta
     const changeTypeInputShowCard = (data,id,variable,setParam) => {
         if(!(nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="" || 
              nroTarjetaValue=="undefined" || nroTarjetaValue=="{}" || nroTarjetaValue=={} || nroTarjetaValue=="null")){
@@ -821,6 +941,15 @@ const CredicardPay = ({ metodoColeccion }) => {
             React.createElement("div", { className: "form-floating" },
                 React.createElement("input", {
                     type: "text",
+                    onKeyUp: (e) => devolverEvent(e),
+                    onKeyPress: (e) => getEventMonto(e),
+                    onClick: () => moveCursorToEnd(),
+                    onKeyDown: (e) => keyDown(e),
+                    onFocus: () => setMaskMonto(),
+                    onChange: () => changeAmount(),
+                    onInput: (e) => inputEvent(e),
+                    onPaste: (e) => e.preventDefault(),
+                    onCut: (e) => e.preventDefault(),
                     inputMode: "numeric",
                     maxLength: 20,
                     className: "form-control",
@@ -830,7 +959,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                     value: tokenCcr,
                     onChange: (e) => setTokenCcr(e.target.value)
                 }),
-                React.createElement("label", { htmlFor: `token_ccr${metodoColeccion?.product_name}` }, "Token")
+                React.createElement("label", { htmlFor: `token_ccr${metodoColeccion?.product_name}` }, "Tokenn")
             )
         ),
         showOtpBank && React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -864,7 +993,7 @@ const CredicardPay = ({ metodoColeccion }) => {
                     type: "button",
                     className: "btn btn-danger btn-lg",
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
-                    onClick: () => verifyData()
+                    onClick: () => verifyData('TOKEN')
                 }, "Solicitar token")
             ),
             React.createElement("div", { className: rowClass, style: { textAlign: 'right' } },

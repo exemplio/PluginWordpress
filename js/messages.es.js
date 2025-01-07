@@ -115,4 +115,6 @@
 	"payment_method_not_found":"Método de pago no encontrado",
 	"access_denied":"Acceso denegado",
 	"one_card_must_be_not_null":"La tarjeta no debe estar vacía",
+	"currency_not_found":"Moneda no encontrada",
+	"otp_ccr_token_sent":"Token enviado"
 };
