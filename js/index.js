@@ -37,8 +37,7 @@ function getClientSecret(){
 	return "0f5b91ff-3ff9-4f0a-bcf6-8171e3914204"; //--> new
 }
 function getChannelId(){
-	// return "d75ffc20-c3ba-11ef-be7c-fdd381be1ffd"; //--> old;
-	return "8fe31300-c91e-11ef-93d1-1f6dc49582a9"; //--> new;
+	return "8fe31300-c91e-11ef-93d1-1f6dc49582a9"; //--> ;
 }
 
 function getRealm(){

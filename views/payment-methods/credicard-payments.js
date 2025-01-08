@@ -41,7 +41,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     const [bankType, setBankType] = React.useState("");
     const [amountToShow, setAmountToShow] = React.useState("");
     const [rowClass, setRowClass] = React.useState("col-lg-6 col-md-6 col-sm-6 col-12");
-    if (!(metodoColeccion==null || metodoColeccion==undefined)) {
+    if (!(metodoColeccion==null && metodoColeccion==undefined && metodoColeccion=="")) {
         metodoColeccion= metodoColeccion[0];
         metodoColeccion.type = metodoColeccion?.product_name== "TDC_API" ? "TDC" : "TDD";
     }

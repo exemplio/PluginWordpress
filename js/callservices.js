@@ -9,32 +9,39 @@ function getBearerToken(){
 }
 
 async function callServices(url, method, headers, body, auth){
-	if(auth){
-		headers['Authorization']='bearer '+ getBearerToken();
-	}
-	try {
-		const response = await fetch(
-				url,
-			{				
-				method: method,
-				headers: headers,
-				processData: false,
-				body: method!= "GET" ? JSON.stringify(body) : null,
-				contentType: "application/json; charset=UTF-8",
-			})
+	return new Promise((resolve, reject) => {
+		if(auth){
+			headers['Authorization']='bearer '+ getBearerToken();
+		}
+		fetch(
+			url,
+		{				
+			method: method,
+			headers: headers,
+			processData: false,
+			body: method!= "GET" ? JSON.stringify(body) : null,
+			contentType: "application/json; charset=UTF-8",
+		})
+		.then(response => {
 			HideLoading();
 			if (!response.ok) {
-				return processResponse("JSON",response);
+				throw new Error(`HTTP error! Status: ${response.status}`);
 			}
-			return await response.json();				
-	} catch (error) {
-		HideLoading();
-		console.error('Error:', error);
-        throw error;
-	}
+			return response.json();
+		})
+		.then(data => {
+			HideLoading();
+			resolve(data);
+		})
+		.catch(error => {
+			HideLoading();
+			reject(error);
+			console.log(processError(error, "Error"));
+		});
+	});
 }
 
-async function callServicesHttp(ser,querys,data){
+function callServicesHttp(ser,querys,data){
 	ActiveLoading();
 	let request=null;
 	var headers = {
@@ -42,35 +49,35 @@ async function callServicesHttp(ser,querys,data){
 	};
 	switch(ser){
 		case 'get-credentials':{
-			request=await callServices(_url+`/oauth/authorize?client_id=${getClientId()}&client_secret=${getClientSecret()}`,"POST",headers,'',false);
+			request=callServices(_url+`/oauth/authorize?client_id=${getClientId()}&client_secret=${getClientSecret()}`,"POST",headers,'',false);
 			return request;
 		}break;
 		case 'get-collect-channel':{
-			request=await callServices(_url+`/payco/collect_channel_info?realm=${getRealm()}&business_id=${getBusinessId()}&channel_id=${getChannelId()}`+querys,"GET",headers,data,true);			
+			request=callServices(_url+`/payco/collect_channel_info?realm=${getRealm()}&business_id=${getBusinessId()}&channel_id=${getChannelId()}`+querys,"GET",headers,data,true);			
 			return request;
 		}break;
 		case 'get-commision':{
-			request=await callServices(_url+'/payco/card_holder_commission'+querys,"POST",headers,data,true);
+			request=callServices(_url+'/payco/card_holder_commission'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'verify-card':{
-			request=await callServices(_url+'/payco/card_info'+querys,"POST",headers,data,true);
+			request=callServices(_url+'/payco/card_info'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-bank-token':{
-			request=await callServices(_url+'/payco/send_bank_token'+querys,"POST",headers,data,true);
+			request=callServices(_url+'/payco/send_bank_token'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-token-with-card':{
-			request=await callServices(_url+'/payco/send_token_with_card'+querys,"POST",headers,data,true);
+			request=callServices(_url+'/payco/send_token_with_card'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'send-mercantil-token':{
-			request=await callServices(_url+'/payco/mercantil_send_otp'+querys,"POST",headers,data,true);
+			request=callServices(_url+'/payco/mercantil_send_otp'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		case 'payment':{
-			request=await callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
+			request=callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
 			return request;
 		}break;
 		default:{

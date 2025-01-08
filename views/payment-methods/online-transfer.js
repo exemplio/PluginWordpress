@@ -3,7 +3,7 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceValue, setReference] = React.useState(null);
-    metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
+    metodoColeccion= !(metodoColeccion== null && metodoColeccion== undefined) ? metodoColeccion[0] : null;
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");

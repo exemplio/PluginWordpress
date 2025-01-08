@@ -6,7 +6,7 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
     const [bankValue, setBank] = React.useState(null);
     const [referenceP2PValue, setP2PReference] = React.useState(null);
     let bank_image = myPluginImage.bancaribe;
-    metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
+    metodoColeccion= !(metodoColeccion== null && metodoColeccion== undefined) ? metodoColeccion[0] : null;
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");

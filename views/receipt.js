@@ -1,6 +1,5 @@
-const Receipt = ({ metodoColeccion,paymentFun,all_data, actual_status, actual_status_icon, parsePhone, parseDate,payments, payment, parsearImagen, parseAmountCalculate, parseAmountIva, parseTelefono, real_data, parseDate2, openModalrechazarPago, aprobarPago, redirect, openCerrar, print }) => {
+const Receipt = ({ paymentFun,all_data, actual_status, actual_status_icon, parsePhone, parseDate,payments, payment, parsearImagen, parseAmountCalculate, parseAmountIva, parseTelefono, real_data, parseDate2, openModalrechazarPago, aprobarPago, redirect, openCerrar, print }) => {
     const [isB2b, setIsB2b] = React.useState(true);
-    metodoColeccion= metodoColeccion!= null || undefined ? metodoColeccion[0] : null;
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement('div', { className: 'row pt-3' },
             React.createElement('div', { className: 'col-lg-12 col-md-12 col-sm-12 col-12' },

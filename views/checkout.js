@@ -5,6 +5,85 @@ var jsonTosend = {};
 const eyeSolid= myPluginImage.eye_solid;
 const eyeSlash= myPluginImage.eye_slash;
 
+function callWooCommerceAPI() {
+    $.ajax({
+        url: '../wp-json/wc/store/v1/checkout?_locale=site',
+        method: 'POST', // or 'GET' depending on the API requirements
+        contentType: 'application/json',
+        data: JSON.stringify({            
+            "additional_fields": [],
+            "billing_address": {
+                "first_name": "R",
+                "last_name": "M",
+                "company": "",
+                "address_1": "6515151",
+                "address_2": "",
+                "city": "CARACA",
+                "state": "VE-A",
+                "postcode": "1020",
+                "country": "VE",
+                "email": "rmolina@paguetodo.com",
+                "phone": ""
+            },
+            "create_account": false,
+            "customer_note": "",
+            "customer_password": "",
+            "extensions": {
+                "woocommerce/order-attribution": {
+                "source_type": "typein",
+                "referrer": "(none)",
+                "utm_campaign": "(none)",
+                "utm_source": "(direct)",
+                "utm_medium": "(none)",
+                "utm_content": "(none)",
+                "utm_id": "(none)",
+                "utm_term": "(none)",
+                "utm_source_platform": "(none)",
+                "utm_creative_format": "(none)",
+                "utm_marketing_tactic": "(none)",
+                "session_entry": "http://localhost:8090/wordpress/",
+                "session_start_time": "2025-01-08 12:32:23",
+                "session_pages": "6",
+                "session_count": "4",
+                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                }
+            },
+            "shipping_address": {
+                "first_name": "R",
+                "last_name": "M",
+                "company": "",
+                "address_1": "6515151",
+                "address_2": "",
+                "city": "CARACA",
+                "state": "VE-A",
+                "postcode": "1020",
+                "country": "VE",
+                "phone": ""
+            },
+            "payment_method": "my_custom_gateway",
+            "payment_data": [
+                {
+                "key": "wc-my_custom_gateway-new-payment-method",
+                "value": false
+                }
+            ]              
+        }),
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('Nonce', '86d2268552');
+        },
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function(response) {
+            console.log('Success:', response);
+            // getHello();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
 //Vista de la pasarela de pago
 const Accordion = () => {
     const [TDCValidation, setTDCValidation] = React.useState(false);
@@ -14,7 +93,7 @@ const Accordion = () => {
     const [OTValidation, setOTValidation] = React.useState(false);
     const [ReceiptValidation, setReceiptValidation] = React.useState(false);
     // Obtener credenciales
-    const getCredentials = async () => {
+    const getCredentials = () => {
         let query = "";
         var mensajeAll = "Error al obtener los métodos de colección";
         callServicesHttp('get-credentials',query,"").then((response) => {        
@@ -128,6 +207,8 @@ const Accordion = () => {
         return;
     }
     React.useEffect(() => {
+        // callWooCommerceAPI();
+        // getHello();
         if (!(localStorage.getItem('collect-methods')==undefined)) {        
             localStorage.getItem('removeItem')
         }
