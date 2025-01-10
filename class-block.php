@@ -7,12 +7,12 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
     protected $name = 'my_custom_gateway';// your payment gateway name
 
     public function initialize() {
-		$this->settings = get_option( "woocommerce_{$this->name}_settings", array() );
+		  $this->settings = get_option( "woocommerce_{$this->name}_settings", array() );
         // $this->gateway = new My_Custom_Gateway();
     }
 
     public function is_active() {
-		return ! empty( $this->settings[ 'enabled' ] ) && 'yes' === $this->settings[ 'enabled' ];
+		  return ! empty( $this->settings[ 'enabled' ] ) && 'yes' === $this->settings[ 'enabled' ];
     }
 
     public function get_payment_method_script_handles() {
@@ -196,8 +196,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       $tesoro = plugin_dir_url(__FILE__) . 'images/png/tesoro.png';
       $bicentenario = plugin_dir_url(__FILE__) . 'images/png/bicentenario.png';
       $bfc = plugin_dir_url(__FILE__) . 'images/png/bfc.png';
-
-      wp_localize_script('my_custom_gateway-blocks-integration', 'myPluginImage', [
+      wp_localize_script('my_custom_gateway-blocks-integration', 'php_var', [
         'eye_solid' => $eye_solid,
         'eye_slash' => $eye_slash,
         'loading' => $loading,
@@ -213,6 +212,9 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         'tesoro' => $tesoro,
         'bicentenario' => $bicentenario,
         'bfc' => $bfc,
+        'nonce' => wp_create_nonce('wc_store_api'),
+        'cart_total' => WC()->cart !== null ? WC()->cart->total : 0,
+        'ajax_url' => admin_url('admin-ajax.php')
       ]);
       wp_enqueue_script('my_custom_gateway-blocks-integration');
       wp_enqueue_script('credicard_payments_script');

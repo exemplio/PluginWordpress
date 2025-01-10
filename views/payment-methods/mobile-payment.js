@@ -5,8 +5,8 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
     const [phoneP2PValue, setPhoneP2P] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceP2PValue, setP2PReference] = React.useState(null);
-    let bank_image = myPluginImage.bancaribe;
-    metodoColeccion= !(metodoColeccion== null && metodoColeccion== undefined) ? metodoColeccion[0] : null;
+    let bank_image = php_var.bancaribe;
+    metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;    
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
@@ -54,13 +54,13 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
         jsonTosend= {            
             product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
-            amount: cartTotal,
+            amount: php_var.cart_total,
             bank_account_id: metodoColeccion?.bank_account_id,
             payment: {
                 payer_id_doc: payerIdDocValue,
                 payer_phone: phoneP2PValue,
                 reference: referenceP2PValue,
-                amount: cartTotal
+                amount: php_var.cart_total
             }
         }
         $("#msgConfirmP2P").modal("show");
@@ -216,7 +216,7 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(cartTotal))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(php_var.cart_total))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

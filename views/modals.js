@@ -1,6 +1,9 @@
 function sendModalValue(id,msg){
-    document.getElementById(`${id}Body`).innerText=msg;
-    return;
+    let modal = document.getElementById(`${id}Body`);
+    if (!(modal==undefined || modal==null)) {
+        modal.innerText=msg;
+        return;        
+    }
 }
 const WarningModal = ({ bodyText }) => {
     return React.createElement('div', { id:"msgWarning", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },

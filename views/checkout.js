@@ -2,95 +2,16 @@ const settings = window.wc.wcSettings.getSetting("my_custom_gateway_data", {});
 const label = window.wp.htmlEntities.decodeEntities(settings.title) || window.wp.i18n.__("", "my-custom-gateway");
 const collectMethod = JSON.parse(localStorage.getItem("collect-methods"));
 var jsonTosend = {};
-const eyeSolid= myPluginImage.eye_solid;
-const eyeSlash= myPluginImage.eye_slash;
-
-function callWooCommerceAPI() {
-    $.ajax({
-        url: '../wp-json/wc/store/v1/checkout?_locale=site',
-        method: 'POST', // or 'GET' depending on the API requirements
-        contentType: 'application/json',
-        data: JSON.stringify({            
-            "additional_fields": [],
-            "billing_address": {
-                "first_name": "R",
-                "last_name": "M",
-                "company": "",
-                "address_1": "6515151",
-                "address_2": "",
-                "city": "CARACA",
-                "state": "VE-A",
-                "postcode": "1020",
-                "country": "VE",
-                "email": "rmolina@paguetodo.com",
-                "phone": ""
-            },
-            "create_account": false,
-            "customer_note": "",
-            "customer_password": "",
-            "extensions": {
-                "woocommerce/order-attribution": {
-                "source_type": "typein",
-                "referrer": "(none)",
-                "utm_campaign": "(none)",
-                "utm_source": "(direct)",
-                "utm_medium": "(none)",
-                "utm_content": "(none)",
-                "utm_id": "(none)",
-                "utm_term": "(none)",
-                "utm_source_platform": "(none)",
-                "utm_creative_format": "(none)",
-                "utm_marketing_tactic": "(none)",
-                "session_entry": "http://localhost:8090/wordpress/",
-                "session_start_time": "2025-01-08 12:32:23",
-                "session_pages": "6",
-                "session_count": "4",
-                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-                }
-            },
-            "shipping_address": {
-                "first_name": "R",
-                "last_name": "M",
-                "company": "",
-                "address_1": "6515151",
-                "address_2": "",
-                "city": "CARACA",
-                "state": "VE-A",
-                "postcode": "1020",
-                "country": "VE",
-                "phone": ""
-            },
-            "payment_method": "my_custom_gateway",
-            "payment_data": [
-                {
-                "key": "wc-my_custom_gateway-new-payment-method",
-                "value": false
-                }
-            ]              
-        }),
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('Nonce', '86d2268552');
-        },
-        xhrFields: {
-            withCredentials: true
-        },
-        success: function(response) {
-            console.log('Success:', response);
-            // getHello();
-        },
-        error: function(xhr, status, error) {
-            console.error('Error:', error);
-        }
-    });
-}
+const eyeSolid= php_var.eye_solid;
+const eyeSlash= php_var.eye_slash;
 
 //Vista de la pasarela de pago
 const Accordion = () => {
-    const [TDCValidation, setTDCValidation] = React.useState(false);
-    const [TDDValidation, setTDDValidation] = React.useState(false);
-    const [P2PValidation, setP2PValidation] = React.useState(false);
-    const [C2PValidation, setC2PValidation] = React.useState(false);
-    const [OTValidation, setOTValidation] = React.useState(false);
+    const [TDCValidation, setTDCValidation] = React.useState(true);
+    const [TDDValidation, setTDDValidation] = React.useState(true);
+    const [P2PValidation, setP2PValidation] = React.useState(true);
+    const [C2PValidation, setC2PValidation] = React.useState(true);
+    const [OTValidation, setOTValidation] = React.useState(true);
     const [ReceiptValidation, setReceiptValidation] = React.useState(false);
     // Obtener credenciales
     const getCredentials = () => {
@@ -134,10 +55,7 @@ const Accordion = () => {
                     return;                
                 }else{
                     localStorage.setItem('collect-methods', JSON.stringify(response));
-                    if(Boolean(response)){
-                        if (cartTotal==undefined) {
-                            var cartTotal = 0;
-                        }
+                    if(Boolean(response)){                        
                         if(response.hasOwnProperty('collect_methods')){
                             response?.collect_methods.map((item) => {
                                 switch (item.product_name) {
@@ -176,24 +94,29 @@ const Accordion = () => {
         let mensajeAll = "Error al realizar el pago";
         let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
         let data = jsonTosend;
+        
+        HideAccordions();
+        ShowReceipt();
+        callWooCommerceAPI();
+        callWooCommerceRedirect();
+
         callServicesHttp('payment', query, data).then((response) => {            
-            if (!(Boolean(response.code))) {
+            if ((Boolean(response.code))) {
                 sendModalValue("msgError",processMessageError(response,mensajeAll));
                 $("#msgError").modal("show");
                 return;                             
             }else{
-                CloseAccordion();
                 ShowReceipt();
             }
-        });        
+        });
     };
     // Abrir modal de los acordiones
     const OpenAccordionModal = () => {
         $("#msgWarningP2P").modal("show");
         return;
     }
-    // Cerrar todos los acordiones
-    const CloseAccordion = () => {
+    // Esconder todos los acordiones
+    const HideAccordions = () => {
         setTDCValidation(false),
         setTDDValidation(false),
         setP2PValidation(false),
@@ -206,9 +129,83 @@ const Accordion = () => {
         setReceiptValidation(true)
         return;
     }
+    const callWooCommerceAPI = () => {
+        $.ajax({
+            url: '../wp-json/wc/store/v1/checkout?_locale=site',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({            
+                "billing_address": {
+                    "first_name": "R",
+                    "last_name": "M",
+                    "company": "",
+                    "address_1": "6515151",
+                    "address_2": "",
+                    "city": "CARACA",
+                    "state": "VE-A",
+                    "postcode": "1020",
+                    "country": "VE",
+                    "email": "rmolina@paguetodo.com",
+                    "phone": ""
+                },
+                "shipping_address": {
+                    "first_name": "R",
+                    "last_name": "M",
+                    "company": "",
+                    "address_1": "6515151",
+                    "address_2": "",
+                    "city": "CARACA",
+                    "state": "VE-A",
+                    "postcode": "1020",
+                    "country": "VE",
+                    "phone": ""
+                },
+                "payment_method": "my_custom_gateway",
+                "payment_data": [
+                    {
+                    "key": "wc-my_custom_gateway-new-payment-method",
+                    "value": false
+                    }
+                ],
+            }),
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('Nonce', php_var.nonce);
+            },
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function(response) {
+                console.log('Success:', response);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+    const callWooCommerceRedirect = () => {
+        $.ajax({
+            url: php_var.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'my_custom_function',
+            },
+            success: function(response) {
+                if (response.success) {
+                    // window.location.href = response.data.redirect_url;
+                    console.log(response.data.message);
+                } else {
+                    console.log('Error:', response.data);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+            }
+        });
+    }
     React.useEffect(() => {
-        // callWooCommerceAPI();
-        // getHello();
+        if (!(php_var.cart_total==undefined || php_var.cart_total==null)) {
+            php_var.cart_total = parseFloat(php_var.cart_total);
+        }
         if (!(localStorage.getItem('collect-methods')==undefined)) {        
             localStorage.getItem('removeItem')
         }

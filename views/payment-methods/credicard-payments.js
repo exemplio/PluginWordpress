@@ -1,16 +1,16 @@
 const CredicardPay = ({ metodoColeccion,paymentFun }) => {
-    let credicard = myPluginImage.credicard;
-    let visa = myPluginImage.visa;
-    let maestro = myPluginImage.maestro;
-    let venezuela = myPluginImage.venezuela;
-    let bancaribe = myPluginImage.bancaribe;
-    let mibanco = myPluginImage.mibanco;
-    let bancrecer = myPluginImage.bancrecer;
-    let bancamiga = myPluginImage.bancamiga;
-    let banfanb = myPluginImage.banfanb;
-    let tesoro = myPluginImage.tesoro;
-    let bicentenario = myPluginImage.bicentenario;
-    let bfc = myPluginImage.bfc;
+    let credicard = php_var.credicard;
+    let visa = php_var.visa;
+    let maestro = php_var.maestro;
+    let venezuela = php_var.venezuela;
+    let bancaribe = php_var.bancaribe;
+    let mibanco = php_var.mibanco;
+    let bancrecer = php_var.bancrecer;
+    let bancamiga = php_var.bancamiga;
+    let banfanb = php_var.banfanb;
+    let tesoro = php_var.tesoro;
+    let bicentenario = php_var.bicentenario;
+    let bfc = php_var.bfc;
     let regex = /^\d+$/;
     const [ojitoCcvValue, setOjitoCcv] = React.useState(eyeSolid);
     const [ojitoTarjetaValue, setOjitoTarjeta] = React.useState(eyeSolid);
@@ -41,7 +41,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     const [bankType, setBankType] = React.useState("");
     const [amountToShow, setAmountToShow] = React.useState("");
     const [rowClass, setRowClass] = React.useState("col-lg-6 col-md-6 col-sm-6 col-12");
-    if (!(metodoColeccion==null && metodoColeccion==undefined && metodoColeccion=="")) {
+    if (!(metodoColeccion==null || metodoColeccion==undefined || metodoColeccion=="")) {
         metodoColeccion= metodoColeccion[0];
         metodoColeccion.type = metodoColeccion?.product_name== "TDC_API" ? "TDC" : "TDD";
     }
@@ -386,7 +386,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     jsonTosend= {
                         product_name: metodoColeccion?.product_name,
                         collect_method_id: metodoColeccion.id,
-                        amount: cartTotal,
+                        amount: php_var.cart_total,
                         payment: {
                             reason:	'Pago de servicios CREDICARD PAGOS',
                             currency: "VES",
@@ -416,7 +416,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     jsonTosend= {
                         product_name: metodoColeccion?.product_name,
                         collect_method_id: metodoColeccion.id,
-                        amount: cartTotal,
+                        amount: php_var.cart_total,
                         payment: {
                             reason:	'Pago de servicios CREDICARD PAGOS',
                             currency: "VES",
@@ -468,7 +468,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         collect_method_id: metodoColeccion.id,
                         product_name: metodoColeccion?.product_name,
                         payment_method: metodoColeccion.payment_method,
-                        amount: cartTotal                      
+                        amount: php_var.cart_total                      
                     };
                     if (action=='TOKEN') {
                         sendTokenCcr(jsonTosend?.payment?.credit_card);
@@ -495,10 +495,10 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         collect_method_id: metodoColeccion.id,
                         product_name: metodoColeccion?.product_name,
                         payment_method: metodoColeccion.payment_method,
-                        amount: cartTotal                      
+                        amount: php_var.cart_total                      
                     };
                 }
-                setAmountToShow(`Bs. ${parseAmount(cartTotal)}`);
+                setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
                 $(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("show");
                 break;
             default:
@@ -510,7 +510,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
 		let request=null;
 		let data={
 			card_number:numeroOriginalValue,
-			amount:cartTotal,
+			amount:php_var.cart_total,
 			currency:"VED",
 			card_type:type,
 			bank_type:bankName,

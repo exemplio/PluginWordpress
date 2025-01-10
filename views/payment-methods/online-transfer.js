@@ -3,7 +3,7 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceValue, setReference] = React.useState(null);
-    metodoColeccion= !(metodoColeccion== null && metodoColeccion== undefined) ? metodoColeccion[0] : null;
+    metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
@@ -28,12 +28,12 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
         jsonTosend= {                        
             product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
-            amount: cartTotal,
+            amount: php_var.cart_total,
             bank_account_id: metodoColeccion?.bank_account_id,
             payment: {
                 payer_id_doc: payerIdDocValue,
                 reference: referenceValue,
-                amount: cartTotal
+                amount: php_var.cart_total
             }
         }
         $("#msgConfirmOT").modal("show");
@@ -140,7 +140,7 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(cartTotal))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(php_var.cart_total))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

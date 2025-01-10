@@ -1,5 +1,5 @@
 const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {  
-    let bank_image = myPluginImage.bancaribe;
+    let bank_image = php_var.bancaribe;
     const [ojitoOperacion, setOjitoOperacion] = React.useState(eyeSolid);
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [idDocC2pValue, setIdDocC2p] = React.useState(null);
@@ -7,7 +7,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
     const [phoneC2PValue, setPhoneC2P] = React.useState(null);
     const [bancoSelectedValue, setBancoSelected] = React.useState(null);
     const [otpValue, setOtp] = React.useState(null);
-    metodoColeccion= !(metodoColeccion== null && metodoColeccion== undefined) ? metodoColeccion[0] : null;    
+    metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;    
     //Funcion para cambiar un input de type password a text
     const changeTypeInputShow = (data,variable,setParam) => {
 		if(!(data==null || data==undefined || data=="")){
@@ -88,7 +88,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
         jsonTosend= {                        
             product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
-            amount: cartTotal,
+            amount: php_var.cart_total,
             bank_account_id: metodoColeccion?.bank_account_id,
             payment: {
                 payer_phone: phoneC2PValue,
@@ -259,7 +259,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(cartTotal))
+                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(php_var.cart_total))
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

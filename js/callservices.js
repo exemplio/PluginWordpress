@@ -37,6 +37,9 @@ async function callServices(url, method, headers, body, auth){
 			HideLoading();
 			reject(error);
 			console.log(processError(error, "Error"));
+		})
+		.finally(() => {
+			HideLoading();
 		});
 	});
 }
@@ -139,21 +142,6 @@ function processResponse(format,res){
 			};
 			return res;
 		}
-	}else {
-		if(format=="CSV"){
-			 try {
-				res = res._body;
-				return res.toString();
-			} catch (err) {
-				res = "Error";
-				return res;
-			}
-		}else{
-			console.log('res',res);
-			res=res._body.blob();
-			return res
-		}
-	   
 	}
 }
 

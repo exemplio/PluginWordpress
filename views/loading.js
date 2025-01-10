@@ -7,7 +7,7 @@ function HideLoading() {
 }
 
 const Loading = () => {
-    let loading = myPluginImage.loading;
+    let loading = php_var.loading;
     return React.createElement('div', { id:"loading", className: 'modal fade bd-example-modal-sm important-padding', style: { overflow: 'hidden', marginTop: '60px', textAlign : 'center', paddingLeft: '19px;' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement("img", { src: loading, height: "40px", style: { objectFit: 'contain' } }),
