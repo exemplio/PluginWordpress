@@ -16,39 +16,14 @@ function woocommerce_myplugin(){
     include(plugin_dir_path(__FILE__) . 'class-gateway.php');
 }
 
-function re_redirect_woo_checkout( $order_id ){
-    $order = wc_get_order( $order_id );
-    $url = 'custom thankyou page url here';
-    if ( ! $order->has_status( 'failed' ) ) {
-        wp_safe_redirect( $url );
-        exit;
-    }
-}
-
-// Process the payment
-function process_payment($order_id) {
-    $order = wc_get_order($order_id);
-
-    // Implement your payment processing logic here
-
-    // Mark the order as processed
-    $order->payment_complete();
-
-    // Redirect to the thank you page
-    return array(
-        'result'   => 'success',
-        'redirect' => get_return_url($order),
-    );
-}
-
 add_action('wp_ajax_my_custom_function', 'my_custom_function');
 add_action('wp_ajax_nopriv_my_custom_function', 'my_custom_function');
 
 function my_custom_function() {
-    
-    $data = array('message' => 'Hello from PHP!');        
-    $redirect_url = home_url('index.php/finalizar-compra/thankyou'); 
+
     WC()->cart->empty_cart();
+    $order = wc_get_order(133);
+    $redirect_url = $order->get_checkout_order_received_url();     
     wp_send_json_success(array(
         'redirect_url' => $redirect_url,
         'billing_first_name'  => wc()->customer->get_billing_first_name(),
@@ -73,32 +48,6 @@ function my_custom_function() {
         'shipping_country'    => wc()->customer->get_shipping_country(),
         'shipping_phone'      => wc()->customer->get_shipping_phone(),    
     ));
-}
-
-add_action('woocommerce_payment_gateways', 'get_amount');
-function get_amount(){
-    $response = [];
-    if (WC()->cart !== null) {
-        if ( ! WC()->cart->is_empty() ) {
-            $cart_items = WC()->cart->get_cart();    
-            foreach ( $cart_items as $cart_item_key => $cart_item ) {
-                $product_id = $cart_item['product_id'];
-                $quantity = $cart_item['quantity'];    
-                $product = wc_get_product( $product_id );
-                if ( $product ) {
-                    $response[] = [
-                        'quantity' => $quantity,
-                        'price' => $product->get_price(),
-                        'total' => 0,
-                    ];
-                }
-            }
-            // echo "<script>const cartItems= ". json_encode($response) .";</script>";
-        } else {
-            $response = ['message' => 'Your cart is empty.'];
-            echo "<script>const cartItems= ". json_encode($response) .";</script>";
-        }
-    }
 }
 
 add_filter('woocommerce_payment_gateways', 'add_my_custom_gateway');

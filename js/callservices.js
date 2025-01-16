@@ -13,6 +13,7 @@ async function callServices(url, method, headers, body, auth){
 		if(auth){
 			headers['Authorization']='bearer '+ getBearerToken();
 		}
+		ActiveLoading();
 		fetch(
 			url,
 		{				
@@ -30,13 +31,13 @@ async function callServices(url, method, headers, body, auth){
 			return response.json();
 		})
 		.then(data => {
-			HideLoading();
 			resolve(data);
+			HideLoading();
 		})
 		.catch(error => {
-			HideLoading();
 			reject(error);
 			console.log(processError(error, "Error"));
+			HideLoading();
 		})
 		.finally(() => {
 			HideLoading();
@@ -45,7 +46,6 @@ async function callServices(url, method, headers, body, auth){
 }
 
 function callServicesHttp(ser,querys,data){
-	ActiveLoading();
 	let request=null;
 	var headers = {
 		'Content-Type': 'application/json',

@@ -30,11 +30,9 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
             collect_method_id: metodoColeccion?.id,
             amount: php_var.cart_total,
             bank_account_id: metodoColeccion?.bank_account_id,
-            payment: {
-                payer_id_doc: payerIdDocValue,
-                reference: referenceValue,
-                amount: php_var.cart_total
-            }
+            payer_id_doc: payerIdDocValue,
+            reference: referenceValue,
+            amount: php_var.cart_total,            
         }
         $("#msgConfirmOT").modal("show");
     }

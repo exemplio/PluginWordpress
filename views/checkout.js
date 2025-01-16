@@ -7,11 +7,11 @@ const eyeSlash= php_var.eye_slash;
 
 //Vista de la pasarela de pago
 const Accordion = () => {
-    const [TDCValidation, setTDCValidation] = React.useState(true);
-    const [TDDValidation, setTDDValidation] = React.useState(true);
-    const [P2PValidation, setP2PValidation] = React.useState(true);
-    const [C2PValidation, setC2PValidation] = React.useState(true);
-    const [OTValidation, setOTValidation] = React.useState(true);
+    const [TDCValidation, setTDCValidation] = React.useState(false);
+    const [TDDValidation, setTDDValidation] = React.useState(false);
+    const [P2PValidation, setP2PValidation] = React.useState(false);
+    const [C2PValidation, setC2PValidation] = React.useState(false);
+    const [OTValidation, setOTValidation] = React.useState(false);
     const [ReceiptValidation, setReceiptValidation] = React.useState(false);
     // Obtener credenciales
     const getCredentials = () => {
@@ -93,21 +93,19 @@ const Accordion = () => {
         $(`#${id}`).modal("hide");
         let mensajeAll = "Error al realizar el pago";
         let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
-        let data = jsonTosend;
-        
-        HideAccordions();
-        ShowReceipt();
-        callWooCommerceAPI();
-        callWooCommerceRedirect();
-
+        let data = jsonTosend;    
         callServicesHttp('payment', query, data).then((response) => {            
-            if ((Boolean(response.code))) {
+            if (!(Boolean(response.code))) {
                 sendModalValue("msgError",processMessageError(response,mensajeAll));
                 $("#msgError").modal("show");
                 return;                             
             }else{
+                HideAccordions();
                 ShowReceipt();
+                callWooCommerceAPI();
             }
+        }).catch((e)=>{
+            console.error(e);            
         });
     };
     // Abrir modal de los acordiones
@@ -175,6 +173,8 @@ const Accordion = () => {
                 withCredentials: true
             },
             success: function(response) {
+                callWooCommerceRedirect();
+                window.location.href = response?.payment_result?.redirect_url;
                 console.log('Success:', response);
             },
             error: function(xhr, status, error) {
@@ -192,6 +192,8 @@ const Accordion = () => {
             success: function(response) {
                 if (response.success) {
                     // window.location.href = response.data.redirect_url;
+                    console.log(response.data);
+                    
                     console.log(response.data.message);
                 } else {
                     console.log('Error:', response.data);

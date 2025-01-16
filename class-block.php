@@ -214,7 +214,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         'bfc' => $bfc,
         'nonce' => wp_create_nonce('wc_store_api'),
         'cart_total' => WC()->cart !== null ? WC()->cart->total : 0,
-        'ajax_url' => admin_url('admin-ajax.php')
+        'ajax_url' => content_url('plugins/PluginWordpress/empty-cart.php'),
       ]);
       wp_enqueue_script('my_custom_gateway-blocks-integration');
       wp_enqueue_script('credicard_payments_script');
