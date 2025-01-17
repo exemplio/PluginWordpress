@@ -128,7 +128,7 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
                 }, "Pagar")
             )
         ),
-        React.createElement('div', { id:"msgConfirmOT", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { id:"msgConfirmOT", className: 'modal fade bd-example-modal-sm', 'data-bs-backdrop':'static', 'data-keyboard':'false', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },

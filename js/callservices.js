@@ -31,17 +31,36 @@ async function callServices(url, method, headers, body, auth){
 			return response.json();
 		})
 		.then(data => {
-			resolve(data);
 			HideLoading();
+			resolve(data);
 		})
 		.catch(error => {
-			reject(error);
 			console.log(processError(error, "Error"));
 			HideLoading();
+			reject(error);
 		})
 		.finally(() => {
 			HideLoading();
 		});
+	});
+}
+
+async function callServicesAjax(url, body){
+	return new Promise((resolve,reject) => {
+		ActiveLoading();
+		$.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                action: body,
+            },
+            success: function(response) {
+                resolve(response);
+            },
+            error: function(xhr, status, error) {
+                reject(xhr);
+            }
+        });		
 	});
 }
 
@@ -81,6 +100,14 @@ function callServicesHttp(ser,querys,data){
 		}break;
 		case 'payment':{
 			request=callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
+			return request;
+		}break;
+		case 'customer-info':{
+			request=callServicesAjax(querys,data);
+			return request;
+		}break;
+		case 'redirect':{
+			request=callServicesAjax(querys,data);
 			return request;
 		}break;
 		default:{

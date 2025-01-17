@@ -54,7 +54,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     }, []);
 
     const changeDoc = () => {
-		let typeDoc = document.getElementById("documentType").value;
+		let typeDoc = document.getElementById(`documentType${metodoColeccion?.product_name}`).value;
 		if(typeDoc == "V" || typeDoc == "E" || typeDoc == "J" || typeDoc == "G"){
 			setTypeP(false);
 			// this.clean2();
@@ -742,8 +742,8 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 React.createElement("div", { className: "form-floating", style: { marginBottom: '0px' } },
                     React.createElement("input", {
                         type: "text",
-                        id: "cardHolder",
-                        name: "cardHolder",
+                        id: `cardHolder${metodoColeccion?.product_name}`,
+                        name: `cardHolder${metodoColeccion?.product_name}`,
                         className: "form-control font-regular",
                         style: { textTransform: 'uppercase' },
                         maxLength: "50",
@@ -751,15 +751,15 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         onChange: (e) => setCardHolder(e.currentTarget.value),
                         onKeyPress: (e) => keypressLetras(e)
                     }),
-                    React.createElement("label", { htmlFor: "cardHolder", className: `font-regular` }, "Nombres y apellidos")
+                    React.createElement("label", { htmlFor: `cardHolder${metodoColeccion?.product_name}`, className: `font-regular` }, "Nombres y apellidos")
                 ),                
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group", style: { marginBottom: '0px' } },
                     React.createElement("select", {
                         className: "input-group-text",
-                        id: "documentType",
-                        name: "documentType",
+                        id: `documentType${metodoColeccion?.product_name}`,
+                        name: `documentType${metodoColeccion?.product_name}`,
                         required: true,
                         value: documentTypeValue,
                         onChange: (e) => {
@@ -778,8 +778,8 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                                 maxLength: "9",
                                 className: "form-control",
                                 inputMode: "numeric",
-                                id: "id_doc",
-                                name: "id_doc",
+                                id: `id_doc${metodoColeccion?.product_name}`,
+                                name: `id_doc${metodoColeccion?.product_name}`,
                                 style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
                                 value: idDocValue,
                                 onChange: (e) => setIdDoc(e.currentTarget.value),
@@ -794,8 +794,8 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                                 maxLength: "9",
                                 className: "form-control",
                                 inputMode: "numeric",
-                                id: "id_doc",
-                                name: "id_doc",
+                                id: `id_doc${metodoColeccion?.product_name}`,
+                                name: `id_doc${metodoColeccion?.product_name}`,
                                 style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
                                 value: idDocValue,
                                 onChange: (e) => setIdDoc(e.currentTarget.value),
@@ -805,7 +805,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                                 onPaste: (e) => e.preventDefault(),
                                 onDrag: (e) => e.preventDefault()
                             }),
-                        React.createElement("label", { htmlFor: "id_doc",className: "font-regular" }, "Nro. documento")
+                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.product_name}`,className: "font-regular" }, "Nro. documento")
                     )
                 )
             ),
@@ -818,21 +818,21 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                             autoComplete: "off",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: "nroTarjeta",
-                            name: "nroTarjeta",
+                            id: `nroTarjeta${metodoColeccion?.product_name}`,
+                            name: `nroTarjeta${metodoColeccion?.product_name}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             disabled: verifyDisabled,
                             value: nroTarjetaValue,
                             onChange: (e) => setNroTarjeta(e.currentTarget.value),
                             onBlur: (e) => getCardInfo(nroTarjetaValue)
                         }),
-                        React.createElement("label", { htmlFor: "nroTarjeta", className: "font-regular" }, "Nro. Tarjeta")
+                        React.createElement("label", { htmlFor: `nroTarjeta${metodoColeccion?.product_name}`, className: "font-regular" }, "Nro. Tarjeta")
                     ),
                     React.createElement("button", {
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShowCard(nroTarjetaValue,'nroTarjeta', ojitoTarjetaValue, setOjitoTarjeta)
+                        onClick: () => changeTypeInputShowCard(nroTarjetaValue,`nroTarjeta${metodoColeccion?.product_name}`, ojitoTarjetaValue, setOjitoTarjeta)
                     },
                         React.createElement("img", { src: ojitoTarjetaValue, height: "18px", width: "18px", alt: "Toggle card visibility" })
                     )
@@ -1026,7 +1026,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
             React.createElement("img", { src: visa, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
-        React.createElement('div', { id:`msgConfirmCredicard${metodoColeccion?.product_name}`, className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { id:`msgConfirmCredicard${metodoColeccion?.product_name}`, 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },

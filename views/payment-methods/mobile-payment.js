@@ -52,14 +52,18 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
             return;
         }
         jsonTosend= {            
-            product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
             amount: php_var.cart_total,
-            bank_account_id: metodoColeccion?.bank_account_id,
-            payer_id_doc: payerIdDocValue,
-            payer_phone: phoneP2PValue,
-            reference: referenceP2PValue,
-            amount: php_var.cart_total
+            payment: {
+                collect_method_id: metodoColeccion?.id,
+                amount: php_var.cart_total,
+                payment: {
+                    amount: php_var.cart_total,
+                    payer_id_doc: payerIdDocValue,
+                    payer_phone: phoneP2PValue,
+                    reference: referenceP2PValue,
+                }
+            }
         }
         $("#msgConfirmP2P").modal("show");
     }
@@ -89,8 +93,8 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
                 React.createElement("div", { className: "input-group" },
                     React.createElement("select", {
                         className: "input-group-text",
-                        id: "id_doc_type",
-                        name: "id_doc_type",
+                        id: "doc_type_p2p",
+                        name: "doc_type_p2p",
                         required: true,
                         value: idDocTypeValue,
                         onChange: (e) => setIdDocType(e.currentTarget.value)
@@ -204,7 +208,7 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
                 }, "Pagar")
             )
         ),
-        React.createElement('div', { id:"msgConfirmP2P", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { id:"msgConfirmP2P", className: 'modal fade bd-example-modal-sm', 'data-bs-backdrop':'static', 'data-keyboard':'false', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },

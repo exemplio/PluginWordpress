@@ -115,8 +115,8 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                 React.createElement("div", { className: "input-group" },
                     React.createElement("select", {
                         className: "input-group-text",
-                        id: "id_doc_type",
-                        name: "id_doc_type",
+                        id: "doc_type_c2p",
+                        name: "doc_type_c2p",
                         required: true,
                         value: idDocTypeValue,
                         onChange: (e) => setIdDocType(e.currentTarget.value)
@@ -247,7 +247,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                 }, "Pagar")
             )
         ),
-        React.createElement('div', { id:"msgConfirmC2P", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { id:"msgConfirmC2P", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },

@@ -16,40 +16,6 @@ function woocommerce_myplugin(){
     include(plugin_dir_path(__FILE__) . 'class-gateway.php');
 }
 
-add_action('wp_ajax_my_custom_function', 'my_custom_function');
-add_action('wp_ajax_nopriv_my_custom_function', 'my_custom_function');
-
-function my_custom_function() {
-
-    WC()->cart->empty_cart();
-    $order = wc_get_order(133);
-    $redirect_url = $order->get_checkout_order_received_url();     
-    wp_send_json_success(array(
-        'redirect_url' => $redirect_url,
-        'billing_first_name'  => wc()->customer->get_billing_first_name(),
-        'billing_last_name'   => wc()->customer->get_billing_last_name(),
-        'billing_company'     => wc()->customer->get_billing_company(),
-        'billing_address_1'   => wc()->customer->get_billing_address_1(),
-        'billing_address_2'   => wc()->customer->get_billing_address_2(),
-        'billing_city'        => wc()->customer->get_billing_city(),
-        'billing_state'       => wc()->customer->get_billing_state(),
-        'billing_postcode'    => wc()->customer->get_billing_postcode(),
-        'billing_country'     => wc()->customer->get_billing_country(),
-        'billing_email'       => wc()->customer->get_billing_email(),
-        'billing_phone'       => wc()->customer->get_billing_phone(),
-        'shipping_first_name' => wc()->customer->get_shipping_first_name(),
-        'shipping_last_name'  => wc()->customer->get_shipping_last_name(),
-        'shipping_company'    => wc()->customer->get_shipping_company(),
-        'shipping_address_1'  => wc()->customer->get_shipping_address_1(),
-        'shipping_address_2'  => wc()->customer->get_shipping_address_2(),
-        'shipping_city'       => wc()->customer->get_shipping_city(),
-        'shipping_state'      => wc()->customer->get_shipping_state(),
-        'shipping_postcode'   => wc()->customer->get_shipping_postcode(),
-        'shipping_country'    => wc()->customer->get_shipping_country(),
-        'shipping_phone'      => wc()->customer->get_shipping_phone(),    
-    ));
-}
-
 add_filter('woocommerce_payment_gateways', 'add_my_custom_gateway');
 
 function add_my_custom_gateway($gateways) {
@@ -95,4 +61,35 @@ function oawoo_register_order_approval_payment_method_type() {
         }
     );
 }
+
+add_action('wp_ajax_get_customer_orders', 'get_customer_orders');
+add_action('wp_ajax_nopriv_get_customer_orders', 'get_customer_orders');
+
+    function get_customer_orders() {
+        $data = array(
+            'billing_first_name'  => wc()->customer->get_billing_first_name(),
+            'billing_last_name'   => wc()->customer->get_billing_last_name(),
+            'billing_company'     => wc()->customer->get_billing_company(),
+            'billing_address_1'   => wc()->customer->get_billing_address_1(),
+            'billing_address_2'   => wc()->customer->get_billing_address_2(),
+            'billing_city'        => wc()->customer->get_billing_city(),
+            'billing_state'       => wc()->customer->get_billing_state(),
+            'billing_postcode'    => wc()->customer->get_billing_postcode(),
+            'billing_country'     => wc()->customer->get_billing_country(),
+            'billing_email'       => wc()->customer->get_billing_email(),
+            'billing_phone'       => wc()->customer->get_billing_phone(),
+            'shipping_first_name' => wc()->customer->get_shipping_first_name(),
+            'shipping_last_name'  => wc()->customer->get_shipping_last_name(),
+            'shipping_company'    => wc()->customer->get_shipping_company(),
+            'shipping_address_1'  => wc()->customer->get_shipping_address_1(),
+            'shipping_address_2'  => wc()->customer->get_shipping_address_2(),
+            'shipping_city'       => wc()->customer->get_shipping_city(),
+            'shipping_state'      => wc()->customer->get_shipping_state(),
+            'shipping_postcode'   => wc()->customer->get_shipping_postcode(),
+            'shipping_country'    => wc()->customer->get_shipping_country(),
+            'shipping_phone'      => wc()->customer->get_shipping_phone(),
+        );
+        wp_send_json_success($data);
+    }
+
 ?>

@@ -1,6 +1,5 @@
 const settings = window.wc.wcSettings.getSetting("my_custom_gateway_data", {});
 const label = window.wp.htmlEntities.decodeEntities(settings.title) || window.wp.i18n.__("", "my-custom-gateway");
-const collectMethod = JSON.parse(localStorage.getItem("collect-methods"));
 var jsonTosend = {};
 const eyeSolid= php_var.eye_solid;
 const eyeSlash= php_var.eye_slash;
@@ -13,6 +12,7 @@ const Accordion = () => {
     const [C2PValidation, setC2PValidation] = React.useState(false);
     const [OTValidation, setOTValidation] = React.useState(false);
     const [ReceiptValidation, setReceiptValidation] = React.useState(false);
+    const [CollectMethod, setCollectMethod] = React.useState("");
     // Obtener credenciales
     const getCredentials = () => {
         let query = "";
@@ -54,7 +54,7 @@ const Accordion = () => {
                     $("#msgError").modal("show");
                     return;                
                 }else{
-                    localStorage.setItem('collect-methods', JSON.stringify(response));
+                    setCollectMethod(response);
                     if(Boolean(response)){                        
                         if(response.hasOwnProperty('collect_methods')){
                             response?.collect_methods.map((item) => {
@@ -93,20 +93,80 @@ const Accordion = () => {
         $(`#${id}`).modal("hide");
         let mensajeAll = "Error al realizar el pago";
         let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
-        let data = jsonTosend;    
-        callServicesHttp('payment', query, data).then((response) => {            
-            if (!(Boolean(response.code))) {
-                sendModalValue("msgError",processMessageError(response,mensajeAll));
-                $("#msgError").modal("show");
-                return;                             
-            }else{
-                HideAccordions();
-                ShowReceipt();
-                callWooCommerceAPI();
-            }
+        let data = jsonTosend;
+        callServicesHttp('customer-info', php_var.customer_info, 'get_customer_orders').then((response) => {            
+            console.log(response);
+            $.ajax({
+                url: '../wp-json/wc/store/v1/checkout?_locale=site',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({            
+                    "billing_address": {
+                        "first_name": php_var?.billing_first_name,
+                        "last_name": php_var?.billing_last_name,
+                        "company": php_var?.billing_company,
+                        "address_1": php_var?.billing_address_1,
+                        "address_2": php_var?.billing_address_2,
+                        "city": php_var?.billing_city,
+                        "state": php_var?.billing_state,
+                        "postcode": php_var?.billing_postcode,
+                        "country": php_var?.billing_country,
+                        "email": php_var?.billing_email,
+                        "phone": php_var?.billing_phone
+                    },
+                    "shipping_address": {
+                        "first_name": php_var?.shipping_first_name,
+                        "last_name": php_var?.shipping_last_name,
+                        "company": php_var?.shipping_company,
+                        "address_1": php_var?.shipping_address_1,
+                        "address_2": php_var?.shipping_address_1,
+                        "city": php_var?.shipping_city,
+                        "state": php_var?.shipping_state,
+                        "postcode": php_var?.shipping_postcode,
+                        "country": php_var?.shipping_country,
+                        "phone": php_var?.shipping_phone
+                    },
+                    "payment_method": "my_custom_gateway",
+                    "payment_data": [
+                        {
+                        "key": "wc-my_custom_gateway-new-payment-method",
+                        "value": false
+                        }
+                    ],
+                }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Nonce', php_var.nonce);
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function(dataResponse) {
+                    callServicesHttp('payment', query, data).then((response) => {            
+                        if (!(Boolean(response.code))) {
+                            sendModalValue("msgError",processMessageError(response,mensajeAll));
+                            $("#msgError").modal("show");
+                            return;                             
+                        }else{
+                            callServicesHttp('redirect', php_var.empty_cart).then((response) => {
+                                window.location.href = dataResponse?.payment_result?.redirect_url;                                  
+                            }).catch((e)=>console.log(e))
+                        }
+                    }).catch((e)=>{
+                        console.error(e);            
+                    });
+                },
+                error: function(xhr) {
+                    HideLoading();
+                    sendModalValue("msgError", translate(xhr?.responseJSON?.message));
+                    $("#msgError").modal("show");
+                    return;   
+                }
+            });  
+            
         }).catch((e)=>{
             console.error(e);            
-        });
+        });      
+        return;
     };
     // Abrir modal de los acordiones
     const OpenAccordionModal = () => {
@@ -127,89 +187,9 @@ const Accordion = () => {
         setReceiptValidation(true)
         return;
     }
-    const callWooCommerceAPI = () => {
-        $.ajax({
-            url: '../wp-json/wc/store/v1/checkout?_locale=site',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({            
-                "billing_address": {
-                    "first_name": "R",
-                    "last_name": "M",
-                    "company": "",
-                    "address_1": "6515151",
-                    "address_2": "",
-                    "city": "CARACA",
-                    "state": "VE-A",
-                    "postcode": "1020",
-                    "country": "VE",
-                    "email": "rmolina@paguetodo.com",
-                    "phone": ""
-                },
-                "shipping_address": {
-                    "first_name": "R",
-                    "last_name": "M",
-                    "company": "",
-                    "address_1": "6515151",
-                    "address_2": "",
-                    "city": "CARACA",
-                    "state": "VE-A",
-                    "postcode": "1020",
-                    "country": "VE",
-                    "phone": ""
-                },
-                "payment_method": "my_custom_gateway",
-                "payment_data": [
-                    {
-                    "key": "wc-my_custom_gateway-new-payment-method",
-                    "value": false
-                    }
-                ],
-            }),
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('Nonce', php_var.nonce);
-            },
-            xhrFields: {
-                withCredentials: true
-            },
-            success: function(response) {
-                callWooCommerceRedirect();
-                window.location.href = response?.payment_result?.redirect_url;
-                console.log('Success:', response);
-            },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-            }
-        });
-    }
-    const callWooCommerceRedirect = () => {
-        $.ajax({
-            url: php_var.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'my_custom_function',
-            },
-            success: function(response) {
-                if (response.success) {
-                    // window.location.href = response.data.redirect_url;
-                    console.log(response.data);
-                    
-                    console.log(response.data.message);
-                } else {
-                    console.log('Error:', response.data);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', status, error);
-            }
-        });
-    }
     React.useEffect(() => {
         if (!(php_var.cart_total==undefined || php_var.cart_total==null)) {
             php_var.cart_total = parseFloat(php_var.cart_total);
-        }
-        if (!(localStorage.getItem('collect-methods')==undefined)) {        
-            localStorage.getItem('removeItem')
         }
         setTimeout(() => {
             getCredentials();
@@ -235,7 +215,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDC_API"), paymentFun: sendPayment })
+                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "TDC_API"), paymentFun: sendPayment })
                     )
                 )
             ),
@@ -258,7 +238,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TDD_API"), paymentFun: sendPayment } )
+                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "TDD_API"), paymentFun: sendPayment } )
                     )
                 )
             ),
@@ -282,7 +262,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment  })
+                        React.createElement(MobilePayment, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment  })
                     )
                 )
             ),
@@ -305,7 +285,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago C2P Bancaribe"),
-                        React.createElement(C2pPayment, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT"), paymentFun: sendPayment })
+                        React.createElement(C2pPayment, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT"), paymentFun: sendPayment })
                     )
                 )
             ),
@@ -328,7 +308,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
-                        React.createElement(OnlineTransfer, { label: "Card Number", metodoColeccion: collectMethod?.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH"), paymentFun: sendPayment })
+                        React.createElement(OnlineTransfer, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH"), paymentFun: sendPayment })
                     )
                 )
             ),

@@ -6,7 +6,7 @@ function sendModalValue(id,msg){
     }
 }
 const WarningModal = ({ bodyText }) => {
-    return React.createElement('div', { id:"msgWarning", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+    return React.createElement('div', { id:"msgWarning", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
                 React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
@@ -30,7 +30,7 @@ const WarningModal = ({ bodyText }) => {
     );
 };
 const InfoModal = ({ bodyText }) => {
-    return React.createElement('div', { id:"msgInfo", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+    return React.createElement('div', { id:"msgInfo", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
                 React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
@@ -54,7 +54,7 @@ const InfoModal = ({ bodyText }) => {
     );
 };
 const ErrorModal = ({ bodyText }) => {
-    return React.createElement('div', { id:"msgError", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+    return React.createElement('div', { id:"msgError", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
                 React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
@@ -78,7 +78,7 @@ const ErrorModal = ({ bodyText }) => {
     );
 };
 const MsgModal = ({ bodyText }) => {
-    return React.createElement('div', { id:"msgToken", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+    return React.createElement('div', { id:"msgToken", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
                 React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
@@ -102,7 +102,7 @@ const MsgModal = ({ bodyText }) => {
     );
 };
 const WarningP2P = ({ bodyText }) => {
-    return React.createElement('div', { id:"msgWarningP2P", className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+    return React.createElement('div', { id:"msgWarningP2P", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
         React.createElement('div', { className: 'modal-dialog', role: 'document' },
             React.createElement('div', { className: 'modal-content' },
                 React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
