@@ -8,7 +8,7 @@ function getBearerToken(){
 	return JSON.parse(localStorage.getItem('authorize-credentials'))?.access_token;
 }
 
-async function callServices(url, method, headers, body, auth){
+function callServices(url, method, headers, body, auth){
 	return new Promise((resolve, reject) => {
 		if(auth){
 			headers['Authorization']='bearer '+ getBearerToken();
@@ -24,28 +24,25 @@ async function callServices(url, method, headers, body, auth){
 			contentType: "application/json; charset=UTF-8",
 		})
 		.then(response => {
-			HideLoading();
 			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
+				return response.json();
 			}
 			return response.json();
 		})
 		.then(data => {
-			HideLoading();
-			resolve(data);
+			resolve(data);			
 		})
 		.catch(error => {
 			console.log(processError(error, "Error"));
-			HideLoading();
 			reject(error);
 		})
 		.finally(() => {
 			HideLoading();
-		});
+		})
 	});
 }
 
-async function callServicesAjax(url, body){
+function callServicesAjax(url, body){
 	return new Promise((resolve,reject) => {
 		ActiveLoading();
 		$.ajax({

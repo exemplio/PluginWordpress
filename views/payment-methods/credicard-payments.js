@@ -106,11 +106,43 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         }else{
                             formattedCardInfo(response);
                         }
+                    }).catch((e)=>{
+                        sendModalValue("msgError",processError(e, mensajeAll));
+                        $("#msgError").modal("show");
+                        return;
                     });
                 }
             }
 		}
 	}
+    const verifyExpiration = (expiration) => {
+        if (expiration==null || expiration==undefined || expiration=="" || expiration=="null") {
+            sendModalValue("msgWarning","Debe ingresar la fecha de expiración de la tarjeta");
+            $("#msgWarning").modal("show");
+            return;
+        }else{
+            if(expiration.length<4){
+                setExpiration("");
+                sendModalValue("msgWarning","La fecha de expiración tiene formato incorrecto");         
+                $("#msgWarning").modal("show");
+                return;
+            }
+            month=parseInt(expiration.split("/")[0]);
+            if(month<1 || month>12){
+                setExpiration("");
+                sendModalValue("msgWarning","El mes de expiración de la tarjeta tiene formato incorrecto");         
+                $("#msgWarning").modal("show");
+                return;
+            }
+            year=parseInt(expiration.split("/")[1]);
+            if(!Boolean(year)){
+                setExpiration("");
+                sendModalValue("msgWarning","El año de expiración de la tarjeta tiene formato incorrecto");         
+                $("#msgWarning").modal("show");
+                return;
+            }
+        }
+    }
     //Formateo de data de la funcion verifyCardData()
     const formattedCardInfo = (data) => {
         let result=null;
@@ -224,11 +256,11 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 $("#msgToken").modal("show");
                 return;
             }
-        }, err => {                
-            sendModalValue("msgError",processMessageError(err,mensajeAll));
+        }).catch((e)=>{
+            sendModalValue("msgError",processError(e, mensajeAll));
             $("#msgError").modal("show");
             return;
-        });		
+        });	
 	}
     //Enviar token de CCR
     const sendTokenCcr = (data) => {
@@ -267,10 +299,9 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 $("#msgToken").modal("show");
                 return;
             }
-        }, err => {
-            result={};
-            result.error=this.service.processError(err, mensajeAll);
-            this.result.emit(result);
+        }).catch((e)=>{
+            sendModalValue("msgError",processError(e, mensajeAll));
+            $("#msgError").modal("show");
             return;
         });
 	}
@@ -509,7 +540,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
 		};
 		let querys = "?product_name="+metodoColeccion?.product_name+"&collect_method_id="+metodoColeccion?.id+"&channel_id="+getChannelId();
 		let mensajeAll = "Error al obtener comisión a cobrar";
-        callServicesHttp('get-commision', querys, data).then((response) => {            
+        callServicesHttp('get-commision', querys, data).then((response) => {   
 			if (response == null || response == undefined || response == "") {
 				sendModalValue("msgError",mensajeAll);
 				$("#msgError").modal("show");
@@ -531,11 +562,11 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     }
                 }
             }
-		}, err => {
-			sendModalValue("msgError",processError(err, mensajeAll));
-			$("#msgError").modal("show");
-			return;
-		});
+		}).catch((e)=>{
+            sendModalValue("msgError",processError(e, mensajeAll));
+            $("#msgError").modal("show");
+            return;
+        });
 	}
     const devolverEvent = (event) =>{
         if(!(event==null || event==undefined || event=="")){
@@ -855,6 +886,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                             onChange: (e) => {
                                 setExpiration(e.currentTarget.value);
                             },
+                            onBlur: (e) => verifyExpiration(e.target.value),
                             style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' }
                         }),
                         React.createElement("label", { htmlFor: `expiration${metodoColeccion?.product_name}`, className: "font-regular" }, "Expiración")

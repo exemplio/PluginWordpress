@@ -17,7 +17,7 @@ const Accordion = () => {
     const getCredentials = () => {
         let query = "";
         var mensajeAll = "Error al obtener los métodos de colección";
-        callServicesHttp('get-credentials',query,"").then((response) => {        
+        callServicesHttp('get-credentials',query,"").then((response) => {
             if (response == null || response == undefined || response == "") {
                 sendModalValue("msgError",processMessageError(response, mensajeAll));
                 $("#msgError").modal("show");
@@ -33,8 +33,8 @@ const Accordion = () => {
                     return;
                 }
             }
-        }, err => {
-            sendModalValue("msgError",processError(err, mensajeAll));
+        }).catch((e)=>{
+            sendModalValue("msgError",processError(e, mensajeAll));
             $("#msgError").modal("show");
             return;
         });
@@ -43,7 +43,7 @@ const Accordion = () => {
     const getMethods = async () => {
         let query = "";
         var mensajeAll = "Error al obtener los métodos de colección";
-        callServicesHttp('get-collect-channel',query,null).then((response) => {        
+        callServicesHttp('get-collect-channel',query,null).then((response) => {  
             if (response == null || response == undefined || response == "") {
                 sendModalValue("msgError",processMessageError(response, mensajeAll));
                 $("#msgError").modal("show");
@@ -83,8 +83,8 @@ const Accordion = () => {
                     return;
                 }                         
             }
-        }, err => {
-            sendModalValue("msgError",processError(err, mensajeAll));
+        }).catch((e)=>{
+            sendModalValue("msgError",processError(e, mensajeAll));
             $("#msgError").modal("show");
             return;
         });
@@ -94,75 +94,115 @@ const Accordion = () => {
         let mensajeAll = "Error al realizar el pago";
         let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
         let data = jsonTosend;
-        callServicesHttp('customer-info', php_var.customer_info, 'get_customer_orders').then((response) => {            
-            console.log(response);
-            $.ajax({
-                url: '../wp-json/wc/store/v1/checkout?_locale=site',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({            
-                    "billing_address": {
-                        "first_name": php_var?.billing_first_name,
-                        "last_name": php_var?.billing_last_name,
-                        "company": php_var?.billing_company,
-                        "address_1": php_var?.billing_address_1,
-                        "address_2": php_var?.billing_address_2,
-                        "city": php_var?.billing_city,
-                        "state": php_var?.billing_state,
-                        "postcode": php_var?.billing_postcode,
-                        "country": php_var?.billing_country,
-                        "email": php_var?.billing_email,
-                        "phone": php_var?.billing_phone
-                    },
-                    "shipping_address": {
-                        "first_name": php_var?.shipping_first_name,
-                        "last_name": php_var?.shipping_last_name,
-                        "company": php_var?.shipping_company,
-                        "address_1": php_var?.shipping_address_1,
-                        "address_2": php_var?.shipping_address_1,
-                        "city": php_var?.shipping_city,
-                        "state": php_var?.shipping_state,
-                        "postcode": php_var?.shipping_postcode,
-                        "country": php_var?.shipping_country,
-                        "phone": php_var?.shipping_phone
-                    },
-                    "payment_method": "my_custom_gateway",
-                    "payment_data": [
-                        {
-                        "key": "wc-my_custom_gateway-new-payment-method",
-                        "value": false
+        callServicesHttp('customer-info', php_var.customer_info, 'get_customer_orders').then((responseCustomer) => {
+            if (responseCustomer?.data?.billing_email==null || responseCustomer?.data?.billing_email==undefined || responseCustomer?.data?.billing_email=="" || responseCustomer?.data?.billing_email=="null") {
+                sendModalValue("msgWarning","Es obligatoria una dirección de correo electrónico válida");
+                $("#msgWarning").modal("show");
+                return;                
+            }
+            if (responseCustomer?.data?.billing_first_name==null || responseCustomer?.data?.billing_first_name==undefined || responseCustomer?.data?.billing_first_name=="" || responseCustomer?.data?.billing_first_name=="null") {
+                if (responseCustomer?.data?.billing_last_name==null || responseCustomer?.data?.billing_last_name==undefined || responseCustomer?.data?.billing_last_name=="" || responseCustomer?.data?.billing_last_name=="null") {
+                    if (responseCustomer?.data?.billing_company==null || responseCustomer?.data?.billing_company==undefined || responseCustomer?.data?.billing_company=="" || responseCustomer?.data?.billing_company=="null") {
+                        if (responseCustomer?.data?.billing_address_1==null || responseCustomer?.data?.billing_address_1==undefined || responseCustomer?.data?.billing_address_1=="" || responseCustomer?.data?.billing_address_1=="null") {
+                            if (responseCustomer?.data?.billing_city==null || responseCustomer?.data?.billing_city==undefined || responseCustomer?.data?.billing_city=="" || responseCustomer?.data?.billing_city=="null") {
+                                if (responseCustomer?.data?.billing_postcode==null || responseCustomer?.data?.billing_postcode==undefined || responseCustomer?.data?.billing_postcode=="" || responseCustomer?.data?.billing_postcode=="null") {
+                                        sendModalValue("msgWarning","Ha habido un problema con la dirección de envío proporcionada: Nombre es obligatorio, Apellidos es obligatorio, Dirección de la calle es obligatorio, Localidad / Ciudad es obligatorio, Código postal es obligatorio");
+                                        $("#msgWarning").modal("show");
+                                        return;
+                                }
+                            }
                         }
-                    ],
-                }),
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader('Nonce', php_var.nonce);
-                },
-                xhrFields: {
-                    withCredentials: true
-                },
-                success: function(dataResponse) {
-                    callServicesHttp('payment', query, data).then((response) => {            
-                        if (!(Boolean(response.code))) {
-                            sendModalValue("msgError",processMessageError(response,mensajeAll));
-                            $("#msgError").modal("show");
-                            return;                             
-                        }else{
-                            callServicesHttp('redirect', php_var.empty_cart).then((response) => {
-                                window.location.href = dataResponse?.payment_result?.redirect_url;                                  
-                            }).catch((e)=>console.log(e))
-                        }
-                    }).catch((e)=>{
-                        console.error(e);            
-                    });
-                },
-                error: function(xhr) {
-                    HideLoading();
-                    sendModalValue("msgError", translate(xhr?.responseJSON?.message));
-                    $("#msgError").modal("show");
-                    return;   
+                    }
                 }
-            });  
-            
+            }
+            if (responseCustomer?.data?.shipping_first_name==null || responseCustomer?.data?.shipping_first_name==undefined || responseCustomer?.data?.shipping_first_name=="" || responseCustomer?.data?.shipping_first_name=="null") {
+                if (responseCustomer?.data?.shipping_last_name==null || responseCustomer?.data?.shipping_last_name==undefined || responseCustomer?.data?.shipping_last_name=="" || responseCustomer?.data?.shipping_last_name=="null") {
+                    if (responseCustomer?.data?.shipping_company==null || responseCustomer?.data?.shipping_company==undefined || responseCustomer?.data?.shipping_company=="" || responseCustomer?.data?.shipping_company=="null") {
+                        if (responseCustomer?.data?.shipping_address_1==null || responseCustomer?.data?.shipping_address_1==undefined || responseCustomer?.data?.shipping_address_1=="" || responseCustomer?.data?.shipping_address_1=="null") {
+                            if (responseCustomer?.data?.shipping_city==null || responseCustomer?.data?.shipping_city==undefined || responseCustomer?.data?.shipping_city=="" || responseCustomer?.data?.shipping_city=="null") {
+                                if (responseCustomer?.data?.shipping_postcode==null || responseCustomer?.data?.shipping_postcode==undefined || responseCustomer?.data?.shipping_postcode=="" || responseCustomer?.data?.shipping_postcode=="null") {
+                                    sendModalValue("msgWarning","Ha habido un problema con la dirección de envío proporcionada: Nombre es obligatorio, Apellidos es obligatorio, Dirección de la calle es obligatorio, Localidad / Ciudad es obligatorio, Código postal es obligatorio");
+                                    $("#msgWarning").modal("show");
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            callServicesHttp('payment', query, data).then((responsePayment) => {
+                if (!(Boolean(responsePayment?.code))) {
+                    sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                    $("#msgError").modal("show");
+                    return;                             
+                }else{
+                    if(!(responsePayment?.status==200)){
+                        $.ajax({
+                            url: '../wp-json/wc/store/v1/checkout?_locale=site',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({            
+                                "billing_address": {
+                                    "first_name": responseCustomer?.data?.billing_first_name,
+                                    "last_name": responseCustomer?.data?.billing_last_name,
+                                    "company": responseCustomer?.data?.billing_company,
+                                    "address_1": responseCustomer?.data?.billing_address_1,
+                                    "address_2": responseCustomer?.data?.billing_address_2,
+                                    "city": responseCustomer?.data?.billing_city,
+                                    "state": responseCustomer?.data?.billing_state,
+                                    "postcode": responseCustomer?.data?.billing_postcode,
+                                    "country": responseCustomer?.data?.billing_country,
+                                    "email": responseCustomer?.data?.billing_email,
+                                    "phone": responseCustomer?.data?.billing_phone
+                                },
+                                "shipping_address": {
+                                    "first_name": responseCustomer?.data?.shipping_first_name,
+                                    "last_name": responseCustomer?.data?.shipping_last_name,
+                                    "company": responseCustomer?.data?.shipping_company,
+                                    "address_1": responseCustomer?.data?.shipping_address_1,
+                                    "address_2": responseCustomer?.data?.shipping_address_1,
+                                    "city": responseCustomer?.data?.shipping_city,
+                                    "state": responseCustomer?.data?.shipping_state,
+                                    "postcode": responseCustomer?.data?.shipping_postcode,
+                                    "country": responseCustomer?.data?.shipping_country,
+                                    "phone": responseCustomer?.data?.shipping_phone
+                                },
+                                "payment_method": "my_custom_gateway",
+                                "payment_data": [
+                                    {
+                                    "key": "wc-my_custom_gateway-new-payment-method",
+                                    "value": false
+                                    }
+                                ],
+                            }),
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Nonce', php_var.nonce);
+                            },
+                            xhrFields: {
+                                withCredentials: true
+                            },
+                            success: function(dataResponse) {
+                                callServicesHttp('redirect', php_var.empty_cart).then((response) => {
+                                    window.location.href = dataResponse?.payment_result?.redirect_url;                                  
+                                }).catch((e)=>console.log(e))
+                            },
+                            error: function(xhr) {
+                                sendModalValue("msgError", translate(xhr?.responseJSON?.message));
+                                $("#msgError").modal("show");
+                                return;   
+                            }
+                        });  
+                    }else{
+                        sendModalValue("msgError",processMessageError(dataResponse,mensajeAll));
+                        $("#msgError").modal("show");
+                        return;    
+                    }
+                }
+            }).catch((e)=>{
+                sendModalValue("msgError",processError(e, mensajeAll));
+                $("#msgError").modal("show");
+                return;
+            });            
         }).catch((e)=>{
             console.error(e);            
         });      

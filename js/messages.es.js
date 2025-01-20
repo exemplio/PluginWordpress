@@ -117,5 +117,6 @@
 	"one_card_must_be_not_null":"La tarjeta no debe estar vacía",
 	"currency_not_found":"Moneda no encontrada",
 	"otp_ccr_token_sent":"Token enviado",
-	"deegle_payco_collect_channel_not_found":"Canal de colección no encontrado"
+	"deegle_payco_collect_channel_not_found":"Canal de colección no encontrado",
+	"bad_request":"Error de solicitud",
 };

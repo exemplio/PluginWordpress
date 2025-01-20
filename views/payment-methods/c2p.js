@@ -85,15 +85,21 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                 return;
             }
         }
-        jsonTosend= {                        
-            product_name: metodoColeccion?.product_name,
+        jsonTosend= {            
             collect_method_id: metodoColeccion?.id,
             amount: php_var.cart_total,
-            bank_account_id: metodoColeccion?.bank_account_id,
-            payer_phone: phoneC2PValue,
-            payer_bank_code: bancoSelectedValue,
-            payer_id_doc: idDocC2pValue,
-            otp: otpValue            
+            payment: {
+                collect_method_id: metodoColeccion?.id,
+                amount: php_var.cart_total,
+                payment: {
+                    bank_account_id: metodoColeccion?.bank_account_id,
+                    amount: php_var.cart_total,
+                    payer_id_doc: idDocC2pValue,
+                    payer_phone: phoneC2PValue,
+                    payer_bank_code: bancoSelectedValue,
+                    otp: otpValue,
+                }
+            }
         }
         $("#msgConfirmC2P").modal("show");
     }
