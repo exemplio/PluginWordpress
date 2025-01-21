@@ -1,15 +1,17 @@
 function ActiveLoading() {
-    $('#loading').modal('show');
+    let loadingClass = document.getElementById('loadingModalShowWhile'); 
+    loadingClass.style.display = 'block';
 }
 
 function HideLoading() {
-    $('#loading').modal('hide');
+    let loadingClass = document.getElementById('loadingModalShowWhile'); 
+    loadingClass.style.display = 'none';
 }
 
 const Loading = () => {
     let loading = php_var.loading;
-    return React.createElement('div', { id:"loading", 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm important-padding', style: { overflow: 'hidden', marginTop: '60px', textAlign : 'center', paddingLeft: '19px;' } },
-        React.createElement('div', { className: 'modal-dialog', role: 'document' },
+    return React.createElement('div', { id:"loadingModalShowWhile", 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm important-padding show modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'block' } },
+        React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
             React.createElement("img", { src: loading, height: "40px", style: { objectFit: 'contain' } }),
         )
     );

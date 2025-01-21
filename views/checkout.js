@@ -96,42 +96,34 @@ const Accordion = () => {
         let data = jsonTosend;
         callServicesHttp('customer-info', php_var.customer_info, 'get_customer_orders').then((responseCustomer) => {
             if (responseCustomer?.data?.billing_email==null || responseCustomer?.data?.billing_email==undefined || responseCustomer?.data?.billing_email=="" || responseCustomer?.data?.billing_email=="null") {
+                HideLoading();
                 sendModalValue("msgWarning","Es obligatoria una dirección de correo electrónico válida");
                 $("#msgWarning").modal("show");
                 return;                
             }
-            if (responseCustomer?.data?.billing_first_name==null || responseCustomer?.data?.billing_first_name==undefined || responseCustomer?.data?.billing_first_name=="" || responseCustomer?.data?.billing_first_name=="null") {
-                if (responseCustomer?.data?.billing_last_name==null || responseCustomer?.data?.billing_last_name==undefined || responseCustomer?.data?.billing_last_name=="" || responseCustomer?.data?.billing_last_name=="null") {
-                    if (responseCustomer?.data?.billing_company==null || responseCustomer?.data?.billing_company==undefined || responseCustomer?.data?.billing_company=="" || responseCustomer?.data?.billing_company=="null") {
-                        if (responseCustomer?.data?.billing_address_1==null || responseCustomer?.data?.billing_address_1==undefined || responseCustomer?.data?.billing_address_1=="" || responseCustomer?.data?.billing_address_1=="null") {
-                            if (responseCustomer?.data?.billing_city==null || responseCustomer?.data?.billing_city==undefined || responseCustomer?.data?.billing_city=="" || responseCustomer?.data?.billing_city=="null") {
-                                if (responseCustomer?.data?.billing_postcode==null || responseCustomer?.data?.billing_postcode==undefined || responseCustomer?.data?.billing_postcode=="" || responseCustomer?.data?.billing_postcode=="null") {
-                                        sendModalValue("msgWarning","Ha habido un problema con la dirección de envío proporcionada: Nombre es obligatorio, Apellidos es obligatorio, Dirección de la calle es obligatorio, Localidad / Ciudad es obligatorio, Código postal es obligatorio");
-                                        $("#msgWarning").modal("show");
-                                        return;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if (responseCustomer?.data?.shipping_first_name==null || responseCustomer?.data?.shipping_first_name==undefined || responseCustomer?.data?.shipping_first_name=="" || responseCustomer?.data?.shipping_first_name=="null") {
-                if (responseCustomer?.data?.shipping_last_name==null || responseCustomer?.data?.shipping_last_name==undefined || responseCustomer?.data?.shipping_last_name=="" || responseCustomer?.data?.shipping_last_name=="null") {
-                    if (responseCustomer?.data?.shipping_company==null || responseCustomer?.data?.shipping_company==undefined || responseCustomer?.data?.shipping_company=="" || responseCustomer?.data?.shipping_company=="null") {
-                        if (responseCustomer?.data?.shipping_address_1==null || responseCustomer?.data?.shipping_address_1==undefined || responseCustomer?.data?.shipping_address_1=="" || responseCustomer?.data?.shipping_address_1=="null") {
-                            if (responseCustomer?.data?.shipping_city==null || responseCustomer?.data?.shipping_city==undefined || responseCustomer?.data?.shipping_city=="" || responseCustomer?.data?.shipping_city=="null") {
-                                if (responseCustomer?.data?.shipping_postcode==null || responseCustomer?.data?.shipping_postcode==undefined || responseCustomer?.data?.shipping_postcode=="" || responseCustomer?.data?.shipping_postcode=="null") {
+            if ((responseCustomer?.data?.billing_first_name==null || responseCustomer?.data?.billing_first_name==undefined || responseCustomer?.data?.billing_first_name=="" || responseCustomer?.data?.billing_first_name=="null") 
+                || (responseCustomer?.data?.billing_last_name==null || responseCustomer?.data?.billing_last_name==undefined || responseCustomer?.data?.billing_last_name=="" || responseCustomer?.data?.billing_last_name=="null") 
+                    || (responseCustomer?.data?.billing_address_1==null || responseCustomer?.data?.billing_address_1==undefined || responseCustomer?.data?.billing_address_1=="" || responseCustomer?.data?.billing_address_1=="null") 
+                        || (responseCustomer?.data?.billing_city==null || responseCustomer?.data?.billing_city==undefined || responseCustomer?.data?.billing_city=="" || responseCustomer?.data?.billing_city=="null") 
+                            || (responseCustomer?.data?.billing_postcode==null || responseCustomer?.data?.billing_postcode==undefined || responseCustomer?.data?.billing_postcode=="" || responseCustomer?.data?.billing_postcode=="null")) {
+                                    HideLoading();
                                     sendModalValue("msgWarning","Ha habido un problema con la dirección de envío proporcionada: Nombre es obligatorio, Apellidos es obligatorio, Dirección de la calle es obligatorio, Localidad / Ciudad es obligatorio, Código postal es obligatorio");
                                     $("#msgWarning").modal("show");
                                     return;
-                                }
-                            }
-                        }
-                    }
-                }
+            }
+            if ((responseCustomer?.data?.shipping_first_name==null || responseCustomer?.data?.shipping_first_name==undefined || responseCustomer?.data?.shipping_first_name=="" || responseCustomer?.data?.shipping_first_name=="null")
+                || (responseCustomer?.data?.shipping_last_name==null || responseCustomer?.data?.shipping_last_name==undefined || responseCustomer?.data?.shipping_last_name=="" || responseCustomer?.data?.shipping_last_name=="null")
+                    || (responseCustomer?.data?.shipping_address_1==null || responseCustomer?.data?.shipping_address_1==undefined || responseCustomer?.data?.shipping_address_1=="" || responseCustomer?.data?.shipping_address_1=="null")
+                        || (responseCustomer?.data?.shipping_city==null || responseCustomer?.data?.shipping_city==undefined || responseCustomer?.data?.shipping_city=="" || responseCustomer?.data?.shipping_city=="null")
+                            || (responseCustomer?.data?.shipping_postcode==null || responseCustomer?.data?.shipping_postcode==undefined || responseCustomer?.data?.shipping_postcode=="" || responseCustomer?.data?.shipping_postcode=="null")) {
+                                HideLoading();
+                                sendModalValue("msgWarning","Ha habido un problema con la dirección de envío proporcionada: Nombre es obligatorio, Apellidos es obligatorio, Dirección de la calle es obligatorio, Localidad / Ciudad es obligatorio, Código postal es obligatorio");
+                                $("#msgWarning").modal("show");
+                                return;
             }
             callServicesHttp('payment', query, data).then((responsePayment) => {
-                if (!(Boolean(responsePayment?.code))) {
+                if ((Boolean(responsePayment?.code))) {
+                    HideLoading();
                     sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
                     $("#msgError").modal("show");
                     return;                             
@@ -193,12 +185,14 @@ const Accordion = () => {
                             }
                         });  
                     }else{
+                        HideLoading();
                         sendModalValue("msgError",processMessageError(dataResponse,mensajeAll));
                         $("#msgError").modal("show");
                         return;    
                     }
                 }
             }).catch((e)=>{
+                HideLoading();
                 sendModalValue("msgError",processError(e, mensajeAll));
                 $("#msgError").modal("show");
                 return;

@@ -37,7 +37,9 @@ function callServices(url, method, headers, body, auth){
 			reject(error);
 		})
 		.finally(() => {
-			HideLoading();
+			if (!url.includes('payco/payment')) {
+				HideLoading();				
+			}			
 		})
 	});
 }
