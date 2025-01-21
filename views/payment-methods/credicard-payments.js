@@ -1054,7 +1054,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
             // React.createElement("img", { src: bfc, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
         metodoColeccion?.product_name=='TDC_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
-            React.createElement("label", { className: 'font-bold' }, "Marcas aliados: "),
+            React.createElement("label", { className: 'font-bold' }, "Marcas aliadas: "),
             React.createElement("img", { src: visa, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
