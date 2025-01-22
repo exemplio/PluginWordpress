@@ -107,9 +107,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                             formattedCardInfo(response);
                         }
                     }).catch((e)=>{
-                        sendModalValue("msgError",processError(e, mensajeAll));
-                        $("#msgError").modal("show");
-                        return;
+                        console.error(e);                        
                     });
                 }
             }
@@ -146,6 +144,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     //Formateo de data de la funcion verifyCardData()
     const formattedCardInfo = (data) => {
         let result=null;
+        setErrorTarjeta("");
 		if(Boolean(data)){
 			if(data.hasOwnProperty("bank_info")){
 				if(Boolean(data.bank_info)){
@@ -257,9 +256,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 return;
             }
         }).catch((e)=>{
-            sendModalValue("msgError",processError(e, mensajeAll));
-            $("#msgError").modal("show");
-            return;
+            console.error(e);            
         });	
 	}
     //Enviar token de CCR
@@ -300,9 +297,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 return;
             }
         }).catch((e)=>{
-            sendModalValue("msgError",processError(e, mensajeAll));
-            $("#msgError").modal("show");
-            return;
+            console.error(e);            
         });
 	}
     const verifyData = (action) => {
@@ -415,85 +410,92 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     return;
                 }else if(showOtpBank){
                     jsonTosend= {
-                        product_name: metodoColeccion?.product_name,
                         collect_method_id: metodoColeccion.id,
                         amount: php_var.cart_total,
-                        reason:	'Pago de servicios CREDICARD PAGOS',
-                        currency: "VES",
-                        payer_name: cardHolderValue,
-                        card_bank_code: bankCode,
-                        debit_card:{
-                            card_number: numeroOriginalValue,
-                            expiration_month: month,
-                            expiration_year: year,
-                            holder_name: cardHolderValue,
-                            holder_id_doc: "RIF",
-                            holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                            card_type: metodoColeccion?.type,
-                            cvc: ccvValue,
-                            account_type: tipoCuentaValue.toUpperCase(),
-                            pin: pinToSend,
+                        payment:{
+                            reason:	'Pago de servicios CREDICARD PAGOS',
                             currency: "VES",
-                            bank_card_validation: {
-                                bank_code: bankCode,
-                                token: "1111111111",
-                                rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                            payer_name: cardHolderValue,
+                            card_bank_code: bankCode,
+                            amount: php_var.cart_total,
+                            debit_card:{
+                                card_number: numeroOriginalValue,
+                                expiration_month: month,
+                                expiration_year: year,
+                                holder_name: cardHolderValue,
+                                holder_id_doc: "RIF",
+                                holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                                card_type: metodoColeccion?.type,
+                                cvc: ccvValue,
+                                account_type: tipoCuentaValue.toUpperCase(),
+                                pin: pinToSend,
+                                currency: "VES",
+                                bank_card_validation: {
+                                    bank_code: bankCode,
+                                    token: "1111111111",
+                                    rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                                }
                             }
                         }
                     };  
                 }else{
                     jsonTosend= {
-                        product_name: metodoColeccion?.product_name,
                         collect_method_id: metodoColeccion.id,
                         amount: php_var.cart_total,
-                        reason:	'Pago de servicios CREDICARD PAGOS',
-                        currency: "VES",
-                        payer_name: cardHolderValue,
-                        card_bank_code: bankCode,
-                        debit_card:{
-                            card_number: numeroOriginalValue,
-                            expiration_month: month,
-                            expiration_year: year,
-                            holder_name: cardHolderValue,
-                            holder_id_doc: "RIF",
-                            holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                            card_type: metodoColeccion?.type,
-                            cvc: ccvValue,
-                            account_type: tipoCuentaValue.toUpperCase(),
-                            pin: pinToSend,
+                        payment:{
+                            product_name: metodoColeccion?.product_name,
+                            reason:	'Pago de servicios CREDICARD PAGOS',
                             currency: "VES",
+                            payer_name: cardHolderValue,
+                            card_bank_code: bankCode,
+                            amount: php_var.cart_total,
+                            debit_card:{
+                                card_number: numeroOriginalValue,
+                                expiration_month: month,
+                                expiration_year: year,
+                                holder_name: cardHolderValue,
+                                holder_id_doc: "RIF",
+                                holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                                card_type: metodoColeccion?.type,
+                                cvc: ccvValue,
+                                account_type: tipoCuentaValue.toUpperCase(),
+                                pin: pinToSend,
+                                currency: "VES",
+                            }
                         }
                     };
                 }
-                checkCommision(metodoColeccion?.type);
+                // checkCommision(metodoColeccion?.type);
+                setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
+                $(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("show");
                 break;
             case 'TDC_API':
                 if (showOtpCcr) {
                     jsonTosend= {
-                        reason: "Pago de servicios CREDICARD PAGOS",
-                        currency: "VED",
-                        payer_name: cardHolderValue,
-                        product_name: metodoColeccion?.product_name,
-                        card_bank_code: bankCode,
-                        credit_card: {
-                            card_number: numeroOriginalValue,
-                            expiration_month: month,
-                            expiration_year: year,
-                            holder_name: cardHolderValue,
-                            holder_id_doc: "RIF",
-                            holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                            cvc: ccvValue,
-                            bank_card_validation: {
-                                bank_code: bankCode,
-                                phone: "4241209806",
-                                rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                                token: tokenCcr
-                            }                          
-                        },
                         collect_method_id: metodoColeccion.id,
-                        product_name: metodoColeccion?.product_name,
-                        payment_method: metodoColeccion.payment_method,
-                        amount: php_var.cart_total                      
+                        amount: php_var.cart_total,
+                        payment:{
+                            reason: "Pago de servicios CREDICARD PAGOS",
+                            currency: "VED",
+                            payer_name: cardHolderValue,
+                            card_bank_code: bankCode,
+                            amount: php_var.cart_total,
+                            credit_card: {
+                                card_number: numeroOriginalValue,
+                                expiration_month: month,
+                                expiration_year: year,
+                                holder_name: cardHolderValue,
+                                holder_id_doc: "RIF",
+                                holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                                cvc: ccvValue,
+                                bank_card_validation: {
+                                    bank_code: bankCode,
+                                    phone: "4241209806",
+                                    rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                                    token: tokenCcr
+                                }                          
+                            }
+                        }
                     };
                     if (action=='TOKEN') {
                         sendTokenCcr(jsonTosend?.payment?.credit_card);
@@ -501,26 +503,27 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     }
                 }else{
                     jsonTosend= {
-                        reason: "Pago de servicios CREDICARD PAGOS",
-                        currency: "VED",
-                        payer_name: cardHolderValue,
-                        product_name: metodoColeccion?.product_name,
-                        card_bank_code: bankCode,
-                        credit_card: {
-                            card_number: numeroOriginalValue,
-                            expiration_month: month,
-                            expiration_year: year,
-                            holder_name: cardHolderValue,
-                            holder_id_doc: "RIF",
-                            holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                            cvc: ccvValue,                        
-                        },
                         collect_method_id: metodoColeccion.id,
-                        product_name: metodoColeccion?.product_name,
-                        payment_method: metodoColeccion.payment_method,
-                        amount: php_var.cart_total                      
+                        amount: php_var.cart_total,
+                        payment:{
+                            reason: "Pago de servicios CREDICARD PAGOS",
+                            currency: "VED",
+                            payer_name: cardHolderValue,
+                            card_bank_code: bankCode,
+                            amount: php_var.cart_total,
+                            credit_card: {
+                                card_number: numeroOriginalValue,
+                                expiration_month: month,
+                                expiration_year: year,
+                                holder_name: cardHolderValue,
+                                holder_id_doc: "RIF",
+                                holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                                cvc: ccvValue,                        
+                            }
+                        }
                     };
                 }
+                // checkCommision(metodoColeccion?.type);
                 setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
                 $(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("show");
                 break;
@@ -563,9 +566,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 }
             }
 		}).catch((e)=>{
-            sendModalValue("msgError",processError(e, mensajeAll));
-            $("#msgError").modal("show");
-            return;
+            console.error(e);            
         });
 	}
     const devolverEvent = (event) =>{
@@ -761,6 +762,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         setBankName("");
         setShowOtpBank(false);
         setShowOtpCcr(false);
+        setErrorTarjeta("");
         setRowClass("col-lg-6 col-md-6 col-sm-6 col-12");
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },

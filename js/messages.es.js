@@ -119,4 +119,5 @@
 	"otp_ccr_token_sent":"Token enviado",
 	"deegle_payco_collect_channel_not_found":"Canal de colección no encontrado",
 	"bad_request":"Error de solicitud",
+	"wallet_device_not_found":"dispositivo no encontrado",
 };

@@ -57,12 +57,9 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
             payment: {
                 collect_method_id: metodoColeccion?.id,
                 amount: php_var.cart_total,
-                payment: {
-                    amount: php_var.cart_total,
-                    payer_id_doc: payerIdDocValue,
-                    payer_phone: phoneP2PValue,
-                    reference: referenceP2PValue,
-                }
+                payer_id_doc: `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`,
+                payer_phone: `${prefixPhoneValue}${phoneP2PValue}`,
+                reference: referenceP2PValue,
             }
         }
         $("#msgConfirmP2P").modal("show");

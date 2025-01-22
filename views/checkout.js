@@ -34,9 +34,7 @@ const Accordion = () => {
                 }
             }
         }).catch((e)=>{
-            sendModalValue("msgError",processError(e, mensajeAll));
-            $("#msgError").modal("show");
-            return;
+            console.error(e);            
         });
     }
     // Obtener metodos de pago
@@ -84,9 +82,7 @@ const Accordion = () => {
                 }                         
             }
         }).catch((e)=>{
-            sendModalValue("msgError",processError(e, mensajeAll));
-            $("#msgError").modal("show");
-            return;
+            console.error(e);            
         });
     }
     const sendPayment = (id,metodoColeccion) => {
@@ -192,10 +188,7 @@ const Accordion = () => {
                     }
                 }
             }).catch((e)=>{
-                HideLoading();
-                sendModalValue("msgError",processError(e, mensajeAll));
-                $("#msgError").modal("show");
-                return;
+                console.error(e);                
             });            
         }).catch((e)=>{
             console.error(e);            

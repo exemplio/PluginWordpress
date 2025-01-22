@@ -91,14 +91,11 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
             payment: {
                 collect_method_id: metodoColeccion?.id,
                 amount: php_var.cart_total,
-                payment: {
-                    bank_account_id: metodoColeccion?.bank_account_id,
-                    amount: php_var.cart_total,
-                    payer_id_doc: idDocC2pValue,
-                    payer_phone: phoneC2PValue,
-                    payer_bank_code: bancoSelectedValue,
-                    otp: otpValue,
-                }
+                bank_account_id: metodoColeccion?.bank_account_id,
+                payer_id_doc: `${idDocTypeValue}${addZeros(idDocC2pValue, 9)}`,
+                payer_phone: `${prefixPhoneValue}${phoneC2PValue}`,
+                payer_bank_code: bancoSelectedValue,
+                otp: otpValue                
             }
         }
         $("#msgConfirmC2P").modal("show");
