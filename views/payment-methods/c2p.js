@@ -99,6 +99,17 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
             }
         }
         $("#msgConfirmC2P").modal("show");
+    };
+    const setTooltip= (banco) => {
+        let aux=findBankInfo(banco)
+        if(Boolean(aux)){
+            let texto=aux.tooltip;
+            if(Boolean(texto)){
+                document.getElementById("tooltip-"+metodoColeccion?.product_name).innerHTML=texto;
+            }else{
+                document.getElementById("tooltip-"+metodoColeccion?.product_name).innerHTML="";
+            }
+        }
     }
     const clean = () => { 
         setIdDocType("V");
@@ -185,9 +196,10 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                         name: `banco_selected_c2p`,
                         required: true,
                         value: bancoSelectedValue,
+                        // onClick: () => {setTooltip(bancoSelectedValue)},
                         onChange: (e) => {
                             setBancoSelected(e.currentTarget.value);
-                            // setTooltip(e.currentTarget.value);
+                            setTooltip(e.currentTarget.value);
                         }
                     },
                     React.createElement("option", { value: "", disabled: true, selected: true }, ""),
@@ -248,6 +260,11 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                     style: { margin: '10px', fontSize: '14px', width: '100%' },
                     onClick: () => verifyDataC2P('PAY')
                 }, "Pagar")
+            )
+        ),
+        React.createElement('div',{ className: 'row' },
+            React.createElement('div', { className: 'col-xs-12 col-md-12 col-lg-12 mt-12 mt-2' },
+                React.createElement('div', { id: `tooltip-${metodoColeccion?.product_name}` })
             )
         ),
         React.createElement('div', { id:"msgConfirmC2P", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },

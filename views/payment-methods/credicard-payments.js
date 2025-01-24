@@ -33,7 +33,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     const [showOtpBank, setShowOtpBank] = React.useState(false);
     const [showButtonSend, setShowButtonSend] = React.useState(false);
     const [tokenCcr, setTokenCcr] = React.useState("");
-    const [tokenBank, setTokenBank] = React.useState(false);
+    const [tokenBank, setTokenBank] = React.useState("");
     const [bankImage, setBankImage] = React.useState("");
     const [bankName, setBankName] = React.useState("");
     const [bankAcronym, setBankAcronym] = React.useState("");
@@ -149,7 +149,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
 			if(data.hasOwnProperty("bank_info")){
 				if(Boolean(data.bank_info)){
                     if(Boolean(data?.bank_info?.thumbnail)){
-                        setBankImage(getStatic()+data?.bank_info?.thumbnail);
+                        setBankImage(php_var?.get_static+data?.bank_info?.thumbnail);
                     }
                     if(Boolean(data?.bank_info?.name)){
                         setBankName(data?.bank_info?.name);
@@ -220,7 +220,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 setRowClass('col-lg-4 col-md-4 col-sm-4 col-12');
 				if(data.hasOwnProperty("financial_card_emitter")){
 					if(Boolean(data.financial_card_emitter)){
-						setBankImage(getStatic()+data?.financial_card_emitter?.thumbnail);
+						setBankImage(php_var?.get_static+data?.financial_card_emitter?.thumbnail);
                         setBankName(data?.financial_card_emitter?.name);
 					}
 				}

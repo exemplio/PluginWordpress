@@ -8,6 +8,7 @@ const eyeSlash= php_var.eye_slash;
 const Accordion = () => {
     const [TDCValidation, setTDCValidation] = React.useState(false);
     const [TDDValidation, setTDDValidation] = React.useState(false);
+    const [MercantilTDDValidation, setMercantilTDDValidation] = React.useState(false);
     const [P2PValidation, setP2PValidation] = React.useState(false);
     const [C2PValidation, setC2PValidation] = React.useState(false);
     const [OTValidation, setOTValidation] = React.useState(false);
@@ -44,7 +45,7 @@ const Accordion = () => {
     const getMethods = async () => {
         let query = "";
         var mensajeAll = "Error al obtener los métodos de colección";
-        callServicesHttp('get-collect-channel',query,null).then((response) => {  
+        callServicesHttp('get-collect-channel',query,null).then((response) => {
             if (response == null || response == undefined || response == "") {
                 sendModalValue("msgError",processMessageError(response, mensajeAll));
                 $("#msgError").modal("show");
@@ -60,12 +61,16 @@ const Accordion = () => {
                         if(response.hasOwnProperty('collect_methods')){
                             setDisplayingEmail(response?.business_email);
                             response?.collect_methods.map((item) => {
-                                switch (item.product_name) {
+                                switch (item?.product_name) {
                                     case "TDC_API":
                                         setTDCValidation(true);
                                         break;
                                     case "TDD_API":
-                                        setTDDValidation(true);
+                                        if (item?.credential_service=="CREDICARD_PAGOS_TDD") {
+                                            setTDDValidation(true);                                            
+                                        }else{
+                                            setMercantilTDDValidation(true);
+                                        }
                                         break;
                                     case "MOBILE_PAYMENT_SEARCH":
                                         setP2PValidation(true);
@@ -248,7 +253,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "TDC_API"), paymentFun: sendPayment })
+                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDC_API"), paymentFun: sendPayment })
                     )
                 )
             ),
@@ -271,7 +276,30 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "TDD_API"), paymentFun: sendPayment } )
+                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="CREDICARD_PAGOS_TDD"), paymentFun: sendPayment } )
+                    )
+                )
+            ),
+            MercantilTDDValidation && React.createElement("div", { className: "accordion-item" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingMercantilTDD" },
+                    React.createElement("button", {
+                        className: "accordion-button collapsed",
+                        type: "button",
+                        "data-bs-toggle": "collapse",
+                        "data-bs-target": "#collapseMercantilTDD",
+                        "aria-expanded": "false",
+                        "aria-controls": "collapseMercantilTDD"
+                    }, "MERCANTIL TDD")
+                ),
+                React.createElement("div", {
+                    id: "collapseMercantilTDD",
+                    className: "accordion-collapse collapse",
+                    "aria-labelledby": "headingMercantilTDD",
+                    "data-bs-parent": "#accordion"
+                },
+                    React.createElement("div", { className: "accordion-body" },
+                        React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
+                        React.createElement(MercantilTDD, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD"), paymentFun: sendPayment } )
                     )
                 )
             ),
@@ -295,7 +323,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
+                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
                     )
                 )
             ),
@@ -318,7 +346,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago C2P Bancaribe"),
-                        React.createElement(C2pPayment, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT"), paymentFun: sendPayment })
+                        React.createElement(C2pPayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT"), paymentFun: sendPayment })
                     )
                 )
             ),
@@ -341,11 +369,11 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
-                        React.createElement(OnlineTransfer, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "TRANSFER_PAYMENT_SEARCH"), paymentFun: sendPayment })
+                        React.createElement(OnlineTransfer, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH"), paymentFun: sendPayment })
                     )
                 )
             ),
-            ReceiptValidation && React.createElement(Receipt, { label: "Card Number", metodoColeccion: "", paymentFun: sendPayment }),
+            ReceiptValidation && React.createElement(Receipt, { metodoColeccion: "", paymentFun: sendPayment }),
         );
 };
 const Content = () => {

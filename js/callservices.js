@@ -1,8 +1,4 @@
-var _url = getApi();
-var timeout="120000";
-var enlace1=getEnlaceApiV1();
-var enlace2=getEnlaceApiV2();
-var enlace3 = getEnlaceApiV3();
+var _url = php_var?.url_link;
 
 function getBearerToken(){
 	return JSON.parse(localStorage.getItem('authorize-credentials'))?.access_token;
@@ -78,7 +74,7 @@ function callServicesHttp(ser,querys,data){
 			return request;
 		}break;
 		case 'get-collect-channel':{
-			request=callServices(_url+`/payco/collect_channel_info?realm=${getRealm()}&business_id=${getBusinessId()}&channel_id=${getChannelId()}`+querys,"GET",headers,data,true);			
+			request=callServices(_url+`/payco/collect_channel_info?channel_id=${getChannelId()}`+querys,"GET",headers,data,true);			
 			return request;
 		}break;
 		case 'get-commision':{
@@ -97,7 +93,7 @@ function callServicesHttp(ser,querys,data){
 			request=callServices(_url+'/payco/send_token_with_card'+querys,"POST",headers,data,true);
 			return request;
 		}break;
-		case 'send-mercantil-token':{
+		case 'mercantil-send-otp':{
 			request=callServices(_url+'/payco/mercantil_send_otp'+querys,"POST",headers,data,true);
 			return request;
 		}break;
@@ -210,4 +206,21 @@ function processMessageError(data,mensaje){
 	} else {
 		return mensaje;
 	}
+}
+
+function publicKeyPay(){
+	return "-----BEGIN PUBLIC KEY-----"+
+	"MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAlZsOvWornKePU+ssZl3V"+
+	"hOy8vExZTRSosd4bgmsj4dRCAs9Uosw4i47go+aABkmbVW1wrvNxhJmUvtbBk9IH"+
+	"ueunWR7bd4ZmRQvxldPeo1QQBaFdR9a9xGGLvpLdHJHf8EqQeJj85a5+kKmjjNA3"+
+	"pXUZejiAOR6c7LnzVImaZbgSSvghmeN7jg6gJ+yL4a3t6xK9CcBD8EKkVnD7Ry4/"+
+	"6nhV9v8r1lfRgECSBPdpNCSdQxJeCGUz0Zrb7QIp6ccjNRGCQga6F/XuPAoG/5qo"+
+	"kPrjW6FD35DxUx5DGKWGj9VnBAKsD13cW8rcTZB60BzZX39QTbNRNJ6o+Am/dhcZ"+
+	"VNzv9F6lJJ0T50kVzUsN8tDDDnW8LCe7U1O1vLGN8/kLVFW4XjaJDJmKISLqEmS+"+
+	"ydLM/9zHLdOG/gHHXn8yVK8/TpXI8rOKo/B8VRHVqGKeVSWEmuFM4FxsgUD9xLMi"+
+	"kZFIzd4pJVJBePU8GihrjhtBs8Xve/NWg2i8HN3qm7E7Z8E5iwM1R5YFSLVbfIRz"+
+	"E4QDCAVQgUhNk+WkM4sYVXjOSdzg8w8qVedOsNH6REpZsN5+u5Xof9+/KogujsVb"+
+	"EiOVmxrty2hXh73G5yfLlIaxQZO3YwUoE/UGN7qx2HnNChdP/LsexthuIjLcDdXP"+
+	"uESdH/bsClMcj7N/gC7gRO0CAwEAAQ=="+
+	"-----END PUBLIC KEY-----";
 }

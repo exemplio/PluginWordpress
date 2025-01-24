@@ -57,6 +57,15 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         true
       );
       wp_register_script(
+        'mercantil_payments_script',
+        plugin_dir_url(__FILE__) . 'views/payment-methods/mercantil-tdd.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
+      wp_register_script(
         'online_transfer_script',
         plugin_dir_url(__FILE__) . 'views/payment-methods/online-transfer.js',
         [
@@ -173,6 +182,15 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         null,
         true
       );
+      wp_register_script(
+        'bank_messages_script',
+        plugin_dir_url(__FILE__) . 'js/bank-messages.js',
+        [
+            'my_custom_gateway-blocks-integration',
+        ],
+        null,
+        true
+      );
       wp_register_style(
           'bootstrap_css',
           plugin_dir_url(__FILE__) . 'css/bootstrap.min.css'
@@ -185,6 +203,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       $eye_slash = plugin_dir_url(__FILE__) . 'images/eye-slash-solid.svg';
       $loading = plugin_dir_url(__FILE__) . 'images/loading.gif';
       $credicard = plugin_dir_url(__FILE__) . 'images/png/credicard.png';
+      $mercantil = plugin_dir_url(__FILE__) . 'images/png/mercantil.png';
       $visa = plugin_dir_url(__FILE__) . 'images/png/visa.png';
       $master_card = plugin_dir_url(__FILE__) . 'images/png/master_card.png';
       $venezuela = plugin_dir_url(__FILE__) . 'images/png/venezuela.png';
@@ -201,6 +220,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         'eye_slash' => $eye_slash,
         'loading' => $loading,
         'credicard' => $credicard,
+        'mercantil' => $mercantil,
         'visa' => $visa,
         'master_card' => $master_card,
         'venezuela' => $venezuela,
@@ -216,9 +236,14 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         'cart_total' => WC()->cart !== null ? WC()->cart->total : 0,
         'empty_cart' => content_url('plugins/PluginWordpress/empty-cart.php'),
         'customer_info' => admin_url('admin-ajax.php'),
+        'url_link' => 'https://apid.paguetodo.com/demo', // demo
+        // 'url_link' => 'https://api.paguetodo.com', // prod
+        'get_static' => 'http://staticd.paguetodo.com/', // demo
+        // 'get_static' => 'http://static.paguetodo.com/', // prod
       ]);
       wp_enqueue_script('my_custom_gateway-blocks-integration');
       wp_enqueue_script('credicard_payments_script');
+      wp_enqueue_script('mercantil_payments_script');
       wp_enqueue_script('online_transfer_script');
       wp_enqueue_script('mobile_payment_script');
       wp_enqueue_script('receipt_script');
@@ -234,6 +259,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       wp_enqueue_script('messages_script');
       wp_enqueue_script('jsbn_script');
       wp_enqueue_script('rsa_script');
+      wp_enqueue_script('bank_messages_script');
       wp_enqueue_style('bootstrap_css');
       wp_enqueue_style('styles_css');
   

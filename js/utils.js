@@ -174,6 +174,9 @@ function getTypesIdDoc(){
 function getTypesAccount(){
 	return ['PRINCIPAL','CORRIENTE','AHORRO'];
 }
+function getTypesAccountMercantil(){
+	return ['CORRIENTE','AHORRO'];
+}
 function getPrefixArea(){
 	return [{to_show: "(414)", value:"414"},{to_show: "(424)", value:"424"},{to_show: "(412)", value:"412"},{to_show: "(416)", value:"416"},{to_show: "(426)", value:"426"}];
 }
@@ -218,4 +221,178 @@ function enmascararTarjeta (data){
     }catch(Er){
         return data;
     }
+}
+function findBankInfo(data){
+  return allBanksC2P().find(element => element.value ==data);
+}
+function allBanksC2P() {
+  return [
+    {
+      "value": "0114",
+      "to_show": "Bancaribe C.A. Banco Universal",
+      "rif": "J000029490",
+      "tooltip":_bankMessage("0114")
+    },
+    {
+      "value": "0172",
+      "to_show": "Bancamica, Banco Microfinanciero C.A.",
+      "rif": "J316287599",
+      "tooltip":_bankMessage("0172")
+    },
+    {
+      "value": "0169",
+      "to_show": "Mi Banco, Banco Microfinanciero C.A.",
+      "rif": "J315941023",
+      "tooltip":_bankMessage("0169")
+    },
+    {
+          "value": "0102",
+          "to_show": "Banco de Venezuela S.A.C.A. Banco Universal",
+          "rif": "G200099976",
+          "tooltip":_bankMessage("0102")
+      },
+      {
+        "value": "0105",
+        "to_show": "Banco Mercantil, C.A. Banco Universal",
+        "rif": "J000029610",
+        "tooltip":_bankMessage("0105")
+      },
+      {
+        "value": "0108",
+        "to_show": "Banco Provincial, S.A. Banco Universal",
+        "rif": "J000029679",
+        "tooltip":_bankMessage("0108")
+      },
+      {
+        "value": "0168",
+        "to_show": "Bancrecer, S.A. Banco Microfinanciero",
+        "rif": "J316374173",
+        "tooltip":_bankMessage("0168")
+    },
+      {
+          "value": "0104",
+          "to_show": "Venezolano de Crédito, S.A. Banco Universal",
+          "rif": "J000029709",
+          "tooltip":_bankMessage("0104")
+      },
+      
+     
+    
+      {
+          "value": "0115",
+          "to_show": "Banco Exterior C.A. Banco Universal",
+          "rif": "J000029504",
+          "tooltip":_bankMessage("0115")
+      },
+      {
+          "value": "0116",
+          "to_show": "Banco Occidental de Descuento, Banco Universal C.A",
+          "rif": "J300619460",
+          "tooltip":_bankMessage("0116")
+      },
+      {
+          "value": "0128",
+          "to_show": "Banco Caroní C.A. Banco Universal",
+          "rif": "J095048551",
+          "tooltip":_bankMessage("0128")
+      },
+      {
+          "value": "0134",
+          "to_show": "Banesco Banco Universal S.A.C.A.",
+          "rif": "J070133805",
+          "tooltip":_bankMessage("0134")
+      },
+      {
+          "value": "0137",
+          "to_show": "Banco Sofitasa, Banco Universal",
+          "rif": "J090283846",
+          "tooltip":_bankMessage("0137")
+      },
+      {
+          "value": "0138",
+          "to_show": "Banco Plaza, Banco Universal",
+          "rif": "J002970553",
+          "tooltip":_bankMessage("0138") 
+      },
+      {
+          "value": "0146",
+          "to_show": "Banco de la Gente Emprendedora C.A",
+          "rif": "J301442040"
+      },
+      {
+          "value": "0151",
+          "to_show": "BFC Banco Fondo Común C.A. Banco Universal",
+          "rif": "J000723060",
+          "tooltip":_bankMessage("0151")    
+          
+      },
+      {
+          "value": "0156",
+          "to_show": "100% Banco, Banco Universal C.A.",
+          "rif": "J085007768",
+          "tooltip":_bankMessage("0156")
+      },
+      {
+          "value": "0157",
+          "to_show": "DelSur Banco Universal C.A.",
+          "rif": "J000797234"
+      },
+      {
+          "value": "0163",
+          "to_show": "Banco del Tesoro, C.A. Banco Universal",
+          "rif": "G200051876",
+          "tooltip":_bankMessage("0163")
+      },
+      {
+          "value": "0166",
+          "to_show": "Banco Agrícola de Venezuela, C.A. Banco Universal",
+          "rif": "G200057955"
+      },
+      {
+          "value": "0171",
+          "to_show": "Banco Activo, Banco Universal",
+          "rif": "J080066227",
+          "tooltip":_bankMessage("0171")
+      },
+      
+      {
+          "value": "0173",
+          "to_show": "Banco Internacional de Desarrollo, C.A. Banco Universal",
+          "rif": "J294640109"
+      },
+      {
+          "value": "0174",
+          "to_show": "Banplus Banco Universal, C.A",
+          "rif": "J000423032",
+          "tooltip":_bankMessage("0174")   
+      },
+      {
+          "value": "0175",
+          "to_show": "Banco Bicentenario del Pueblo de la Clase Obrera, Mujer y Comunas B.U.",
+          "rif": "G200091487",
+          "tooltip":_bankMessage("0175")
+      },
+      {
+          "value": "0177",
+          "to_show": "Banco de la Fuerza Armada Nacional Bolivariana, B.U.",
+          "rif": "G200106573"
+      },
+      {
+          "value": "0191",
+          "to_show": "Banco Nacional de Crédito, C.A. Banco Universal",
+          "rif": "J309841327",
+          "tooltip":_bankMessage("0191")
+      },
+      {
+          "value": "0601",
+          "to_show": "Instituto Municipal de Crédito Popular",
+          "rif": "G200068973"
+      }
+  ];
+}
+function _bankMessage(s) {
+	if (typeof(bankMessage)!='undefined' && bankMessage[s]) {
+ 		return bankMessage[s];
+ 	}
+ 	return "";
 }
