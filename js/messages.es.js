@@ -120,4 +120,5 @@
 	"deegle_payco_collect_channel_not_found":"Canal de colección no encontrado",
 	"bad_request":"Error de solicitud",
 	"wallet_device_not_found":"dispositivo no encontrado",
+	"invalid_payer_id_doc":"Documento de identidad inválido",
 };

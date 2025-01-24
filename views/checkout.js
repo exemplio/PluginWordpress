@@ -122,7 +122,7 @@ const Accordion = () => {
                     HideLoading();
                     sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
                     $("#msgError").modal("show");
-                    return;                             
+                    return;
                 }else{
                     if(!(responsePayment?.status==200)){
                         $.ajax({

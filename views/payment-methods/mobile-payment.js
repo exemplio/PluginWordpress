@@ -17,6 +17,15 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
             sendModalValue("msgWarning","Debe ingresar el número de documento");
             $("#msgWarning").modal("show");
             return;
+        }else{
+            setPayerIdDoc(payerIdDocValue+"".trim().toUpperCase());
+            if(idDocTypeValue!="P"){
+                if(!utils_keyNumber(payerIdDocValue)){
+                    sendModalValue("msgWarning","El formato del número de documento es incorrecto");
+                    $("#msgWarning").modal("show");
+                    return;
+                }
+            }
         }
         if(prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el código de area del teléfono");

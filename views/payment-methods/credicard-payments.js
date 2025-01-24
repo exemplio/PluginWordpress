@@ -478,7 +478,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                             reason: "Pago de servicios CREDICARD PAGOS",
                             currency: "VED",
                             payer_name: cardHolderValue,
-                            card_bank_code: bankCode,
+                            // card_bank_code: bankCode,
                             amount: php_var.cart_total,
                             credit_card: {
                                 card_number: numeroOriginalValue,
@@ -489,10 +489,10 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                                 holder_id: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
                                 cvc: ccvValue,
                                 bank_card_validation: {
-                                    bank_code: bankCode,
+                                    // bank_code: bankCode,
                                     phone: "4241209806",
                                     rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                                    token: tokenCcr
+                                    token: ((tokenCcr+"").trim()).replace(/\./g,"").replace(/,/g,"")
                                 }                          
                             }
                         }

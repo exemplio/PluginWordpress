@@ -25,7 +25,11 @@ function callServices(url, method, headers, body, auth){
 		})
 		.then(response => {
 			if (!response.ok) {
-				return processResponse(response);
+				if (response?.status == 401 || response?.status == "401" || response?.status == 403 || response?.status == "403") {
+					processResponse(response);
+					return;					
+				}
+				return response.json();
 			}
 			return response.json();
 		})
@@ -120,7 +124,7 @@ function processResponse(res){
 	   status=res?.status;
 		if(status==202 || status=="202" || status=="403" || status==403 || status=="401" || status==401){
 			sendModalValue("msgError","Error: Ha ocurrido un problema. Por favor, recarga la página");
-			$("#msgError").modal("show");
+			$("#msgError").modal("show");			
 			return;
 		}
 	}
