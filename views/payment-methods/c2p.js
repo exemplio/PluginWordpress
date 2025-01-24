@@ -214,7 +214,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                             onChange: (e) => setOtp(e.currentTarget.value),
                             onKeyPress: (e) => keypressNumeros(e)
                         }),
-                        React.createElement("label", { htmlFor: `otp`, className: "d-none d-sm-inline-block font-regular" }, "Clave de operaciones especiales"),
+                        React.createElement("label", { htmlFor: `otp`, className: "d-none d-sm-inline-block font-regular" }, "Clave de operaciones"),
                         React.createElement("label", { htmlFor: `otp`, className: "d-sm-none font-regular" }, "Clave")
                     ),
                     React.createElement("button", {
@@ -260,7 +260,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(php_var.cart_total))
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

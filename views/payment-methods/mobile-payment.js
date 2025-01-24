@@ -1,4 +1,4 @@
-const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
+const MobilePayment = ({ metodoColeccion,banco,paymentFun, displayingRif, displayingPhone, displayingEmail }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
@@ -87,9 +87,9 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
             React.createElement("img", { src: bank_image, style: { objectFit: 'contain', height: "40px" } }),
             React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco),
             React.createElement("h4", { className: "font-bold", style: { textTransform: 'uppercase' } }, "REALIZAR PAGO MÓVIL A:"),
-            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "Número de teléfono:" + "(414) 319-6228"),
-            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "RIF: J403399646"),
-            React.createElement("label", { className: "font-regular" }, "Si tiene problemas para validar su pago, pase el capture con su RIF al siguiente correo: operaciones@paguetodo.com"),
+            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "Número de teléfono:" + displayingPhone),
+            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "RIF:"+displayingRif),
+            React.createElement("label", { className: "font-regular" }, "Si tiene problemas para validar su pago, pase el capture con su RIF al siguiente correo: "+ displayingEmail),
         ),
         React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center', marginTop: '40px' } },
             React.createElement("h4", { className: "font-bold", style: { textTransform: 'uppercase' } }, "COLOQUE LOS DATOS DEL PAGO MÓVIL:"),
@@ -224,7 +224,7 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun  }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: Bs.'+ parseAmount(php_var.cart_total))
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

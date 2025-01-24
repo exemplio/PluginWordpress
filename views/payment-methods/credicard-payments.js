@@ -1,7 +1,7 @@
 const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     let credicard = php_var.credicard;
     let visa = php_var.visa;
-    let maestro = php_var.maestro;
+    let master_card = php_var.master_card;
     let venezuela = php_var.venezuela;
     let bancaribe = php_var.bancaribe;
     let mibanco = php_var.mibanco;
@@ -819,8 +819,8 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                                 onKeyPress: (e) => {
                                     keypressNumeros(e);
                                 },
-                                onPaste: (e) => e.preventDefault(),
-                                onDrag: (e) => e.preventDefault()
+                                // onPaste: (e) => e.preventDefault(),
+                                // onDrag: (e) => e.preventDefault()
                             })
                             : React.createElement("input", {
                                 type: "text",
@@ -835,8 +835,8 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                                 onKeyPress: (e) => {
                                     keypressNumeros(e);
                                 },
-                                onPaste: (e) => e.preventDefault(),
-                                onDrag: (e) => e.preventDefault()
+                                // onPaste: (e) => e.preventDefault(),
+                                // onDrag: (e) => e.preventDefault()
                             }),
                         React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.product_name}`,className: "font-regular" }, "Nro. documento")
                     )
@@ -973,8 +973,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     onFocus: () => setMaskMonto(),
                     onChange: () => changeAmount(),
                     onInput: (e) => inputEvent(e),
-                    onPaste: (e) => e.preventDefault(),
-                    onCut: (e) => e.preventDefault(),
+                    // onPaste: (e) => e.preventDefault(),
                     inputMode: "numeric",
                     maxLength: 20,
                     className: "form-control",
@@ -1040,11 +1039,11 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         ),
         React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             React.createElement("label", { className: 'font-bold' }, "Procesado por: "),
-            React.createElement("img", { src: credicard, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: credicard, className: 'mini-size-img max-width-important', height: "40px", style: { objectFit: 'contain' } }),
         ),
         metodoColeccion?.product_name=='TDD_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             React.createElement("label", { className: 'font-bold' }, "Bancos aliados: "),
-            React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: master_card, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: venezuela, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: bancaribe, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: mibanco, height: "40px" , className: 'mini-size-img', style: { objectFit: 'contain' } }),
@@ -1058,7 +1057,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         metodoColeccion?.product_name=='TDC_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             React.createElement("label", { className: 'font-bold' }, "Marcas aliadas: "),
             React.createElement("img", { src: visa, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
-            React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: master_card, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
         React.createElement('div', { id:`msgConfirmCredicard${metodoColeccion?.product_name}`, 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document' },
@@ -1070,7 +1069,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, '¿ Estás seguro que deseas procesar la transacción por un monto de: '+ amountToShow)
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

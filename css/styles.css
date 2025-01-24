@@ -95,3 +95,6 @@
   .important-padding {
     padding: 0 !important;
   }
+  .max-width-important {
+    max-width: 100px !important;
+  }

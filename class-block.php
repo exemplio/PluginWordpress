@@ -186,7 +186,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
       $loading = plugin_dir_url(__FILE__) . 'images/loading.gif';
       $credicard = plugin_dir_url(__FILE__) . 'images/png/credicard.png';
       $visa = plugin_dir_url(__FILE__) . 'images/png/visa.png';
-      $maestro = plugin_dir_url(__FILE__) . 'images/png/maestro.png';
+      $master_card = plugin_dir_url(__FILE__) . 'images/png/master_card.png';
       $venezuela = plugin_dir_url(__FILE__) . 'images/png/venezuela.png';
       $bancaribe = plugin_dir_url(__FILE__) . 'images/png/bancaribe.png';
       $mibanco = plugin_dir_url(__FILE__) . 'images/png/mibanco.png';
@@ -202,7 +202,7 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
         'loading' => $loading,
         'credicard' => $credicard,
         'visa' => $visa,
-        'maestro' => $maestro,
+        'master_card' => $master_card,
         'venezuela' => $venezuela,
         'bancaribe' => $bancaribe,
         'mibanco' => $mibanco,

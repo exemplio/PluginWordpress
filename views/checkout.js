@@ -13,6 +13,9 @@ const Accordion = () => {
     const [OTValidation, setOTValidation] = React.useState(false);
     const [ReceiptValidation, setReceiptValidation] = React.useState(false);
     const [CollectMethod, setCollectMethod] = React.useState("");
+    const [displayingRif, setDisplayingRif] = React.useState("");
+    const [displayingPhone, setDisplayingPhone] = React.useState("");
+    const [displayingEmail, setDisplayingEmail] = React.useState("");
     // Obtener credenciales
     const getCredentials = () => {
         let query = "";
@@ -55,6 +58,7 @@ const Accordion = () => {
                     setCollectMethod(response);
                     if(Boolean(response)){                        
                         if(response.hasOwnProperty('collect_methods')){
+                            setDisplayingEmail(response?.business_email);
                             response?.collect_methods.map((item) => {
                                 switch (item.product_name) {
                                     case "TDC_API":
@@ -65,6 +69,8 @@ const Accordion = () => {
                                         break;
                                     case "MOBILE_PAYMENT_SEARCH":
                                         setP2PValidation(true);
+                                        setDisplayingRif(item?.id_doc);
+                                        setDisplayingPhone(item?.phone);
                                         break;
                                     case "MOBILE_PAYMENT":
                                         setC2PValidation(true);
@@ -289,7 +295,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment  })
+                        React.createElement(MobilePayment, { label: "Card Number", metodoColeccion: CollectMethod?.collect_methods.filter((item) => item.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
                     )
                 )
             ),
