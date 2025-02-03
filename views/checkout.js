@@ -166,10 +166,10 @@ const Accordion = () => {
                                     "country": responseCustomer?.data?.shipping_country,
                                     "phone": responseCustomer?.data?.shipping_phone
                                 },
-                                "payment_method": "my_custom_gateway",
+                                "payment_method": "gateway_paguetodo",
                                 "payment_data": [
                                     {
-                                    "key": "wc-my_custom_gateway-new-payment-method",
+                                    "key": "wc-gateway_paguetodo-new-payment-method",
                                     "value": false
                                     }
                                 ],
@@ -389,7 +389,7 @@ const Content = () => {
     );
 };
 const Block_Gateway = {
-    name: "my_custom_gateway",
+    name: "gateway_paguetodo",
     label: label,
     content: Object(window.wp.element.createElement)(Content, null),
     edit: Object(window.wp.element.createElement)(Content, null),

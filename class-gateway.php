@@ -3,7 +3,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
   
   // Constructor method
   public function __construct() {
-    $this->id                 = 'my_custom_gateway';
+    $this->id                 = 'gateway_paguetodo';
     $this->method_title       = __('Pago custom', 'my-custom-gateway');
     $this->method_description = __('Realizar pagos personalizados', 'my-custom-gateway');
     
