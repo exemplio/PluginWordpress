@@ -371,7 +371,7 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
                     inputMode: "numeric",
                     onKeyPress: (e) => keypressNumeros(e)
                 }),
-                React.createElement("label", { htmlFor: `token${metodoColeccion?.credential_service}` }, "Clave dinámica")
+                React.createElement("label", { htmlFor: `token${metodoColeccion?.credential_service}`, className:'font-regular' }, "Clave dinámica")
             )
         ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },

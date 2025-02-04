@@ -94,3 +94,9 @@
   .max-width-important {
     max-width: 100px !important;
   }
+  .modal-dialog {
+    max-width: 300px !important;
+  }
+  p {
+    padding-bottom: 16px !important;
+  }
