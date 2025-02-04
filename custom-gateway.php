@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Pago personalizado
+Plugin Name: Paguetodo Gateway
 Description: Botón de pago.
 Version: 1.0.0
 Author: Paguetodo
@@ -98,15 +98,6 @@ function get_payment_method_script_handles() {
     wp_register_script(
       'bootstrap_script',
       plugin_dir_url(__FILE__) . 'js/bootstrap.min.js',
-      [
-          'gateway_paguetodo-blocks-integration',
-      ],
-      null,
-      true
-    );
-    wp_register_script(
-      'jquery_script',
-      plugin_dir_url(__FILE__) . 'js/jquery.min.js',
       [
           'gateway_paguetodo-blocks-integration',
       ],
@@ -245,7 +236,7 @@ function get_payment_method_script_handles() {
     wp_enqueue_script('loading_script');
     wp_enqueue_script('modals_script');
     wp_enqueue_script('bootstrap_script');
-    wp_enqueue_script('jquery_script');
+    wp_enqueue_script( 'jquery' );
     wp_enqueue_script('indexjs_script');
     wp_enqueue_script('callservices_script');
     wp_enqueue_script('utils_script');

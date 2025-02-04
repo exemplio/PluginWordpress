@@ -1,5 +1,3 @@
-const settings = window.wc.wcSettings.getSetting("my_custom_gateway_data", {});
-const label = window.wp.htmlEntities.decodeEntities(settings.title) || window.wp.i18n.__("", "my-custom-gateway");
 var jsonTosend = {};
 const eyeSolid= php_var.eye_solid;
 const eyeSlash= php_var.eye_slash;
@@ -24,12 +22,12 @@ const Accordion = () => {
         callServicesHttp('get-credentials',query,"").then((response) => {
             if (response == null || response == undefined || response == "") {
                 sendModalValue("msgError",processMessageError(response, mensajeAll));
-                $("#msgError").modal("show");
+                openModal('msgError');
                 return;
             } else {
                 if (!(response.code==null || response.code==undefined || response.code=="")) {
                     sendModalValue("msgError",processMessageError(response, mensajeAll));
-                    $("#msgError").modal("show");
+                    openModal('msgError');
                     return;
                 }else{
                     localStorage.setItem('authorize-credentials', JSON.stringify(response));
@@ -48,12 +46,12 @@ const Accordion = () => {
         callServicesHttp('get-collect-channel',query,null).then((response) => {
             if (response == null || response == undefined || response == "") {
                 sendModalValue("msgError",processMessageError(response, mensajeAll));
-                $("#msgError").modal("show");
+                openModal('msgError');
                 return;
             } else {
                 if (!(response.code==null || response.code==undefined || response.code=="")) {
                     sendModalValue("msgError",processMessageError(response, mensajeAll));
-                    $("#msgError").modal("show");
+                    openModal('msgError');
                     return;                
                 }else{
                     setCollectMethod(response);
@@ -97,109 +95,81 @@ const Accordion = () => {
         });
     }
     const sendPayment = (id,metodoColeccion) => {
-        $(`#${id}`).modal("hide");
+        closeModal(id);
         let mensajeAll = "Error al realizar el pago";
         let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
         let data = jsonTosend;
         callServicesHttp('customer-info', php_var.customer_info, 'get_customer_orders').then((responseCustomer) => {
-            if (responseCustomer?.data?.billing_email==null || responseCustomer?.data?.billing_email==undefined || responseCustomer?.data?.billing_email=="" || responseCustomer?.data?.billing_email=="null") {
-                HideLoading();
-                sendModalValue("msgWarning","Es obligatoria una dirección de correo electrónico válida");
-                $("#msgWarning").modal("show");
-                return;                
-            }
-            if ((responseCustomer?.data?.billing_first_name==null || responseCustomer?.data?.billing_first_name==undefined || responseCustomer?.data?.billing_first_name=="" || responseCustomer?.data?.billing_first_name=="null") 
-                || (responseCustomer?.data?.billing_last_name==null || responseCustomer?.data?.billing_last_name==undefined || responseCustomer?.data?.billing_last_name=="" || responseCustomer?.data?.billing_last_name=="null") 
-                    || (responseCustomer?.data?.billing_address_1==null || responseCustomer?.data?.billing_address_1==undefined || responseCustomer?.data?.billing_address_1=="" || responseCustomer?.data?.billing_address_1=="null") 
-                        || (responseCustomer?.data?.billing_city==null || responseCustomer?.data?.billing_city==undefined || responseCustomer?.data?.billing_city=="" || responseCustomer?.data?.billing_city=="null") 
-                            || (responseCustomer?.data?.billing_postcode==null || responseCustomer?.data?.billing_postcode==undefined || responseCustomer?.data?.billing_postcode=="" || responseCustomer?.data?.billing_postcode=="null")) {
-                                    HideLoading();
-                                    sendModalValue("msgWarning","Ha habido un problema con la dirección de envío proporcionada: Nombre es obligatorio, Apellidos es obligatorio, Dirección de la calle es obligatorio, Localidad / Ciudad es obligatorio, Código postal es obligatorio");
-                                    $("#msgWarning").modal("show");
-                                    return;
-            }
-            if ((responseCustomer?.data?.shipping_first_name==null || responseCustomer?.data?.shipping_first_name==undefined || responseCustomer?.data?.shipping_first_name=="" || responseCustomer?.data?.shipping_first_name=="null")
-                || (responseCustomer?.data?.shipping_last_name==null || responseCustomer?.data?.shipping_last_name==undefined || responseCustomer?.data?.shipping_last_name=="" || responseCustomer?.data?.shipping_last_name=="null")
-                    || (responseCustomer?.data?.shipping_address_1==null || responseCustomer?.data?.shipping_address_1==undefined || responseCustomer?.data?.shipping_address_1=="" || responseCustomer?.data?.shipping_address_1=="null")
-                        || (responseCustomer?.data?.shipping_city==null || responseCustomer?.data?.shipping_city==undefined || responseCustomer?.data?.shipping_city=="" || responseCustomer?.data?.shipping_city=="null")
-                            || (responseCustomer?.data?.shipping_postcode==null || responseCustomer?.data?.shipping_postcode==undefined || responseCustomer?.data?.shipping_postcode=="" || responseCustomer?.data?.shipping_postcode=="null")) {
-                                HideLoading();
-                                sendModalValue("msgWarning","Ha habido un problema con la dirección de envío proporcionada: Nombre es obligatorio, Apellidos es obligatorio, Dirección de la calle es obligatorio, Localidad / Ciudad es obligatorio, Código postal es obligatorio");
-                                $("#msgWarning").modal("show");
-                                return;
-            }
-            callServicesHttp('payment', query, data).then((responsePayment) => {
-                if ((Boolean(responsePayment?.code))) {
-                    HideLoading();
-                    sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
-                    $("#msgError").modal("show");
-                    return;
-                }else{
-                    if(!(responsePayment?.status==200)){
-                        $.ajax({
-                            url: '../wp-json/wc/store/v1/checkout?_locale=site',
-                            method: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify({            
-                                "billing_address": {
-                                    "first_name": responseCustomer?.data?.billing_first_name,
-                                    "last_name": responseCustomer?.data?.billing_last_name,
-                                    "company": responseCustomer?.data?.billing_company,
-                                    "address_1": responseCustomer?.data?.billing_address_1,
-                                    "address_2": responseCustomer?.data?.billing_address_2,
-                                    "city": responseCustomer?.data?.billing_city,
-                                    "state": responseCustomer?.data?.billing_state,
-                                    "postcode": responseCustomer?.data?.billing_postcode,
-                                    "country": responseCustomer?.data?.billing_country,
-                                    "email": responseCustomer?.data?.billing_email,
-                                    "phone": responseCustomer?.data?.billing_phone
-                                },
-                                "shipping_address": {
-                                    "first_name": responseCustomer?.data?.shipping_first_name,
-                                    "last_name": responseCustomer?.data?.shipping_last_name,
-                                    "company": responseCustomer?.data?.shipping_company,
-                                    "address_1": responseCustomer?.data?.shipping_address_1,
-                                    "address_2": responseCustomer?.data?.shipping_address_1,
-                                    "city": responseCustomer?.data?.shipping_city,
-                                    "state": responseCustomer?.data?.shipping_state,
-                                    "postcode": responseCustomer?.data?.shipping_postcode,
-                                    "country": responseCustomer?.data?.shipping_country,
-                                    "phone": responseCustomer?.data?.shipping_phone
-                                },
-                                "payment_method": "gateway_paguetodo",
-                                "payment_data": [
-                                    {
-                                    "key": "wc-gateway_paguetodo-new-payment-method",
-                                    "value": false
-                                    }
-                                ],
-                            }),
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('Nonce', php_var.nonce);
-                            },
-                            xhrFields: {
-                                withCredentials: true
-                            },
-                            success: function(dataResponse) {
+            jQuery.ajax({
+                url: '../wp-json/wc/store/v1/checkout?_locale=site',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({            
+                    "billing_address": {
+                        "first_name": responseCustomer?.data?.billing_first_name,
+                        "last_name": responseCustomer?.data?.billing_last_name,
+                        "company": responseCustomer?.data?.billing_company,
+                        "address_1": responseCustomer?.data?.billing_address_1,
+                        "address_2": responseCustomer?.data?.billing_address_2,
+                        "city": responseCustomer?.data?.billing_city,
+                        "state": responseCustomer?.data?.billing_state,
+                        "postcode": responseCustomer?.data?.billing_postcode,
+                        "country": responseCustomer?.data?.billing_country,
+                        "email": responseCustomer?.data?.billing_email,
+                        "phone": responseCustomer?.data?.billing_phone
+                    },
+                    "shipping_address": {
+                        "first_name": responseCustomer?.data?.shipping_first_name,
+                        "last_name": responseCustomer?.data?.shipping_last_name,
+                        "company": responseCustomer?.data?.shipping_company,
+                        "address_1": responseCustomer?.data?.shipping_address_1,
+                        "address_2": responseCustomer?.data?.shipping_address_1,
+                        "city": responseCustomer?.data?.shipping_city,
+                        "state": responseCustomer?.data?.shipping_state,
+                        "postcode": responseCustomer?.data?.shipping_postcode,
+                        "country": responseCustomer?.data?.shipping_country,
+                        "phone": responseCustomer?.data?.shipping_phone
+                    },
+                    "payment_method": "gateway_paguetodo",
+                    "payment_data": [
+                        {
+                        "key": "wc-gateway_paguetodo-new-payment-method",
+                        "value": false
+                        }
+                    ],
+                }),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Nonce', php_var.nonce);
+                },
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function(dataResponse) {
+                    callServicesHttp('payment', query, data).then((responsePayment) => {
+                        if ((Boolean(responsePayment?.code))) {
+                            HideLoading();
+                            sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                            openModal('msgError');
+                            return;
+                        }else{
+                            if(!(responsePayment?.status==200)){
                                 callServicesHttp('redirect', php_var.empty_cart).then((response) => {
                                     window.location.href = dataResponse?.payment_result?.redirect_url;                                  
                                 }).catch((e)=>console.log(e))
-                            },
-                            error: function(xhr) {
-                                sendModalValue("msgError", translate(xhr?.responseJSON?.message));
-                                $("#msgError").modal("show");
-                                return;   
-                            }
-                        });  
-                    }else{
-                        HideLoading();
-                        sendModalValue("msgError",processMessageError(dataResponse,mensajeAll));
-                        $("#msgError").modal("show");
-                        return;    
-                    }
+                            }else{
+                                HideLoading();
+                                sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                                openModal('msgError');
+                                return;
+                            } 
+                        }
+                    }).catch((e)=>console.log(e))                   
                 }
             }).catch((e)=>{
-                console.error(e);                
+                HideLoading();
+                sendModalValue("msgError",processMessageError(e,mensajeAll));
+                openModal('msgError');
+                return;
             });            
         }).catch((e)=>{
             console.error(e);            
@@ -208,7 +178,7 @@ const Accordion = () => {
     };
     // Abrir modal de los acordiones
     const OpenAccordionModal = () => {
-        $("#msgWarningP2P").modal("show");
+        openModal("msgWarningP2P");
         return;
     }
     // Esconder todos los acordiones
@@ -235,7 +205,7 @@ const Accordion = () => {
     }, []); 
         return React.createElement("div", { className: "accordion", id: "accordion" },
             TDCValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTDC" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTDC", style: { margin: '0' } },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
@@ -258,7 +228,7 @@ const Accordion = () => {
                 )
             ),
             TDDValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTDD" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingTDD", style: { margin: '0' } },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
@@ -281,7 +251,7 @@ const Accordion = () => {
                 )
             ),
             MercantilTDDValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingMercantilTDD" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingMercantilTDD", style: { margin: '0' } },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
@@ -304,7 +274,7 @@ const Accordion = () => {
                 )
             ),
             P2PValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingP2P" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingP2P", style: { margin: '0' } },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
@@ -328,7 +298,7 @@ const Accordion = () => {
                 )
             ),
             C2PValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingC2P" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingC2P", style: { margin: '0' } },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
@@ -351,7 +321,7 @@ const Accordion = () => {
                 )
             ),
             OTValidation && React.createElement("div", { className: "accordion-item" },
-                React.createElement("h2", { className: "accordion-header font-regular", id: "headingIT" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingIT", style: { margin: '0' } },
                     React.createElement("button", {
                         className: "accordion-button collapsed",
                         type: "button",
@@ -377,26 +347,16 @@ const Accordion = () => {
         );
 };
 const Content = () => {
-    return React.createElement("div",{style:{ padding: '20px', paddingTop:0 }},null,
-        React.createElement("p", null, window.wp.htmlEntities.decodeEntities(settings.description || "")),
+    return React.createElement("div",{style:{ padding: '0', paddingTop:0 }},null,
         React.createElement(WarningModal, {label: "Modal"}),
         React.createElement(InfoModal, {label: "Modal"}),
         React.createElement(ErrorModal, {label: "Modal"}),
         React.createElement(MsgModal, {label: "Modal"}),
         React.createElement(WarningP2P, {label: "Modal"}),
-        React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
         React.createElement(Loading, {label: "Modal"}),
+        React.createElement(Accordion, {id: "my_custom_gateway_accordion", label: "Accordion"}),
     );
 };
-const Block_Gateway = {
-    name: "gateway_paguetodo",
-    label: label,
-    content: Object(window.wp.element.createElement)(Content, null),
-    edit: Object(window.wp.element.createElement)(Content, null),
-    canMakePayment: () => true,
-    ariaLabel: label,
-    supports: {
-        features: settings.supports,
-    },
-};
-window.wc.wcBlocksRegistry.registerPaymentMethod(Block_Gateway);
+jQuery('body').on( 'updated_checkout', function() {
+    ReactDOM.render(Object(window.wp.element.createElement)(Content, null), document.getElementById("root"));    
+  });

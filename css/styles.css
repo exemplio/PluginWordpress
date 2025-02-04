@@ -29,10 +29,6 @@
       src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-Bold.ttf)
   }
   @font-face{
-      font-family:Poppins-LightItalic;
-      src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-LightItalic.ttf)
-  }
-  @font-face{
       font-family:Poppins-Light;
       src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-Light.ttf)
   }
@@ -41,16 +37,16 @@
       src:url(https://static.paguetodo.com/fonts/Poppins/Poppins-Regular.ttf)
   }
   .font-light{
-      font-family:Poppins-Light;
+      font-family:Poppins-Light !important;
+      font-size: 16px !important;
   }
   .font-bold{
-      font-family:Poppins-Bold;
+      font-family:Poppins-Bold !important;
+      font-size: 16px !important;
   }
   .font-regular{
-      font-family: Poppins-Regular;
-  }
-  .font-light-italic{
-      font-family:Poppins-LightItalic;
+      font-family: Poppins-Regular !important;
+      font-size: 16px !important;
   }
   /* Campo de entrada */
   .form-control {
@@ -78,8 +74,8 @@
   }
   .mini-size-img {
       width: 100% !important;
-      max-width: 60px !important;
-      height: 32px !important;
+      max-width: 100px !important;
+      height: 50px !important;
       object-fit: contain !important;
     }
   .button-payment{

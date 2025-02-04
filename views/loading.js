@@ -1,7 +1,7 @@
 function ActiveLoading() {
     let loadingClass = document.getElementById('loadingModalShowWhile');
     if (Boolean(loadingClass)) {
-        loadingClass.style.display = 'block';
+        loadingClass.classList.replace('hide', 'show');
         return;        
     }
 }
@@ -9,7 +9,7 @@ function ActiveLoading() {
 function HideLoading() {
     let loadingClass = document.getElementById('loadingModalShowWhile'); 
     if (Boolean(loadingClass)) {
-        loadingClass.style.display = 'none';
+        loadingClass.classList.replace('show', 'hide');
         return;
     }
 }

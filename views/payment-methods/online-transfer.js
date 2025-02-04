@@ -7,22 +7,22 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el número de documento");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
             sendModalValue("msgWarning","Debe seleccionar el banco de origen");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         if(referenceValue==null || referenceValue==undefined || referenceValue=="" || referenceValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el número de referencia");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         jsonTosend= {                        
@@ -34,7 +34,7 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
             reference: referenceValue,
             amount: php_var.cart_total,            
         }
-        $("#msgConfirmOT").modal("show");
+        openModal("msgConfirmOT");
     }
     const clean = () => { 
         setIdDocType("V");
@@ -128,12 +128,12 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
                 }, "Pagar")
             )
         ),
-        React.createElement('div', { id:"msgConfirmOT", className: 'modal fade bd-example-modal-sm', 'data-bs-backdrop':'static', 'data-keyboard':'false', style: { overflow: 'hidden', marginTop: '60px' } },
-            React.createElement('div', { className: 'modal-dialog', role: 'document' },
+        React.createElement('div', { id:"msgConfirmOT", 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
+            React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmOT").modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal('msgConfirmOT')}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -142,7 +142,7 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {$("#msgConfirmOT").modal("hide")},
+                                onClick: () => {closeModal('msgConfirmOT')},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),

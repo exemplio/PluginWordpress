@@ -47,7 +47,7 @@ function callServices(url, method, headers, body, auth){
 function callServicesAjax(url, body){
 	return new Promise((resolve,reject) => {
 		ActiveLoading();
-		$.ajax({
+		jQuery.ajax({
             url: url,
             type: 'POST',
             data: {
@@ -120,7 +120,7 @@ function processResponse(res){
 	   status=res?.status;
 		if(status==202 || status=="202" || status=="403" || status==403 || status=="401" || status==401){
 			sendModalValue("msgError","Error: Ha ocurrido un problema. Por favor, recarga la página");
-			$("#msgError").modal("show");			
+			openModal('msgError');			
 			return;
 		}
 	}

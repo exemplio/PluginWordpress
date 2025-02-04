@@ -14,5 +14,6 @@ final class My_Custom_Gateway_Blocks extends AbstractPaymentMethodType {
     public function is_active() {
 		  return ! empty( $this->settings[ 'enabled' ] ) && 'yes' === $this->settings[ 'enabled' ];
     }
+
 }
 ?>

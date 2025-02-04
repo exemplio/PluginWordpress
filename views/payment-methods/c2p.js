@@ -28,60 +28,60 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
     const verifyDataC2P = () => {
         if (idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         if (idDocC2pValue==null || idDocC2pValue==undefined || idDocC2pValue=="" || idDocC2pValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el número de documento");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             setIdDocC2p(idDocC2pValue+"".trim().toUpperCase());
             if(idDocTypeValue!="P"){
                 if(!utils_keyNumber(idDocC2pValue)){
                     sendModalValue("msgWarning","El formato del número de documento es incorrecto");
-                    $("#msgWarning").modal("show");
+                    openModal('msgWarning');
                     return;
                 }
             }
         }
         if (prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el prefijo del teléfono");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         if (phoneC2PValue==null || phoneC2PValue==undefined || phoneC2PValue=="" || phoneC2PValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el número del teléfono");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             var phone=(phoneC2PValue+"").trim().replace("-","");
             if(phone.length!=7){
                 sendModalValue("msgWarning","El número del teléfono esta incompleto");
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }else{
                 if(!utils_keyNumber(phone)){
                     sendModalValue("msgWarning","El número del teléfono sólo acepta números");
-                    $("#msgWarning").modal("show");
+                    openModal('msgWarning');
                     return;
                 }
             }
         }
         if (bancoSelectedValue==null || bancoSelectedValue==undefined || bancoSelectedValue=="" || bancoSelectedValue=="null") {
             sendModalValue("msgWarning","Debe seleccionar el banco pagador");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;            
         }
         if (otpValue==null || otpValue==undefined || otpValue=="" || otpValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el OTP");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             setOtp((otpValue+"").trim());
             if (otpValue.length<4) {
                 sendModalValue("msgWarning","El OTP esta incompleto");
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
         }
@@ -98,7 +98,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                 otp: otpValue                
             }
         }
-        $("#msgConfirmC2P").modal("show");
+        openModal("msgConfirmC2P");
     };
     const setTooltip= (banco) => {
         let aux=findBankInfo(banco)
@@ -235,7 +235,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                         style: { width: '50px' },
                         onClick: () => changeTypeInputShow('otp', ojitoOperacion, setOjitoOperacion)
                     },
-                        React.createElement("img", { src: ojitoOperacion, height: "18px", width: "18px", alt: "Toggle visibility" })
+                        React.createElement("img", { src: ojitoOperacion, height: "18px", width: "18px", alt: "Toggle visibility", style:{ margin: '0px' } })
                     ),
                 ),
             ),
@@ -267,12 +267,12 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                 React.createElement('div', { id: `tooltip-${metodoColeccion?.product_name}` })
             )
         ),
-        React.createElement('div', { id:"msgConfirmC2P", 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
-            React.createElement('div', { className: 'modal-dialog', role: 'document' },
+        React.createElement('div', { id:"msgConfirmC2P", 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
+            React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$("#msgConfirmC2P").modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal('msgConfirmC2P')}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -281,7 +281,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {$("#msgConfirmC2P").modal("hide")},
+                                onClick: () => {closeModal('msgConfirmC2P')},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),

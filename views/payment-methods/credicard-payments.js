@@ -47,8 +47,8 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     }
     React.useEffect(() => {
         if (modalValue=="PRUEBA") {
-            $(document).ready(function() {
-                $(`#expiration${metodoColeccion?.product_name}`).mask("00/00", {reverse: true});
+            jQuery(document).ready(function() {
+                jQuery(`#expiration${metodoColeccion?.product_name}`).mask("00/00", {reverse: true});
             });                                    
         }
     }, []);
@@ -79,7 +79,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
 			tarjeta=tarjeta+"".trim();
 			if(tarjeta.length<13){
                 sendModalValue("msgError","La tarjeta debe poseer al menos 13 dígitos");
-                $("#msgError").modal("show");
+                openModal('msgError');
 				return;
 			}
             if(!(tarjeta.indexOf("X")>-1)){
@@ -89,7 +89,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
             }
 			if(!utils_keyNumber(tarjeta)){
                 sendModalValue("msgError","El formato del número de tarjeta es incorrecto");
-                $("#msgError").modal("show");
+                openModal('msgError');
 				return;
 			}
             let element={};
@@ -101,7 +101,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     callServicesHttp('verify-card',query,body).then((response) => {
                         if (Boolean(response.code)) { 
                             sendModalValue("msgError",processMessageError(response,mensajeAll));
-                            $("#msgError").modal("show");
+                            openModal('msgError');
                             return;
                         }else{
                             formattedCardInfo(response);
@@ -116,27 +116,27 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     const verifyExpiration = (expiration) => {
         if (expiration==null || expiration==undefined || expiration=="" || expiration=="null") {
             sendModalValue("msgWarning","Debe ingresar la fecha de expiración de la tarjeta");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             if(expiration.length<4){
                 setExpiration("");
                 sendModalValue("msgWarning","La fecha de expiración tiene formato incorrecto");         
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
             month=parseInt(expiration.split("/")[0]);
             if(month<1 || month>12){
                 setExpiration("");
                 sendModalValue("msgWarning","El mes de expiración de la tarjeta tiene formato incorrecto");         
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
             year=parseInt(expiration.split("/")[1]);
             if(!Boolean(year)){
                 setExpiration("");
                 sendModalValue("msgWarning","El año de expiración de la tarjeta tiene formato incorrecto");         
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
         }
@@ -191,7 +191,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         }else{
                             sendModalValue("msgWarning",translate("message_warning_1"));
                             setErrorTarjeta(translate("message_warning_1"));
-                            $("#msgWarning").modal("show");
+                            openModal('msgWarning');
                             return;
                         }
                     }
@@ -199,7 +199,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     if (metodoColeccion?.type=="TDD") {
                         sendModalValue("msgWarning",translate("message_warning_1"));
                         setErrorTarjeta(translate("message_warning_1"));
-                        $("#msgWarning").modal("show");
+                        openModal('msgWarning');
                         return;
                     }
 					setBankType("INTERNATIONAL");
@@ -211,7 +211,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 if (metodoColeccion?.type=="TDD") {
                     sendModalValue("msgWarning",translate("message_warning_1"));
                     setErrorTarjeta(translate("message_warning_1"));
-                    $("#msgWarning").modal("show");
+                    openModal('msgWarning');
                     return;
                 }
 				setBankType("INTERNATIONAL");
@@ -235,7 +235,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
     const sendBankToken = () => {		
         if (idDocValue==null || idDocValue==undefined || idDocValue=="" || idDocValue=="null") {   
             sendModalValue("msgWarning","Debe ingresar el número de documento");         
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         let body = { bank_code: bankCode, rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`}
@@ -244,15 +244,15 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         callServicesHttp('send-bank-token',querys,body).then((response) => {
             if (response == null || response == undefined || response == "") {                    
                 sendModalValue("msgError",processMessageError(response,mensajeAll));
-                $("#msgError").modal("show");
+                openModal('msgError');
                 return;
             }
             if (response.status_http != 200) {                    
                 sendModalValue("msgError",processMessageError(response,mensajeAll));
-                $("#msgError").modal("show");
+                openModal('msgError');
                 return;
             } else{					
-                $("#msgToken").modal("show");
+                closeModal('msgToken');
                 return;
             }
         }).catch((e)=>{
@@ -285,15 +285,15 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         callServicesHttp('send-token-with-card',querys,body).then((response) => {
             if (response == null || response == undefined || response == "") {
                 sendModalValue("msgError",mensajeAll);
-                $("#msgError").modal("show");
+                openModal('msgError');
                 return;
             }
             if (response.status_http != 200) {
                 sendModalValue("msgError",processMessageError(response, mensajeAll));
-                $("#msgError").modal("show");
+                openModal('msgError');
                 return;
             } else{
-                $("#msgToken").modal("show");
+                closeModal('msgToken');
                 return;
             }
         }).catch((e)=>{
@@ -305,66 +305,66 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         let pinToSend;
         if (cardHolderValue==null || cardHolderValue==undefined || cardHolderValue=="" || cardHolderValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el nombre del tarjetahabiente");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         if (documentTypeValue==null || documentTypeValue==undefined || documentTypeValue=="" || documentTypeValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }
         if (idDocValue==null || idDocValue==undefined || idDocValue=="" || idDocValue=="null") {   
             sendModalValue("msgWarning","Debe ingresar el número de documento");         
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             setIdDoc(idDocValue+"".trim().toUpperCase());
             if(documentTypeValue!="P"){
                 if(!utils_keyNumber(idDocValue)){
                     sendModalValue("msgWarning","El formato del número de documento es incorrecto");         
-                    $("#msgWarning").modal("show");
+                    openModal('msgWarning');
                     return;
                 }
             }
         }
         if (nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="") {
             sendModalValue("msgWarning","Debe ingresar el número de tarjeta");         
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             if (!(errorTarjetaValue==null || errorTarjetaValue==undefined || errorTarjetaValue=="")) {
                 sendModalValue("msgWarning","La verificación de tarjeta dio el siguiente error: "+errorTarjetaValue);         
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
         }
         if (expirationValue==null || expirationValue==undefined || expirationValue=="" || expirationValue=="null") {
             sendModalValue("msgWarning","Debe ingresar la fecha de expiración de la tarjeta");         
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             if(expirationValue.length<4){
                 sendModalValue("msgWarning","La fecha de expiración tiene formato incorrecto");         
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
             month=parseInt(expirationValue.split("/")[0]);
             if(month<1 || month>12){
                 sendModalValue("msgWarning","El mes de expiración de la tarjeta tiene formato incorrecto");         
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
             year=parseInt(expirationValue.split("/")[1]);
             if(!Boolean(year)){
                 sendModalValue("msgWarning","El año de expiración de la tarjeta tiene formato incorrecto");         
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
         }
         if (metodoColeccion?.product_name=='TDD_API') {
             if (pinValue==null || pinValue==undefined || pinValue=="") {
                 sendModalValue("msgWarning","Debe ingresar el PIN");
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }else{
                 setPin((pinValue+"").trim());
@@ -374,30 +374,30 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         pinToSend=RSA.encrypt(pinValue, $key);
                     }else{
                         sendModalValue("msgWarning","Formato del pin incorrecto deben ser de 4-6 números");
-                        $("#msgWarning").modal("show");
+                        openModal('msgWarning');
                         return;
                     }
                 }else{
                     sendModalValue("msgWarning","La longitud del PIN es incorrecta debe ser 4-6 números");
-                    $("#msgWarning").modal("show");
+                    openModal('msgWarning');
                     return;
                 }  
             }
         }
         if (ccvValue==null || ccvValue==undefined || ccvValue=="") {
             sendModalValue("msgWarning","Debe ingresar el ccv");
-            $("#msgWarning").modal("show");
+            openModal('msgWarning');
             return;
         }else{
             setCcv(ccvValue+"".trim());
             if(!utils_keyNumber(ccvValue)){
                 sendModalValue("msgWarning","El formato del cvv es incorrecto, se aceptan sólo números y debe ser 3 o 4 caracteres");
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
             if(ccvValue.length<3 || ccvValue.length>4){
                 sendModalValue("msgWarning","El formato del cvv es incorrecto, se aceptan sólo números y debe ser 3 o 4 caracteres");
-                $("#msgWarning").modal("show");
+                openModal('msgWarning');
                 return;
             }
         }
@@ -406,7 +406,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 if (showOtpCcr) {
                     sendModalValue("msgWarning",translate("message_warning_1"));
                     setErrorTarjeta(translate("message_warning_1"));
-                    $("#msgWarning").modal("show");
+                    openModal('msgWarning');
                     return;
                 }else if(showOtpBank){
                     jsonTosend= {
@@ -467,7 +467,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 }
                 // checkCommision(metodoColeccion?.type);
                 setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
-                $(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("show");
+                openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
                 break;
             case 'TDC_API':
                 if (showOtpCcr) {
@@ -525,7 +525,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 }
                 // checkCommision(metodoColeccion?.type);
                 setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
-                $(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("show");
+                openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
                 break;
             default:
                 break;
@@ -546,21 +546,21 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         callServicesHttp('get-commision', querys, data).then((response) => {   
 			if (response == null || response == undefined || response == "") {
 				sendModalValue("msgError",mensajeAll);
-				$("#msgError").modal("show");
+				openModal('msgError');
 				return;
 			}else{
                 if (!(response.code==null || response.code==undefined || response.code=="")) {
                     sendModalValue("msgError",processMessageError(response, mensajeAll));
-                    $("#msgError").modal("show");
+                    openModal('msgError');
                     return;
                 }else{
                     if (Boolean(response.code)) {
                         sendModalValue("msgError",processMessageError(response, mensajeAll));
-                        $("#msgError").modal("show");
+                        openModal('msgError');
                         return;
                     }else{
                         setAmountToShow(response?.amount_formatted);
-                        $(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("show");
+                        openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
                         return;
                     }
                 }
@@ -693,7 +693,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
         }
     }
     const setMaskMonto = () =>{
-		$(`#token_ccr${metodoColeccion?.product_name}`).mask("#.##0,00", {reverse: true});	
+		jQuery(`#token_ccr${metodoColeccion?.product_name}`).mask("#.##0,00", {reverse: true});	
 		var el=document.getElementById(`token_ccr${metodoColeccion?.product_name}`);
 		if (typeof el.selectionStart == "number") {
 			el.selectionStart = el.selectionEnd = el.value.length;
@@ -867,7 +867,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
                         onClick: () => changeTypeInputShowCard(nroTarjetaValue,`nroTarjeta${metodoColeccion?.product_name}`, ojitoTarjetaValue, setOjitoTarjeta)
                     },
-                        React.createElement("img", { src: ojitoTarjetaValue, height: "18px", width: "18px", alt: "Toggle card visibility" })
+                        React.createElement("img", { src: ojitoTarjetaValue, height: "18px", width: "18px", alt: "Toggle card visibility", style:{ margin: '0px' } })
                     )
                 )
             ),
@@ -913,7 +913,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
                         onClick: () => changeTypeInputShow(`ccv${metodoColeccion?.product_name}`, ojitoCcvValue, setOjitoCcv)
                     },
-                        React.createElement("img", { src: ojitoCcvValue, height: "18px", width: "18px", alt: "Toggle CCV visibility" })
+                        React.createElement("img", { src: ojitoCcvValue, height: "18px", width: "18px", alt: "Toggle CCV visibility", style:{ margin: '0px' }})
                     ),
                 ),
             ),
@@ -957,7 +957,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
                         onClick: () => changeTypeInputShow('pin', ojitoPinValue, setPinTarjeta)
                     },
-                        React.createElement("img", { src: ojitoPinValue, height: "18px", width: "18px", alt: "Toggle PIN visibility" })
+                        React.createElement("img", { src: ojitoPinValue, height: "18px", width: "18px", alt: "Toggle PIN visibility", style:{ margin: '0px' } })
                     )
                 )
             ),
@@ -1059,12 +1059,12 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
             React.createElement("img", { src: visa, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: master_card, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
-        React.createElement('div', { id:`msgConfirmCredicard${metodoColeccion?.product_name}`, 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
-            React.createElement('div', { className: 'modal-dialog', role: 'document' },
+        React.createElement('div', { id:`msgConfirmCredicard${metodoColeccion?.product_name}`, 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
+            React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {$(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("hide")}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name}`)}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -1073,7 +1073,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {$(`#msgConfirmCredicard${metodoColeccion?.product_name}`).modal("hide")},
+                                onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name}`)},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
