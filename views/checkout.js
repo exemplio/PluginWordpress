@@ -167,7 +167,7 @@ const Accordion = () => {
                 }
             }).catch((e)=>{
                 HideLoading();
-                sendModalValue("msgError",processMessageError(e,mensajeAll));
+                sendModalValue("msgError",e?.responseJSON?.message);
                 openModal('msgError');
                 return;
             });            

@@ -905,7 +905,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                             value: ccvValue,
                             onChange: (e) => setCcv(e.currentTarget.value),
                         }),
-                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.product_name}`}, "CCV")
+                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.product_name}`, className: "font-regular"}, "CCV")
                     ),
                     React.createElement("button", {
                         type: "button",

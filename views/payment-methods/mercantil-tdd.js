@@ -25,6 +25,8 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
         }
     }, []);
     const verifyExpiration = (expiration) => {
+        let month=0;
+        let year=0;
         if (expiration==null || expiration==undefined || expiration=="" || expiration=="null") {
             sendModalValue("msgWarning","Debe ingresar la fecha de expiración de la tarjeta");
             openModal('msgWarning');
@@ -68,8 +70,8 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
 		let querys = "?product_name="+metodoColeccion?.product_name+"&collect_method_id="+metodoColeccion?.id+"&channel_id="+getChannelId();
         let mensajeAll = _("message_err_1");
         let parametros={};
-        parametros.card_number=this.nro_tarjeta;
-        parametros.payer_id_doc=`${this.id_doc_type}${addZeros(this.id_doc, 9)}`;
+        parametros.card_number=nroTarjetaValue;
+        parametros.payer_id_doc=`${documentTypeValue}${addZeros(idDocValue, 9)}`;
         callServicesHttp("mercantil-send-otp", querys, parametros).then((data) => {
             if (data == null || data == undefined || data == "") {
                 sendModalValue("msgWarning","Error al solicitar clave dinámica de Mercantil");         
@@ -135,7 +137,7 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
                 openModal('msgWarning');
                 return;
             }
-            year=parseInt(expirationValue.split("/")[1]);
+            year=parseInt("20"+expirationValue.split("/")[1]);
             if(!Boolean(year)){
                 sendModalValue("msgWarning","El año de expiración de la tarjeta tiene formato incorrecto");         
                 openModal('msgWarning');
@@ -159,20 +161,32 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
                 return;
             }
         }
+        let typeAccount;
+        if (tipoCuentaValue==null || tipoCuentaValue==undefined || tipoCuentaValue=="") {
+            sendModalValue("msgWarning","Debe ingresar el tipo de cuenta");
+            openModal('msgWarning');
+            return;
+        }else{
+            if(tipoCuentaValue=="CORRIENTE"){
+                typeAccount= "CC";
+            }else{
+                typeAccount="CA";
+            }
+        }
         jsonTosend= {
             collect_method_id: metodoColeccion.id,
             amount: php_var.cart_total,
             payment:{
                 amount: php_var.cart_total,
-                card_number: "4444444444444444444",
-                expiration_month: 1,
-                expiration_year: 2024,
-                payer_id_doc: "V111111111",
-                cvv: "1111",
-                account_type: "CC",
-                otp: "1111111111"
+                card_number: nroTarjetaValue,
+                expiration_month: month,
+                expiration_year: year,
+                payer_id_doc: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
+                cvv: ccvValue,
+                account_type: typeAccount,
+                otp: tokenBank
             }
-        };
+        };        
         setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
         openModal(`msgConfirmMercantil${metodoColeccion?.credential_service}`);
     }
@@ -327,7 +341,7 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
                             value: ccvValue,
                             onChange: (e) => setCcv(e.currentTarget.value),
                         }),
-                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.credential_service}`}, "CCV")
+                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.credential_service}`, className: "font-regular"}, "CCV")
                     ),
                     React.createElement("button", {
                         type: "button",
@@ -404,12 +418,12 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
             React.createElement("label", { className: 'font-bold' }, "Procesado por: "),
             React.createElement("img", { src: mercantil, className: 'mini-size-img max-width-important', height: "40px", style: { objectFit: 'contain' } }),
         ),
-        React.createElement('div', { id:`msgConfirmMercantil${metodoColeccion?.credential_service}`, 'data-bs-backdrop':'static', 'data-keyboard':'false', className: 'modal fade bd-example-modal-sm', style: { overflow: 'hidden', marginTop: '60px' } },
+        React.createElement('div', { id:`msgConfirmMercantil${metodoColeccion?.credential_service}`, 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name}`)}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.product_name}`)}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -418,7 +432,7 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name}`)},
+                                onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.product_name}`)},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),

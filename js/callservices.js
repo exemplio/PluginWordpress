@@ -21,7 +21,7 @@ function callServices(url, method, headers, body, auth){
 		})
 		.then(response => {
 			if (!response.ok) {
-				if (response?.status == 401 || response?.status == "401" || response?.status == 403 || response?.status == "403") {
+				if (response?.status == 401 || response?.status == "401" || response?.status == 403 || response?.status == "403" || response?.status == 502 || response?.status == "502") {
 					processResponse(response);
 					return;					
 				}
