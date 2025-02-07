@@ -219,7 +219,7 @@ function get_payment_method_script_handles() {
       'bfc' => $bfc,
       'nonce' => wp_create_nonce('wc_store_api'),
       'cart_total' => WC()->cart !== null ? WC()->cart->total : 0,
-      'empty_cart' => content_url('plugins/PluginWordpress/empty-cart.php'),
+      'empty_cart' => admin_url('admin-ajax.php'),
       'customer_info' => admin_url('admin-ajax.php'),
       'url_link' => 'https://apid.paguetodo.com/demo', // demo
       // 'url_link' => 'https://api.paguetodo.com', // prod
@@ -308,31 +308,49 @@ function oawoo_register_order_approval_payment_method_type() {
 add_action('wp_ajax_get_customer_orders', 'get_customer_orders');
 add_action('wp_ajax_nopriv_get_customer_orders', 'get_customer_orders');
 
-    function get_customer_orders() {
-        $data = array(
-            'billing_first_name'  => wc()->customer->get_billing_first_name(),
-            'billing_last_name'   => wc()->customer->get_billing_last_name(),
-            'billing_company'     => wc()->customer->get_billing_company(),
-            'billing_address_1'   => wc()->customer->get_billing_address_1(),
-            'billing_address_2'   => wc()->customer->get_billing_address_2(),
-            'billing_city'        => wc()->customer->get_billing_city(),
-            'billing_state'       => wc()->customer->get_billing_state(),
-            'billing_postcode'    => wc()->customer->get_billing_postcode(),
-            'billing_country'     => wc()->customer->get_billing_country(),
-            'billing_email'       => wc()->customer->get_billing_email(),
-            'billing_phone'       => wc()->customer->get_billing_phone(),
-            'shipping_first_name' => wc()->customer->get_shipping_first_name(),
-            'shipping_last_name'  => wc()->customer->get_shipping_last_name(),
-            'shipping_company'    => wc()->customer->get_shipping_company(),
-            'shipping_address_1'  => wc()->customer->get_shipping_address_1(),
-            'shipping_address_2'  => wc()->customer->get_shipping_address_2(),
-            'shipping_city'       => wc()->customer->get_shipping_city(),
-            'shipping_state'      => wc()->customer->get_shipping_state(),
-            'shipping_postcode'   => wc()->customer->get_shipping_postcode(),
-            'shipping_country'    => wc()->customer->get_shipping_country(),
-            'shipping_phone'      => wc()->customer->get_shipping_phone(),
-        );
-        wp_send_json_success($data);
-    }
+function get_customer_orders() {
+    $data = array(
+        'billing_first_name'  => wc()->customer->get_billing_first_name(),
+        'billing_last_name'   => wc()->customer->get_billing_last_name(),
+        'billing_company'     => wc()->customer->get_billing_company(),
+        'billing_address_1'   => wc()->customer->get_billing_address_1(),
+        'billing_address_2'   => wc()->customer->get_billing_address_2(),
+        'billing_city'        => wc()->customer->get_billing_city(),
+        'billing_state'       => wc()->customer->get_billing_state(),
+        'billing_postcode'    => wc()->customer->get_billing_postcode(),
+        'billing_country'     => wc()->customer->get_billing_country(),
+        'billing_email'       => wc()->customer->get_billing_email(),
+        'billing_phone'       => wc()->customer->get_billing_phone(),
+        'shipping_first_name' => wc()->customer->get_shipping_first_name(),
+        'shipping_last_name'  => wc()->customer->get_shipping_last_name(),
+        'shipping_company'    => wc()->customer->get_shipping_company(),
+        'shipping_address_1'  => wc()->customer->get_shipping_address_1(),
+        'shipping_address_2'  => wc()->customer->get_shipping_address_2(),
+        'shipping_city'       => wc()->customer->get_shipping_city(),
+        'shipping_state'      => wc()->customer->get_shipping_state(),
+        'shipping_postcode'   => wc()->customer->get_shipping_postcode(),
+        'shipping_country'    => wc()->customer->get_shipping_country(),
+        'shipping_phone'      => wc()->customer->get_shipping_phone(),
+    );
+    wp_send_json_success($data);
+}
+
+add_action('wp_ajax_place_order_woo', 'place_order_woo');
+add_action('wp_ajax_nopriv_place_order_woo', 'place_order_woo');
+
+function place_order_woo() {
+  global $woocommerce;
+  $get_order_id = get_transient( 'order_id' );
+  $order = new WC_Order( $get_order_id );
+  $order->update_status('completed', __('Payment received, order completed.', 'Paguetodo Gateway'));
+  wc_reduce_stock_levels( $get_order_id );
+  if(isset($_POST[ $get_order_id.'-admin-note']) && trim($_POST[ $get_order_id.'-admin-note'])!=''){
+    $order->add_order_note(esc_html($_POST[ $get_order_id.'-admin-note']));
+  }
+  WC()->cart->empty_cart();
+  return array(
+    'result' => 'success',
+  );
+}
 
 ?>

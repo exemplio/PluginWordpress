@@ -121,4 +121,5 @@
 	"bad_request":"Error de solicitud",
 	"wallet_device_not_found":"dispositivo no encontrado",
 	"invalid_payer_id_doc":"Documento de identidad inválido",
+	"currency_exchange_rate_not_found":"Tasa de cambio no encontrada",
 };

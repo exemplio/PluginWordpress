@@ -7,8 +7,8 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
 
   public function __construct(){
     $this->id = 'gateway_paguetodo';
-    $this->method_title = __('Paguetodo Gateway', 'my-custom-gateway');
-    $this->method_description = __('Realizar pagos personalizados', 'my-custom-gateway');
+    $this->method_title = __('Paguetodo Gateway', 'gateway_paguetodo');
+    $this->method_description = __('Realizar pagos personalizados', 'gateway_paguetodo');
     // $this->has_fields = true;
     $this->init_form_fields();
     // $this->init_settings();
@@ -25,39 +25,39 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
   public function init_form_fields(){
         $this->form_fields = array(
           'enabled' => array(
-          'title' 		=> __( 'Enable/Disable', 'woocommerce-other-payment-gateway' ),
+          'title' 		=> __( 'Enable/Disable', 'gateway_paguetodo' ),
           'type' 			=> 'checkbox',
-          'label' 		=> __( 'Enable Paguetodo Gateway', 'woocommerce-other-payment-gateway' ),
+          'label' 		=> __( 'Enable Paguetodo Gateway', 'gateway_paguetodo' ),
           'default' 		=> 'yes'
           ),
 
                 'title' => array(
-            'title' 		=> __( 'Method Title', 'woocommerce-other-payment-gateway' ),
+            'title' 		=> __( 'Method Title', 'gateway_paguetodo' ),
             'type' 			=> 'text',
-            'description' 	=> __( 'This controls the title', 'woocommerce-other-payment-gateway' ),
-            'default'		=> __( 'Paguetodo Gateway', 'woocommerce-other-payment-gateway' ),
+            'description' 	=> __( 'This controls the title', 'gateway_paguetodo' ),
+            'default'		=> __( 'Paguetodo Gateway', 'gateway_paguetodo' ),
             'desc_tip'		=> true,
           ),
           'description' => array(
-            'title' => __( 'Customer Message', 'woocommerce-other-payment-gateway' ),
+            'title' => __( 'Customer Message', 'gateway_paguetodo' ),
             'type' => 'textarea',
             'css' => 'width:500px;',
             'default' => 'None of the other payment options are suitable for you? please drop us a note about your favourable payment option and we will contact you as soon as possible.',
-            'description' 	=> __( 'The message which you want it to appear to the customer in the checkout page.', 'woocommerce-other-payment-gateway' ),
+            'description' 	=> __( 'The message which you want it to appear to the customer in the checkout page.', 'gateway_paguetodo' ),
           ),
           'text_box_required' => array(
-            'title' 		=> __( 'Make the text field required', 'woocommerce-other-payment-gateway' ),
+            'title' 		=> __( 'Make the text field required', 'gateway_paguetodo' ),
             'type' 			=> 'checkbox',
-            'label' 		=> __( 'Make the text field required', 'woocommerce-other-payment-gateway' ),
+            'label' 		=> __( 'Make the text field required', 'gateway_paguetodo' ),
             'default' 		=> 'no'
           ),
 
           'order_status' => array(
-            'title' => __( 'Order Status After The Checkout', 'woocommerce-other-payment-gateway' ),
+            'title' => __( 'Order Status After The Checkout', 'gateway_paguetodo' ),
             'type' => 'select',
             'options' => wc_get_order_statuses(),
             'default' => 'wc-completed',
-            'description' 	=> __( 'The default order status if this gateway used in payment.', 'woocommerce-other-payment-gateway' ),
+            'description' 	=> __( 'The default order status if this gateway used in payment.', 'gateway_paguetodo' ),
           ),
       );
   }
@@ -70,7 +70,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
    */
   public function admin_options() {
     ?>
-    <h3><?php _e( 'Paguetodo Gateway Settings', 'woocommerce-other-payment-gateway' ); ?></h3>
+    <h3><?php _e( 'Paguetodo Gateway Settings', 'gateway_paguetodo' ); ?></h3>
         <!-- <table>
           <tr>
             <td>Client Id: </td>
@@ -89,22 +89,14 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
   }
 
   public function process_payment( $order_id ) {
-    $order = wc_get_order($order_id);
-
-    if (!$order) {
-        return array(
-            'result' => 'failure',
-            'message' => 'Order not found.'
-        );
-    }
-    $status = 'pending';
-    $order->update_status($status, 'Esperando el pa...');
-
-    // Return success
-    return array(
-        'result' => 'success',
-        'redirect' => $this->get_return_url($order)
-    );
+		global $woocommerce;
+		$order = new WC_Order( $order_id );
+		$order->update_status('pending', __( 'Awaiting payment', 'gateway_paguetodo' ));
+    set_transient( 'order_id', $order_id , MINUTE_IN_SECONDS*1 );
+		return array(
+			'result' => 'success',
+			'redirect' => $this->get_return_url( $order )
+		);
   }
 
   public function payment_fields(){

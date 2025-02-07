@@ -97,6 +97,10 @@ function callServicesHttp(ser,querys,data){
 			request=callServices(_url+'/payco/mercantil_send_otp'+querys,"POST",headers,data,true);
 			return request;
 		}break;
+		case 'get-currency':{
+			request=callServices(_url+'/payco/currency_exchange_rate_last'+querys,"GET",headers,data,true);
+			return request;
+		}break;
 		case 'payment':{
 			request=callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
 			return request;
@@ -105,7 +109,7 @@ function callServicesHttp(ser,querys,data){
 			request=callServicesAjax(querys,data);
 			return request;
 		}break;
-		case 'redirect':{
+		case 'place-order':{
 			request=callServicesAjax(querys,data);
 			return request;
 		}break;
