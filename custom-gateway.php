@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Paguetodo Gateway
+Plugin Name: Servicios Paguetodo
 Description: Botón de pago.
 Version: 1.0.0
 Author: Paguetodo
@@ -342,10 +342,15 @@ function place_order_woo() {
   global $woocommerce;
   $get_order_id = get_transient( 'order_id' );
   $order = new WC_Order( $get_order_id );
-  $order->update_status('completed', __('Payment received, order completed.', 'Paguetodo Gateway'));
+  $order->update_status('completed', __('Payment received, order completed.', 'Servicios Paguetodo'));
   wc_reduce_stock_levels( $get_order_id );
   if(isset($_POST[ $get_order_id.'-admin-note']) && trim($_POST[ $get_order_id.'-admin-note'])!=''){
     $order->add_order_note(esc_html($_POST[ $get_order_id.'-admin-note']));
+  }
+  if (isset($_POST['param_name'])) {
+    $param_value = sanitize_text_field($_POST['param_name']);    
+    $order->set_payment_method_title($param_value);
+    $order->save();
   }
   WC()->cart->empty_cart();
   return array(

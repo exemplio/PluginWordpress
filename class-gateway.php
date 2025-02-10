@@ -7,7 +7,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
 
   public function __construct(){
     $this->id = 'gateway_paguetodo';
-    $this->method_title = __('Paguetodo Gateway', 'gateway_paguetodo');
+    $this->method_title = __('Servicios Paguetodo', 'gateway_paguetodo');
     $this->method_description = __('Realizar pagos personalizados', 'gateway_paguetodo');
     // $this->has_fields = true;
     $this->init_form_fields();
@@ -27,7 +27,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
           'enabled' => array(
           'title' 		=> __( 'Enable/Disable', 'gateway_paguetodo' ),
           'type' 			=> 'checkbox',
-          'label' 		=> __( 'Enable Paguetodo Gateway', 'gateway_paguetodo' ),
+          'label' 		=> __( 'Enable Servicios Paguetodo', 'gateway_paguetodo' ),
           'default' 		=> 'yes'
           ),
 
@@ -35,7 +35,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
             'title' 		=> __( 'Method Title', 'gateway_paguetodo' ),
             'type' 			=> 'text',
             'description' 	=> __( 'This controls the title', 'gateway_paguetodo' ),
-            'default'		=> __( 'Paguetodo Gateway', 'gateway_paguetodo' ),
+            'default'		=> __( 'Servicios Paguetodo', 'gateway_paguetodo' ),
             'desc_tip'		=> true,
           ),
           'description' => array(
@@ -70,7 +70,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
    */
   public function admin_options() {
     ?>
-    <h3><?php _e( 'Paguetodo Gateway Settings', 'gateway_paguetodo' ); ?></h3>
+    <h3><?php _e( 'Servicios Paguetodo Settings', 'gateway_paguetodo' ); ?></h3>
         <!-- <table>
           <tr>
             <td>Client Id: </td>

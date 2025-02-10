@@ -15,6 +15,7 @@ const Accordion = () => {
     const [displayingRif, setDisplayingRif] = React.useState("");
     const [displayingPhone, setDisplayingPhone] = React.useState("");
     const [displayingEmail, setDisplayingEmail] = React.useState("");
+    const [ShowTotalPayment, setShowTotalPayment] = React.useState(false);
     // Obtener credenciales
     const getCredentials = () => {
         let query = "";
@@ -58,6 +59,7 @@ const Accordion = () => {
                     if(Boolean(response)){                        
                         if(response.hasOwnProperty('collect_methods')){
                             setDisplayingEmail(response?.business_email);
+                            setShowTotalPayment(true);
                             response?.collect_methods.map((item) => {
                                 switch (item?.product_name) {
                                     case "TDC_API":
@@ -104,7 +106,7 @@ const Accordion = () => {
             }else{
                 if(!(response?.code==200)){
                     getMethods();
-                    php_var.cart_total = parseFloat((php_var.cart_total * response?.rounded_rate).toFixed(2));                    
+                    php_var.cart_total = parseFloat((php_var.cart_total * response?.rounded_rate).toFixed(2));
                     return;
                 }else{
                     sendModalValue("msgError",processMessageError(response,"Error al obtener la tasa de cambio"));
@@ -278,8 +280,8 @@ const Accordion = () => {
                                     return;
                                 }else{
                                     if(!(responsePayment?.status==200)){
-                                        callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo').then((response) => {
-                                            window.location.href = dataResponse?.payment_result?.redirect_url;                                  
+                                        callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo', translate(responsePayment?.collect_method?.product_name.toLowerCase())).then((response) => {
+                                            window.location.href = dataResponse?.payment_result?.redirect_url;
                                         }).catch((e)=>console.log(e))
                                     }else{
                                         HideLoading();
@@ -476,6 +478,10 @@ const Accordion = () => {
                 )
             ),
             ReceiptValidation && React.createElement(Receipt, { metodoColeccion: "", paymentFun: sendPayment }),
+            ShowTotalPayment && React.createElement("div", { style: { display: 'flex', justifyContent: 'space-between'} },
+                React.createElement("h3", { className: "font-bold", style:{ textAlign : 'right', marginTop:'30px' } }, `Monto a pagar:`),
+                React.createElement("h3", { className: "font-bold custom-font-size", style:{ textAlign : 'right', marginTop:'30px' } }, `Bs. ${parseAmount(php_var.cart_total)}`),
+            ),
         );
 };
 const Content = () => {

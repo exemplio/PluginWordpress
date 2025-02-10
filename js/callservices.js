@@ -44,7 +44,7 @@ function callServices(url, method, headers, body, auth){
 	});
 }
 
-function callServicesAjax(url, body){
+function callServicesAjax(url, body, payment_method){
 	return new Promise((resolve,reject) => {
 		ActiveLoading();
 		jQuery.ajax({
@@ -52,6 +52,7 @@ function callServicesAjax(url, body){
             type: 'POST',
             data: {
                 action: body,
+				param_name: payment_method != undefined ? payment_method : null
             },
             success: function(response) {
                 resolve(response);
@@ -63,7 +64,7 @@ function callServicesAjax(url, body){
 	});
 }
 
-function callServicesHttp(ser,querys,data){
+function callServicesHttp(ser,querys,data,payment_method){
 	let request=null;
 	var headers = {
 		'Content-Type': 'application/json',
@@ -110,7 +111,7 @@ function callServicesHttp(ser,querys,data){
 			return request;
 		}break;
 		case 'place-order':{
-			request=callServicesAjax(querys,data);
+			request=callServicesAjax(querys,data,payment_method);
 			return request;
 		}break;
 		default:{
@@ -183,31 +184,34 @@ function processError(err,msg){
 }
 
 function processMessageError(data,mensaje){
-	if (data.hasOwnProperty('message')) {
-		var auxMsg = "";
-		var titleMsg = "";
-		if (data.message == null || data.message == undefined || data.message == "") {
-			titleMsg =mensaje;
-		} else {
-			data.message=data.message.toLowerCase();
-			titleMsg = translate(data.message);
-		}
-		if (data.hasOwnProperty('cause')) {
-			if (!(data.cause == null || data.cause == undefined || data.cause == "" || data.cause.length == 0)) {
-				for (var i = 0; i < data.cause.length; i++) {
-					if(data.cause[i]!=null){
-						data.cause[i]=data.cause[i].toLowerCase();
-						auxMsg = auxMsg+ " "+ translate(data.cause[i]);
+	if (data?.message) {
+		if (data.hasOwnProperty('message')) {
+			var auxMsg = "";
+			var titleMsg = "";
+			if (data.message == null || data.message == undefined || data.message == "") {
+				titleMsg =mensaje;
+			} else {
+				data.message=data.message.toLowerCase();
+				titleMsg = translate(data.message);
+			}
+			if (data.hasOwnProperty('cause')) {
+				if (!(data.cause == null || data.cause == undefined || data.cause == "" || data.cause.length == 0)) {
+					for (var i = 0; i < data.cause.length; i++) {
+						if(data.cause[i]!=null){
+							data.cause[i]=data.cause[i].toLowerCase();
+							auxMsg = auxMsg+ " "+ translate(data.cause[i]);
+						}
+					}
+					if (auxMsg != "") {
+						titleMsg = titleMsg+ ": " + auxMsg;
 					}
 				}
-				if (auxMsg != "") {
-					titleMsg = titleMsg+ ": " + auxMsg;
-				}
 			}
-		}
-		mensaje = titleMsg;
-		return mensaje;
-	} else {
+			mensaje = titleMsg;
+			return mensaje;
+		}		
+	}
+	 else {
 		return mensaje;
 	}
 }

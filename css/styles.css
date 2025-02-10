@@ -100,3 +100,6 @@
   p {
     padding-bottom: 16px !important;
   }
+  .custom-font-size{
+    font-size: 1.7em !important;
+  }

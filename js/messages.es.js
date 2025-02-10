@@ -122,4 +122,9 @@
 	"wallet_device_not_found":"dispositivo no encontrado",
 	"invalid_payer_id_doc":"Documento de identidad inválido",
 	"currency_exchange_rate_not_found":"Tasa de cambio no encontrada",
+	"mobile_payment":"PAGO MÓVIL C2P", 
+	"tdd_api":"TARJETA DE DÉBITO",
+	"tdc_api":"TARJETA DE CRÉDITO",
+	"mobile_payment_search":"PAGO MÓVIL",
+	"deegle_pay_payment_card_is_locked":"Tarjeta bloqueada",
 };
