@@ -1,4 +1,4 @@
-const CredicardPay = ({ metodoColeccion,paymentFun }) => {
+const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
     let credicard = php_var.credicard;
     let visa = php_var.visa;
     let master_card = php_var.master_card;
@@ -411,13 +411,13 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 }else if(showOtpBank){
                     jsonTosend= {
                         collect_method_id: metodoColeccion.id,
-                        amount: php_var.cart_total,
+                        amount: totalAmount,
                         payment:{
                             reason:	'Pago de servicios CREDICARD PAGOS',
                             currency: "VES",
                             payer_name: cardHolderValue,
                             card_bank_code: bankCode,
-                            amount: php_var.cart_total,
+                            amount: totalAmount,
                             debit_card:{
                                 card_number: numeroOriginalValue,
                                 expiration_month: month,
@@ -441,14 +441,14 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 }else{
                     jsonTosend= {
                         collect_method_id: metodoColeccion.id,
-                        amount: php_var.cart_total,
+                        amount: totalAmount,
                         payment:{
                             product_name: metodoColeccion?.product_name,
                             reason:	'Pago de servicios CREDICARD PAGOS',
                             currency: "VES",
                             payer_name: cardHolderValue,
                             card_bank_code: bankCode,
-                            amount: php_var.cart_total,
+                            amount: totalAmount,
                             debit_card:{
                                 card_number: numeroOriginalValue,
                                 expiration_month: month,
@@ -466,20 +466,20 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     };
                 }
                 // checkCommision(metodoColeccion?.type);
-                setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
+                setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
                 openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
                 break;
             case 'TDC_API':
                 if (showOtpCcr) {
                     jsonTosend= {
                         collect_method_id: metodoColeccion.id,
-                        amount: php_var.cart_total,
+                        amount: totalAmount,
                         payment:{
                             reason: "Pago de servicios CREDICARD PAGOS",
                             currency: "VED",
                             payer_name: cardHolderValue,
                             // card_bank_code: bankCode,
-                            amount: php_var.cart_total,
+                            amount: totalAmount,
                             credit_card: {
                                 card_number: numeroOriginalValue,
                                 expiration_month: month,
@@ -504,13 +504,13 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                 }else{
                     jsonTosend= {
                         collect_method_id: metodoColeccion.id,
-                        amount: php_var.cart_total,
+                        amount: totalAmount,
                         payment:{
                             reason: "Pago de servicios CREDICARD PAGOS",
                             currency: "VED",
                             payer_name: cardHolderValue,
                             card_bank_code: bankCode,
-                            amount: php_var.cart_total,
+                            amount: totalAmount,
                             credit_card: {
                                 card_number: numeroOriginalValue,
                                 expiration_month: month,
@@ -524,7 +524,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                     };
                 }
                 // checkCommision(metodoColeccion?.type);
-                setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
+                setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
                 openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
                 break;
             default:
@@ -536,7 +536,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
 		let request=null;
 		let data={
 			card_number:numeroOriginalValue,
-			amount:php_var.cart_total,
+			amount:totalAmount,
 			currency:"VED",
 			card_type:type,
 			bank_type:bankName,
@@ -1069,7 +1069,7 @@ const CredicardPay = ({ metodoColeccion,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(totalAmount)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

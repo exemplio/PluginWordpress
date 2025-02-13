@@ -1,4 +1,4 @@
-const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
+const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
@@ -28,11 +28,11 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
         jsonTosend= {                        
             product_name: metodoColeccion?.product_name,
             collect_method_id: metodoColeccion?.id,
-            amount: php_var.cart_total,
+            amount: totalAmount,
             bank_account_id: metodoColeccion?.bank_account_id,
             payer_id_doc: payerIdDocValue,
             reference: referenceValue,
-            amount: php_var.cart_total,            
+            amount: totalAmount,            
         }
         openModal("msgConfirmOT");
     }
@@ -138,7 +138,7 @@ const OnlineTransfer = ({ metodoColeccion,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(totalAmount)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

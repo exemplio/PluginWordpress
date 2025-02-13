@@ -78,15 +78,6 @@ function get_payment_method_script_handles() {
       true
     );
     wp_register_script(
-      'receipt_script',
-      plugin_dir_url(__FILE__) . 'views/receipt.js',
-      [
-          'gateway_paguetodo-blocks-integration',
-      ],
-      null,
-      true
-    );
-    wp_register_script(
       'modals_script',
       plugin_dir_url(__FILE__) . 'views/modals.js',
       [
@@ -231,7 +222,6 @@ function get_payment_method_script_handles() {
     wp_enqueue_script('mercantil_payments_script');
     wp_enqueue_script('online_transfer_script');
     wp_enqueue_script('mobile_payment_script');
-    wp_enqueue_script('receipt_script');
     wp_enqueue_script('c2p_script');
     wp_enqueue_script('loading_script');
     wp_enqueue_script('modals_script');

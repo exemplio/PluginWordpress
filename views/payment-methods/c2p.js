@@ -1,4 +1,4 @@
-const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {  
+const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {  
     let bank_image = php_var.bancaribe;
     const [ojitoOperacion, setOjitoOperacion] = React.useState(eyeSolid);
     const [idDocTypeValue, setIdDocType] = React.useState("V");
@@ -87,10 +87,10 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
         }
         jsonTosend= {            
             collect_method_id: metodoColeccion?.id,
-            amount: php_var.cart_total,
+            amount: totalAmount,
             payment: {
                 collect_method_id: metodoColeccion?.id,
-                amount: php_var.cart_total,
+                amount: totalAmount,
                 bank_account_id: metodoColeccion?.bank_account_id,
                 payer_id_doc: `${idDocTypeValue}${addZeros(idDocC2pValue, 9)}`,
                 payer_phone: `${prefixPhoneValue}${phoneC2PValue}`,
@@ -277,7 +277,7 @@ const C2pPayment = ({ metodoColeccion,banco,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(totalAmount)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

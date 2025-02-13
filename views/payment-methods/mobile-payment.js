@@ -1,4 +1,4 @@
-const MobilePayment = ({ metodoColeccion,banco,paymentFun, displayingRif, displayingPhone, displayingEmail }) => {
+const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, displayingRif, displayingPhone, displayingEmail }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
@@ -62,10 +62,10 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun, displayingRif, displa
         }
         jsonTosend= {            
             collect_method_id: metodoColeccion?.id,
-            amount: php_var.cart_total,
+            amount: totalAmount,
             payment: {
                 collect_method_id: metodoColeccion?.id,
-                amount: php_var.cart_total,
+                amount: totalAmount,
                 payer_id_doc: `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`,
                 payer_phone: `${prefixPhoneValue}${phoneP2PValue}`,
                 reference: referenceP2PValue,
@@ -224,7 +224,7 @@ const MobilePayment = ({ metodoColeccion,banco,paymentFun, displayingRif, displa
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(totalAmount)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

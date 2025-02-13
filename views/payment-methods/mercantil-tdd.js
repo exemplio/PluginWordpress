@@ -1,4 +1,4 @@
-const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
+const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
     let mercantil = php_var.mercantil;
     metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;
     const [ojitoCcvValue, setOjitoCcv] = React.useState(eyeSolid);
@@ -175,9 +175,9 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
         }
         jsonTosend= {
             collect_method_id: metodoColeccion.id,
-            amount: php_var.cart_total,
+            amount: totalAmount,
             payment:{
-                amount: php_var.cart_total,
+                amount: totalAmount,
                 card_number: nroTarjetaValue,
                 expiration_month: month,
                 expiration_year: year,
@@ -187,7 +187,7 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
                 otp: tokenBank
             }
         };        
-        setAmountToShow(`Bs. ${parseAmount(php_var.cart_total)}`);
+        setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
         openModal(`msgConfirmMercantil${metodoColeccion?.credential_service}`);
     }
     //Funcion para cambiar un input de type password a text de la tarjeta
@@ -428,7 +428,7 @@ const MercantilTDD = ({ metodoColeccion,paymentFun }) => {
                         )
                     ),
                     React.createElement('div', { className: 'modal-body'},
-                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(php_var.cart_total)}?`)
+                        React.createElement('p', { className: 'font-regular'}, `¿Estás seguro que deseas procesar la transacción por un monto de: Bs. ${parseAmount(totalAmount)}?`)
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',

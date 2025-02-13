@@ -16,6 +16,28 @@ const Accordion = () => {
     const [displayingPhone, setDisplayingPhone] = React.useState("");
     const [displayingEmail, setDisplayingEmail] = React.useState("");
     const [ShowTotalPayment, setShowTotalPayment] = React.useState(false);
+    const [TotalAmount, setTotalAmount] = React.useState("");
+    // Obtener tasa del dia
+    const getCurrency = () => {
+        let query = `?realm=cuyawa&from_currency_code=USD&to_currency_code=VED`;
+        callServicesHttp('get-currency', query, "").then((response) => {
+            if ((Boolean(response?.code))) {
+                sendModalValue("msgError",processMessageError(response,"Error al obtener la tasa de cambio"));
+                openModal('msgError');
+                return;
+            }else{
+                if(!(response?.code==200)){
+                    getMethods();
+                    setTotalAmount(parseFloat((php_var.cart_total * response?.rounded_rate).toFixed(2)));
+                    return;
+                }else{
+                    sendModalValue("msgError",processMessageError(response,"Error al obtener la tasa de cambio"));
+                    openModal('msgError');
+                    return;
+                }
+            }
+        }).catch((e)=>console.log(e))        
+    }
     // Obtener credenciales
     const getCredentials = () => {
         let query = "";
@@ -95,26 +117,6 @@ const Accordion = () => {
         }).catch((e)=>{
             console.error(e);            
         });
-    }
-    const getCurrency = () => {
-        let query = `?realm=cuyawa&from_currency_code=USD&to_currency_code=VED`;
-        callServicesHttp('get-currency', query, "").then((response) => {
-            if ((Boolean(response?.code))) {
-                sendModalValue("msgError",processMessageError(response,"Error al obtener la tasa de cambio"));
-                openModal('msgError');
-                return;
-            }else{
-                if(!(response?.code==200)){
-                    getMethods();
-                    php_var.cart_total = parseFloat((php_var.cart_total * response?.rounded_rate).toFixed(2));
-                    return;
-                }else{
-                    sendModalValue("msgError",processMessageError(response,"Error al obtener la tasa de cambio"));
-                    openModal('msgError');
-                    return;
-                }
-            }
-        }).catch((e)=>console.log(e))        
     }
     const sendPayment = (id,metodoColeccion) => {
         closeModal(id);
@@ -357,7 +359,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDC_API"), paymentFun: sendPayment })
+                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDC_API"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
@@ -380,7 +382,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="CREDICARD_PAGOS_TDD"), paymentFun: sendPayment } )
+                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="CREDICARD_PAGOS_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment } )
                     )
                 )
             ),
@@ -403,7 +405,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(MercantilTDD, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD"), paymentFun: sendPayment } )
+                        React.createElement(MercantilTDD, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment } )
                     )
                 )
             ),
@@ -427,7 +429,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH"), paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
+                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
                     )
                 )
             ),
@@ -450,7 +452,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago C2P Bancaribe"),
-                        React.createElement(C2pPayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT"), paymentFun: sendPayment })
+                        React.createElement(C2pPayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
@@ -473,14 +475,13 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
-                        React.createElement(OnlineTransfer, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH"), paymentFun: sendPayment })
+                        React.createElement(OnlineTransfer, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
-            ReceiptValidation && React.createElement(Receipt, { metodoColeccion: "", paymentFun: sendPayment }),
             ShowTotalPayment && React.createElement("div", { style: { display: 'flex', justifyContent: 'space-between'} },
                 React.createElement("h3", { className: "font-bold", style:{ textAlign : 'right', marginTop:'30px' } }, `Monto a pagar:`),
-                React.createElement("h3", { className: "font-bold custom-font-size", style:{ textAlign : 'right', marginTop:'30px' } }, `Bs. ${parseAmount(php_var.cart_total)}`),
+                React.createElement("h3", { className: "font-bold custom-font-size", style:{ textAlign : 'right', marginTop:'30px' } }, `Bs. ${parseAmount(TotalAmount)}`),
             ),
         );
 };
