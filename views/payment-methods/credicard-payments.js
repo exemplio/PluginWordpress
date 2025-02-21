@@ -242,17 +242,18 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
         let querys = `?product_name=${metodoColeccion?.product_name}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
         let mensajeAll = translate("message_err_4");
         callServicesHttp('send-bank-token',querys,body).then((response) => {
-            if (response == null || response == undefined || response == "") {                    
-                sendModalValue("msgError",processMessageError(response,mensajeAll));
+            if ((Boolean(response?.code))) {
+                if(!(response?.code==200)){
+                    sendModalValue("msgError",processMessageError(response,mensajeAll));
+                    openModal('msgError');
+                    return;
+                }else{
+                    openModal('msgToken');
+                    return;
+                }
+            }else{
+                sendModalValue("msgError",processMessageError(response,"Error al obtener el token"));
                 openModal('msgError');
-                return;
-            }
-            if (response.status_http != 200) {                    
-                sendModalValue("msgError",processMessageError(response,mensajeAll));
-                openModal('msgError');
-                return;
-            } else{					
-                closeModal('msgToken');
                 return;
             }
         }).catch((e)=>{
