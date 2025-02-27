@@ -99,6 +99,11 @@ const Accordion = () => {
                                         setDisplayingRif(item?.id_doc);
                                         setDisplayingPhone(item?.phone);
                                         break;
+                                    case "MOBILE_PAYMENT_SEARCH_API":
+                                        setP2PValidation(true);
+                                        setDisplayingRif(item?.id_doc);
+                                        setDisplayingPhone(item?.phone);
+                                        break;
                                     case "MOBILE_PAYMENT":
                                         setC2PValidation(true);
                                         break;
@@ -429,7 +434,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
-                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
+                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
                     )
                 )
             ),

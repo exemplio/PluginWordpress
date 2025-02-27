@@ -127,5 +127,6 @@
 	"tdc_api":"TARJETA DE CRÉDITO",
 	"mobile_payment_search":"PAGO MÓVIL",
 	"deegle_pay_payment_card_is_locked":"Tarjeta bloqueada",
-	"otp_ccr_is_expired":"Otp expirado"
+	"otp_ccr_is_expired":"Otp expirado",
+	"empty_response":"Respuesta vacía",
 };

@@ -182,6 +182,7 @@ function get_payment_method_script_handles() {
     $mercantil = plugin_dir_url(__FILE__) . 'images/png/mercantil.png';
     $visa = plugin_dir_url(__FILE__) . 'images/png/visa.png';
     $master_card = plugin_dir_url(__FILE__) . 'images/png/master_card.png';
+    $maestro = plugin_dir_url(__FILE__) . 'images/png/maestro.png';
     $venezuela = plugin_dir_url(__FILE__) . 'images/png/venezuela.png';
     $bancaribe = plugin_dir_url(__FILE__) . 'images/png/bancaribe.png';
     $mibanco = plugin_dir_url(__FILE__) . 'images/png/mibanco.png';
@@ -199,6 +200,7 @@ function get_payment_method_script_handles() {
       'mercantil' => $mercantil,
       'visa' => $visa,
       'master_card' => $master_card,
+      'maestro' => $maestro,
       'venezuela' => $venezuela,
       'bancaribe' => $bancaribe,
       'mibanco' => $mibanco,
@@ -212,10 +214,10 @@ function get_payment_method_script_handles() {
       'cart_total' => WC()->cart !== null ? WC()->cart->total : 0,
       'empty_cart' => admin_url('admin-ajax.php'),
       'customer_info' => admin_url('admin-ajax.php'),
-      'url_link' => 'https://apid.paguetodo.com/demo', // demo
-      // 'url_link' => 'https://api.paguetodo.com', // prod
-      'get_static' => 'http://staticd.paguetodo.com/', // demo
-      // 'get_static' => 'http://static.paguetodo.com/', // prod
+      // 'url_link' => 'https://apid.paguetodo.com/demo', // demo
+      'url_link' => 'https://api.paguetodo.com', // prod
+      // 'get_static' => 'http://staticd.paguetodo.com/', // demo
+      'get_static' => 'http://static.paguetodo.com/', // prod
     ]);
     wp_enqueue_script('gateway_paguetodo-blocks-integration');
     wp_enqueue_script('credicard_payments_script');

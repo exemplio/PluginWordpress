@@ -2,6 +2,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
     let credicard = php_var.credicard;
     let visa = php_var.visa;
     let master_card = php_var.master_card;
+    let maestro = php_var.maestro;
     let venezuela = php_var.venezuela;
     let bancaribe = php_var.bancaribe;
     let mibanco = php_var.mibanco;
@@ -1044,7 +1045,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
         ),
         metodoColeccion?.product_name=='TDD_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             React.createElement("label", { className: 'font-bold' }, "Bancos aliados: "),
-            React.createElement("img", { src: master_card, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
+            React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: venezuela, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: bancaribe, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: mibanco, height: "40px" , className: 'mini-size-img', style: { objectFit: 'contain' } }),
