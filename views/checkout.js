@@ -193,128 +193,143 @@ const Accordion = () => {
         let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
         let data = jsonTosend;
         ActiveLoading();
-        jQuery.ajax({
-            url: '../wp-json/wc/store/v1/cart/update-customer',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({            
-                "billing_address": {
-                    "first_name": billing_first_name,
-                    "last_name": billing_last_name,
-                    "address_1": billing_address_1,
-                    "city": billing_city,
-                    "state": billing_state,
-                    "postcode": billing_postcode,
-                    "country": billing_country,
-                    "email": billing_email,
-                    "phone": billing_phone
-                },
-                "shipping_address": {
-                    "first_name": billing_first_name,
-                    "last_name": billing_last_name,
-                    "address_1": billing_address_1,
-                    "city": billing_city,
-                    "state": billing_state,
-                    "postcode": billing_postcode,
-                    "country": billing_country,
-                    "email": billing_email,
-                    "phone": billing_phone
-                },
-                "payment_method": "gateway_paguetodo",
-                "payment_data": [
-                    {
-                    "key": "wc-gateway_paguetodo-new-payment-method",
-                    "value": false
+        callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_true').then((responseChecking) => {
+            if (responseChecking?.success) {
+                jQuery.ajax({
+                    url: '../wp-json/wc/store/v1/cart/update-customer',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({            
+                        "billing_address": {
+                            "first_name": billing_first_name,
+                            "last_name": billing_last_name,
+                            "address_1": billing_address_1,
+                            "city": billing_city,
+                            "state": billing_state,
+                            "postcode": billing_postcode,
+                            "country": billing_country,
+                            "email": billing_email,
+                            "phone": billing_phone
+                        },
+                        "shipping_address": {
+                            "first_name": billing_first_name,
+                            "last_name": billing_last_name,
+                            "address_1": billing_address_1,
+                            "city": billing_city,
+                            "state": billing_state,
+                            "postcode": billing_postcode,
+                            "country": billing_country,
+                            "email": billing_email,
+                            "phone": billing_phone
+                        },
+                        "payment_method": "gateway_paguetodo",
+                        "payment_data": [
+                            {
+                            "key": "wc-gateway_paguetodo-new-payment-method",
+                            "value": false
+                            }
+                        ],
+                    }),
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Nonce', php_var.nonce);
+                    },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function(dataUpdate) {
+                        callServicesHttp('customer-info', php_var.customer_info, 'get_customer_orders').then((responseCustomer) => {
+                            jQuery.ajax({
+                                url: '../wp-json/wc/store/v1/checkout?_locale=site',
+                                method: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({            
+                                    "billing_address": {
+                                        "first_name": responseCustomer?.data?.billing_first_name,
+                                        "last_name": responseCustomer?.data?.billing_last_name,
+                                        "company": responseCustomer?.data?.billing_company,
+                                        "address_1": responseCustomer?.data?.billing_address_1,
+                                        "city": responseCustomer?.data?.billing_city,
+                                        "state": responseCustomer?.data?.billing_state,
+                                        "postcode": responseCustomer?.data?.billing_postcode,
+                                        "country": responseCustomer?.data?.billing_country,
+                                        "email": responseCustomer?.data?.billing_email,
+                                        "phone": responseCustomer?.data?.billing_phone
+                                    },
+                                    "shipping_address": {
+                                        "first_name": responseCustomer?.data?.shipping_first_name,
+                                        "last_name": responseCustomer?.data?.shipping_last_name,
+                                        "company": responseCustomer?.data?.shipping_company,
+                                        "address_1": responseCustomer?.data?.shipping_address_1,
+                                        "city": responseCustomer?.data?.shipping_city,
+                                        "state": responseCustomer?.data?.shipping_state,
+                                        "postcode": responseCustomer?.data?.shipping_postcode,
+                                        "country": responseCustomer?.data?.shipping_country,
+                                        "phone": responseCustomer?.data?.shipping_phone
+                                    },
+                                    "payment_method": "gateway_paguetodo",
+                                    "payment_data": [
+                                        {
+                                        "key": "wc-gateway_paguetodo-new-payment-method",
+                                        "value": false
+                                        }
+                                    ],
+                                }),
+                                beforeSend: function(xhr) {
+                                    xhr.setRequestHeader('Nonce', php_var.nonce);
+                                },
+                                xhrFields: {
+                                    withCredentials: true
+                                },
+                                success: function(dataResponse) {
+                                    callServicesHttp('payment', query, data).then((responsePayment) => {
+                                        if ((Boolean(responsePayment?.code))) {
+                                            callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_false').then((response) => {
+                                                HideLoading();
+                                                sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                                                openModal('msgError');
+                                                return;
+                                            })
+                                        }else{
+                                            if(!(responsePayment?.status==200)){
+                                                let reference_name;
+                                                if (!(responsePayment?.collector_reference==null || responsePayment?.collector_reference==undefined || responsePayment?.collector_reference=="")) {
+                                                    reference_name = `${translate(responsePayment?.collect_method?.product_name.toLowerCase())} #${responsePayment?.collector_reference}`;
+                                                }else{
+                                                    reference_name = translate(responsePayment?.collect_method?.product_name.toLowerCase());
+                                                }
+                                                callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo', reference_name).then((response) => {
+                                                    window.location.href = dataResponse?.payment_result?.redirect_url;
+                                                }).catch((e)=>console.log(e))
+                                            }else{
+                                                callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_false').then((response) => {
+                                                    HideLoading();
+                                                    sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                                                    openModal('msgError');
+                                                    return;
+                                                })
+                                            } 
+                                        }
+                                    }).catch((e)=>console.log(e))                   
+                                }
+                            }).catch((e)=>{
+                                HideLoading();
+                                document.getElementById('msgErrorBody').innerHTML="No se pudo realizar el pago";
+                                openModal('msgError');
+                                return;
+                            });            
+                        }).catch((e)=>{
+                            console.error(e);            
+                        });     
                     }
-                ],
-            }),
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('Nonce', php_var.nonce);
-            },
-            xhrFields: {
-                withCredentials: true
-            },
-            success: function(dataUpdate) {
-                callServicesHttp('customer-info', php_var.customer_info, 'get_customer_orders').then((responseCustomer) => {
-                    jQuery.ajax({
-                        url: '../wp-json/wc/store/v1/checkout?_locale=site',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({            
-                            "billing_address": {
-                                "first_name": responseCustomer?.data?.billing_first_name,
-                                "last_name": responseCustomer?.data?.billing_last_name,
-                                "company": responseCustomer?.data?.billing_company,
-                                "address_1": responseCustomer?.data?.billing_address_1,
-                                "city": responseCustomer?.data?.billing_city,
-                                "state": responseCustomer?.data?.billing_state,
-                                "postcode": responseCustomer?.data?.billing_postcode,
-                                "country": responseCustomer?.data?.billing_country,
-                                "email": responseCustomer?.data?.billing_email,
-                                "phone": responseCustomer?.data?.billing_phone
-                            },
-                            "shipping_address": {
-                                "first_name": responseCustomer?.data?.shipping_first_name,
-                                "last_name": responseCustomer?.data?.shipping_last_name,
-                                "company": responseCustomer?.data?.shipping_company,
-                                "address_1": responseCustomer?.data?.shipping_address_1,
-                                "city": responseCustomer?.data?.shipping_city,
-                                "state": responseCustomer?.data?.shipping_state,
-                                "postcode": responseCustomer?.data?.shipping_postcode,
-                                "country": responseCustomer?.data?.shipping_country,
-                                "phone": responseCustomer?.data?.shipping_phone
-                            },
-                            "payment_method": "gateway_paguetodo",
-                            "payment_data": [
-                                {
-                                "key": "wc-gateway_paguetodo-new-payment-method",
-                                "value": false
-                                }
-                            ],
-                        }),
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Nonce', php_var.nonce);
-                        },
-                        xhrFields: {
-                            withCredentials: true
-                        },
-                        success: function(dataResponse) {
-                            callServicesHttp('payment', query, data).then((responsePayment) => {
-                                if ((Boolean(responsePayment?.code))) {
-                                    HideLoading();
-                                    sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
-                                    openModal('msgError');
-                                    return;
-                                }else{
-                                    if(!(responsePayment?.status==200)){
-                                        callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo', translate(responsePayment?.collect_method?.product_name.toLowerCase())).then((response) => {
-                                            window.location.href = dataResponse?.payment_result?.redirect_url;
-                                        }).catch((e)=>console.log(e))
-                                    }else{
-                                        HideLoading();
-                                        sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
-                                        openModal('msgError');
-                                        return;
-                                    } 
-                                }
-                            }).catch((e)=>console.log(e))                   
-                        }
-                    }).catch((e)=>{
-                        HideLoading();
-                        document.getElementById('msgErrorBody').innerHTML=e?.responseJSON?.message;
-                        openModal('msgError');
-                        return;
-                    });            
                 }).catch((e)=>{
-                    console.error(e);            
-                });     
+                    HideLoading();
+                    sendModalValue("msgError",e?.responseJSON?.message);
+                    openModal('msgError');
+                    return;
+                });                 
             }
-        }).catch((e)=>{
-            HideLoading();
-            sendModalValue("msgError",e?.responseJSON?.message);
-            openModal('msgError');
-            return;
-        }); 
+        }).catch((e)=>console.log(e))
+
         return;
     };
     // Abrir modal de los acordiones

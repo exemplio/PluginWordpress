@@ -26,6 +26,14 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
   public function process_payment( $order_id ) {
 		global $woocommerce;
 		$order = new WC_Order( $order_id );
+    $payment_status = get_transient( 'payment_status' );
+    if (!$payment_status) {
+      wc_add_notice(__('Payment cannot be processed.', ''), 'error');
+      return array(
+          'result' => 'failure',
+          'redirect' => wc_get_checkout_url(),
+      );
+    }
 		$order->update_status('pending', __( 'Awaiting payment', 'gateway_paguetodo' ));
     set_transient( 'order_id', $order_id , MINUTE_IN_SECONDS*1 );
 		return array(
@@ -35,9 +43,14 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
   }
 
   public function payment_fields(){
+    if ( is_user_logged_in() ) {
       ?>
           <div id="root"></div>
-    <?php
+      <?php
+    } else {
+        echo 'Debe iniciar sesión o registrarse para mostrar el método de pago.';
+    }
+
   }
 }
 ?>

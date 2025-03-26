@@ -327,6 +327,22 @@ function get_customer_orders() {
     wp_send_json_success($data);
 }
 
+add_action('wp_ajax_set_payment_status_true', 'set_payment_status_true');
+add_action('wp_ajax_nopriv_set_payment_status_true', 'set_payment_status_true');
+
+function set_payment_status_true() {
+  set_transient( 'payment_status', true , MINUTE_IN_SECONDS*1 );
+  wp_send_json_success();
+}
+
+add_action('wp_ajax_set_payment_status_false', 'set_payment_status_false');
+add_action('wp_ajax_nopriv_set_payment_status_false', 'set_payment_status_false');
+
+function set_payment_status_false() {
+  set_transient( 'payment_status', false , MINUTE_IN_SECONDS*1 );
+  wp_send_json_success();
+}
+
 add_action('wp_ajax_place_order_woo', 'place_order_woo');
 add_action('wp_ajax_nopriv_place_order_woo', 'place_order_woo');
 

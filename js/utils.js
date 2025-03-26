@@ -178,7 +178,7 @@ function getTypesAccountMercantil(){
 	return ['CORRIENTE','AHORRO'];
 }
 function getPrefixArea(){
-	return [{to_show: "(414)", value:"414"},{to_show: "(424)", value:"424"},{to_show: "(412)", value:"412"},{to_show: "(416)", value:"416"},{to_show: "(426)", value:"426"}];
+	return [{to_show: "0414", value:"414"},{to_show: "0424", value:"424"},{to_show: "0412", value:"412"},{to_show: "0416", value:"416"},{to_show: "0426", value:"426"}];
 }
 function translate(s) {
     if (typeof(i18n)!='undefined' && i18n[s]) {
