@@ -10,7 +10,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
     $this->method_title = __('Servicios Paguetodo', 'gateway_paguetodo');
     $this->method_description = __('Realizar pagos personalizados', 'gateway_paguetodo');
     $this->init_form_fields();
-    $this->title = __('Servicios Paguetodo');
+    $this->title = __('Pago móvil');
     $this->description = __('Servicios Paguetodo');
 
 
@@ -28,7 +28,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
 		$order = new WC_Order( $order_id );
     $payment_status = get_transient( 'payment_status' );
     if (!$payment_status) {
-      wc_add_notice(__('Payment cannot be processed.', ''), 'error');
+      wc_add_notice(__('No se puede procesar el pago.', ''), 'error');
       return array(
           'result' => 'failure',
           'redirect' => wc_get_checkout_url(),

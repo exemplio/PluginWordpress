@@ -71,7 +71,7 @@ const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             value: payerIdDocValue,
                             onChange: (e) => setPayerIdDoc(e.currentTarget.value)
                         }),
-                        React.createElement("label", { htmlFor: "id_doc",className: "font-regular" }, "Nro. documento")
+                        React.createElement("label", { htmlFor: "id_doc",className: "font-regular" }, "Documento")
                     )
                 )
             ),

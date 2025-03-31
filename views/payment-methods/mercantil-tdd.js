@@ -283,7 +283,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 // onPaste: (e) => e.preventDefault(),
                                 // onDrag: (e) => e.preventDefault()
                         }),
-                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.credential_service}`,className: "font-regular" }, "Nro. documento")
+                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.credential_service}`,className: "font-regular" }, "Documento")
                     )
                 )
             ),

@@ -337,6 +337,11 @@ const Accordion = () => {
         openModal("msgWarningP2P");
         return;
     }
+    // Abrir modal de los acordiones
+    const RedirectClick = () => {
+        window.open('','_blank').location.href = 'https://www.paguetodo.com/';
+        return;
+    }
     // Esconder todos los acordiones
     const HideAccordions = () => {
         setTDCValidation(false),
@@ -439,7 +444,7 @@ const Accordion = () => {
                         "aria-expanded": "false",
                         "aria-controls": "collapseP2P",
                         onClick: () => OpenAccordionModal()
-                    }, "PAGO MÓVIL")
+                    }, "PAGO P2P")
                 ),
                 React.createElement("div", {
                     id: "collapseP2P",
@@ -448,7 +453,6 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement("h5", { className: "font-bold", }, "Pago Móvil Bancaribe"),
                         React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
                     )
                 )
@@ -471,7 +475,6 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement("h5", { className: "font-bold", }, "Pago C2P Bancaribe"),
                         React.createElement(C2pPayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
@@ -502,6 +505,9 @@ const Accordion = () => {
             ShowTotalPayment && React.createElement("div", { style: { display: 'flex', justifyContent: 'space-between'} },
                 React.createElement("h3", { className: "font-bold", style:{ textAlign : 'right', marginTop:'30px' } }, `Monto a pagar:`),
                 React.createElement("h3", { className: "font-bold custom-font-size", style:{ textAlign : 'right', marginTop:'30px' } }, `Bs. ${parseAmount(TotalAmount)}`),
+            ),
+            ShowTotalPayment && React.createElement("div", { className: "text-muted text-center text-small", style:{ textAlign:'center' } },
+                React.createElement("p", { className: "mt-3", style:{ cursor:'pointer' }, onClick: () => RedirectClick()}, `© 2025 Servicios Paguetodo C.A`),
             ),
         );
 };

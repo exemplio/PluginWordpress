@@ -84,12 +84,12 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
-            React.createElement("img", { src: bank_image, style: { objectFit: 'contain', height: "40px" } }),
-            React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco),
             React.createElement("h4", { className: "font-bold", style: { textTransform: 'uppercase' } }, "REALIZAR PAGO MÓVIL A:"),
-            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "Número de teléfono:" + displayingPhone),
+            React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco),
+            React.createElement("img", { src: bank_image, style: { objectFit: 'contain', height: "40px" } }),
+            React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "Nro. Teléfono: " + `0${displayingPhone}`),
             React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "RIF:"+displayingRif),
-            React.createElement("label", { className: "font-regular" }, "Si tiene problemas para validar su pago, pase el capture con su RIF al siguiente correo: "+ displayingEmail),
+            React.createElement("label", { className: "font-regular" }, "Si tiene inconvenientes para validar su pago, por favor envíe una captura de pantalla junto con su RIF al siguiente correo electrónico: "+ displayingEmail),
         ),
         React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center', marginTop: '40px' } },
             React.createElement("h4", { className: "font-bold", style: { textTransform: 'uppercase' } }, "COLOQUE LOS DATOS DEL PAGO MÓVIL:"),
@@ -122,7 +122,7 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                             value: payerIdDocValue,
                             onChange: (e) => setPayerIdDoc(e.currentTarget.value)
                         }),
-                        React.createElement("label", { htmlFor: "id_doc",className: "font-regular" }, "Nro. documento")
+                        React.createElement("label", { htmlFor: "id_doc",className: "font-regular" }, "Documento")
                     )
                 )
             ),
@@ -153,7 +153,7 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                             value: phoneP2PValue,
                             onChange: (e) => setPhoneP2P(e.currentTarget.value)
                         }),
-                        React.createElement("label", { htmlFor: "phoneP2P",className: "font-regular" }, "Nro. Teléfono")
+                        React.createElement("label", { htmlFor: "phoneP2P",className: "font-regular" }, "Teléfono")
                     )
                 )
             ),
@@ -193,10 +193,10 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
             ),
         ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
-            React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
-                React.createElement("label", { className: 'font-bold', style: {marginRight:'10px'} }, "Procesado por: "),
-                React.createElement("img", { src: bank_image, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
-            ),
+            // React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+            //     React.createElement("label", { className: 'font-bold', style: {marginRight:'10px'} }, "Procesado por: "),
+            //     React.createElement("img", { src: bank_image, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
+            // ),
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
                     type: "button",

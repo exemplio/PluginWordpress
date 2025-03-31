@@ -840,7 +840,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 // onPaste: (e) => e.preventDefault(),
                                 // onDrag: (e) => e.preventDefault()
                             }),
-                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.product_name}`,className: "font-regular" }, "Nro. documento")
+                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.product_name}`,className: "font-regular" }, "Documento")
                     )
                 )
             ),

@@ -153,7 +153,7 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
                             onChange: (e) => setIdDocC2p(e.currentTarget.value),
                             // onBlur: () => verifyDoc(idDoc)
                         }),
-                        React.createElement("label", { htmlFor: "idDocC2p",className: "font-regular" }, "Nro. documento")
+                        React.createElement("label", { htmlFor: "idDocC2p",className: "font-regular" }, "Documento")
                     ),
                 ),
             ),
@@ -184,7 +184,7 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
                             value: phoneC2PValue,
                             onChange: (e) => setPhoneC2P(e.currentTarget.value)
                         }),
-                        React.createElement("label", { htmlFor: "phone_c2p",className: "font-regular" }, "Nro. Teléfono")
+                        React.createElement("label", { htmlFor: "phone_c2p",className: "font-regular" }, "Teléfono")
                     )
                 )
             ),
@@ -226,8 +226,8 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
                             onChange: (e) => setOtp(e.currentTarget.value),
                             onKeyPress: (e) => keypressNumeros(e)
                         }),
-                        React.createElement("label", { htmlFor: `otp`, className: "d-none d-sm-inline-block font-regular" }, "Clave de operaciones"),
-                        React.createElement("label", { htmlFor: `otp`, className: "d-sm-none font-regular" }, "Clave")
+                        React.createElement("label", { htmlFor: `otp`, className: "d-none d-sm-inline-block font-regular" }, "Token"),
+                        React.createElement("label", { htmlFor: `otp`, className: "d-sm-none font-regular" }, "Token")
                     ),
                     React.createElement("button", {
                         type: "button",
@@ -240,10 +240,10 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
                 ),
             ),
         ),
-        React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
-            React.createElement("label", { className: 'font-bold', style: {marginRight:'10px'} }, "Procesado por: "),
-            React.createElement("img", { src: bank_image, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
-        ),
+        // React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+        //     React.createElement("label", { className: 'font-bold', style: {marginRight:'10px'} }, "Procesado por: "),
+        //     React.createElement("img", { src: bank_image, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
+        // ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
