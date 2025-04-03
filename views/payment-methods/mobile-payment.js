@@ -5,7 +5,13 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
     const [phoneP2PValue, setPhoneP2P] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceP2PValue, setP2PReference] = React.useState(null);
+    const [dateP2PValue, setP2Pdate] = React.useState(null);
     let bank_image = php_var.bancaribe;
+    let actualDate = new Date();
+    let year = actualDate.getFullYear();
+    let month = String(actualDate.getMonth() + 1).padStart(2, '0');
+    let day = String(actualDate.getDate()).padStart(2, '0');
+    let formattedDate = `${year}-${month}-${day}`;
     metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;    
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
@@ -59,6 +65,23 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
             sendModalValue("msgWarning","Debe ingresar el número de referencia");
             openModal('msgWarning');
             return;
+        }else{
+            if(referenceP2PValue.length<4){
+                sendModalValue("msgWarning","El número de referencia debe ser de 4 digitos");
+                openModal('msgWarning');
+                return;
+            }
+        }
+        if(dateP2PValue==null || dateP2PValue==undefined || dateP2PValue=="" || dateP2PValue=="null"){
+            sendModalValue("msgWarning","Debe ingresar la fecha de emisión");
+            openModal('msgWarning');
+            return;
+        }else{
+            if (dateP2PValue > formattedDate) {
+                sendModalValue("msgWarning","No puedes ingresar fechas futuras");
+                openModal('msgWarning');
+                return;
+            }
         }
         jsonTosend= {            
             collect_method_id: metodoColeccion?.id,
@@ -69,6 +92,7 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                 payer_id_doc: `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`,
                 payer_phone: `${prefixPhoneValue}${phoneP2PValue}`,
                 reference: referenceP2PValue,
+                date: dateP2PValue,
             }
         }
         openModal("msgConfirmP2P");
@@ -81,6 +105,7 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
         setPhoneP2P("");
         setBank("");
         setP2PReference("");
+        setP2Pdate("");
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
@@ -184,11 +209,26 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                         inputMode: "numeric",
                         id: "reference",
                         name: "reference",
-                        maxLength: "15",
+                        maxLength: "4",
                         value: referenceP2PValue,
                         onChange: (e) => setP2PReference(e.currentTarget.value)
                     }),
-                    React.createElement("label", { htmlFor: "reference",className: "font-regular" }, "Referencia")
+                    React.createElement("label", { htmlFor: "reference",className: "font-regular" }, "Ref. (Últ. 4 dígitos)")
+                )
+            ),
+            React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { marginBottom: '15px' } },
+                React.createElement("div", { className: "form-floating" },
+                    React.createElement("input", {
+                        type: "date",
+                        className: "form-control phone",
+                        onKeyPress: (e) => keypressNumeros(e),
+                        id: "date",
+                        name: "date",
+                        maxLength: "4",
+                        value: dateP2PValue,
+                        onChange: (e) => setP2Pdate(e.currentTarget.value)
+                    }),
+                    React.createElement("label", { htmlFor: "date",className: "font-regular" }, "Fecha de emisión")
                 )
             ),
         ),
