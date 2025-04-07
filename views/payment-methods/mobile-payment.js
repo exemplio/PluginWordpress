@@ -1,18 +1,47 @@
-const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, displayingRif, displayingPhone, displayingEmail }) => {
-    const [idDocTypeValue, setIdDocType] = React.useState("V");
-    const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
-    const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
-    const [phoneP2PValue, setPhoneP2P] = React.useState(null);
-    const [bankValue, setBank] = React.useState(null);
-    const [referenceP2PValue, setP2PReference] = React.useState(null);
-    const [dateP2PValue, setP2Pdate] = React.useState(null);
-    let bank_image = php_var.bancaribe;
+const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEmail }) => {
     let actualDate = new Date();
     let year = actualDate.getFullYear();
     let month = String(actualDate.getMonth() + 1).padStart(2, '0');
     let day = String(actualDate.getDate()).padStart(2, '0');
     let formattedDate = `${year}-${month}-${day}`;
-    metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;    
+    const [idDocTypeValue, setIdDocType] = React.useState("V");
+    const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
+    const [prefixPhoneValue, setPrefixPhone] = React.useState("414");
+    const [phoneP2PValue, setPhoneP2P] = React.useState(null);
+    const [receptorBankValue, setReceptorBank] = React.useState(null);
+    const [bankValue, setBank] = React.useState(null);
+    const [referenceP2PValue, setP2PReference] = React.useState(null);
+    const [dateP2PValue, setP2Pdate] = React.useState(formattedDate);
+    const [displayingRif, setDisplayingRif] = React.useState("");
+    const [displayingPhone, setDisplayingPhone] = React.useState("");
+    const [sendCollectMethod, setSendCollectMethod] = React.useState("");
+    const [bankImage, setBankImage] = React.useState("");
+    let getReceptorBank = [];
+    if (!(metodoColeccion == null || metodoColeccion == undefined || metodoColeccion == "")) {
+        metodoColeccion.map((item) => {
+            getReceptorBank.push(item);
+        })
+        React.useEffect(() => {
+            settingBank(getReceptorBank[0]);
+        }, []);
+    }
+    const settingBank = (value) => {
+        setDisplayingRif(value?.id_doc);
+        setDisplayingPhone(value?.phone);
+        setBankImage(php_var?.get_static+value?.bank_info?.thumbnail);
+        setReceptorBank(value?.bank_info?.name);
+        setSendCollectMethod(value);
+    }
+    const changeBank = (value) => {
+        getReceptorBank.map((item) => {
+            if (item?.bank_info?.name == value) {
+                setDisplayingRif(item?.id_doc);
+                setDisplayingPhone(item?.phone);
+                setBankImage(php_var?.get_static+item?.bank_info?.thumbnail);
+                setSendCollectMethod(item);
+            }
+        });        
+    }
     const verifyDataP2P = () => {
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
@@ -56,8 +85,13 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                 }
             }
         }
+        if(receptorBankValue==null || receptorBankValue==undefined || receptorBankValue=="" || receptorBankValue=="null"){
+            sendModalValue("msgWarning","Debe seleccionar el banco receptor");
+            openModal('msgWarning');
+            return;
+        }
         if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
-            sendModalValue("msgWarning","Debe seleccionar el banco de origen");
+            sendModalValue("msgWarning","Debe seleccionar el banco emisor");
             openModal('msgWarning');
             return;
         }
@@ -84,10 +118,10 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
             }
         }
         jsonTosend= {            
-            collect_method_id: metodoColeccion?.id,
+            collect_method_id: sendCollectMethod?.id,
             amount: totalAmount,
             payment: {
-                collect_method_id: metodoColeccion?.id,
+                collect_method_id: sendCollectMethod?.id,
                 amount: totalAmount,
                 payer_id_doc: `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`,
                 payer_phone: `${prefixPhoneValue}${phoneP2PValue}`,
@@ -106,12 +140,13 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
         setBank("");
         setP2PReference("");
         setP2Pdate("");
+        setReceptorBank("");
+        settingBank(getReceptorBank[0]);
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
             React.createElement("h4", { className: "font-bold", style: { textTransform: 'uppercase' } }, "REALIZAR PAGO MÓVIL A:"),
-            React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco),
-            React.createElement("img", { src: bank_image, style: { objectFit: 'contain', height: "40px" } }),
+            React.createElement("img", { src: bankImage, style: { objectFit: 'contain', height: "40px" } }),
             React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "Nro. Teléfono: " + `0${displayingPhone}`),
             React.createElement("h6", { className: "font-bold", style: { textTransform: 'uppercase' } }, "RIF:"+displayingRif),
             React.createElement("label", { className: "font-regular" }, "Si tiene inconvenientes para validar su pago, por favor envíe una captura de pantalla junto con su RIF al siguiente correo electrónico: "+ displayingEmail),
@@ -186,6 +221,26 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select browser-default font-regular",
+                        name: "receptor_bank",
+                        style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' },
+                        value: receptorBankValue,
+                        onChange: (e) => {
+                            changeBank(e.currentTarget.value),
+                            setReceptorBank(e.currentTarget.value)}
+                    },
+                    React.createElement("option", { value: "", disabled: true, selected: true }, ""),
+                        getReceptorBank.map((item, index) => (
+                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item?.bank_info?.name)
+                        ))
+                    ),
+                    React.createElement("label", { htmlFor: "receptor_bank", className: "d-none d-sm-inline-block font-regular" }, "Banco receptor"),
+                    React.createElement("label", { htmlFor: "receptor_bank", className: "d-sm-none font-regular" }, "Banco receptor")
+                )
+            ),
+            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+                React.createElement("div", { className: "form-floating" },
+                    React.createElement("select", {
+                        className: "form-select browser-default font-regular",
                         name: "bank",
                         style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' },
                         value: bankValue,
@@ -198,6 +253,21 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                     ),
                     React.createElement("label", { htmlFor: "bank", className: "d-none d-sm-inline-block font-regular" }, "Banco pagador"),
                     React.createElement("label", { htmlFor: "bank", className: "d-sm-none font-regular" }, "Banco pagador")
+                )
+            ),
+            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+                React.createElement("div", { className: "form-floating" },
+                    React.createElement("input", {
+                        type: "date",
+                        className: "form-control phone",
+                        onKeyPress: (e) => keypressNumeros(e),
+                        id: "date",
+                        name: "date",
+                        maxLength: "4",
+                        value: dateP2PValue,
+                        onChange: (e) => setP2Pdate(e.currentTarget.value)
+                    }),
+                    React.createElement("label", { htmlFor: "date",className: "font-regular" }, "Fecha de emisión")
                 )
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -216,26 +286,11 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                     React.createElement("label", { htmlFor: "reference",className: "font-regular" }, "Ref. (Últ. 4 dígitos)")
                 )
             ),
-            React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { marginBottom: '15px' } },
-                React.createElement("div", { className: "form-floating" },
-                    React.createElement("input", {
-                        type: "date",
-                        className: "form-control phone",
-                        onKeyPress: (e) => keypressNumeros(e),
-                        id: "date",
-                        name: "date",
-                        maxLength: "4",
-                        value: dateP2PValue,
-                        onChange: (e) => setP2Pdate(e.currentTarget.value)
-                    }),
-                    React.createElement("label", { htmlFor: "date",className: "font-regular" }, "Fecha de emisión")
-                )
-            ),
         ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
             // React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             //     React.createElement("label", { className: 'font-bold', style: {marginRight:'10px'} }, "Procesado por: "),
-            //     React.createElement("img", { src: bank_image, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
+            //     React.createElement("img", { src: bankImage, className: 'mini-size-img', height: "40px", style: { objectFit: 'contain' } }),
             // ),
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
@@ -273,7 +328,7 @@ const MobilePayment = ({ metodoColeccion,banco, totalAmount, paymentFun, display
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => paymentFun('msgConfirmP2P',metodoColeccion),
+                            onClick: () => paymentFun('msgConfirmP2P',sendCollectMethod),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

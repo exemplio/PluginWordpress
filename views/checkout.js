@@ -12,8 +12,6 @@ const Accordion = () => {
     const [OTValidation, setOTValidation] = React.useState(false);
     const [ReceiptValidation, setReceiptValidation] = React.useState(false);
     const [CollectMethod, setCollectMethod] = React.useState("");
-    const [displayingRif, setDisplayingRif] = React.useState("");
-    const [displayingPhone, setDisplayingPhone] = React.useState("");
     const [displayingEmail, setDisplayingEmail] = React.useState("");
     const [ShowTotalPayment, setShowTotalPayment] = React.useState(false);
     const [TotalAmount, setTotalAmount] = React.useState("");
@@ -96,13 +94,9 @@ const Accordion = () => {
                                         break;
                                     case "MOBILE_PAYMENT_SEARCH":
                                         setP2PValidation(true);
-                                        setDisplayingRif(item?.id_doc);
-                                        setDisplayingPhone(item?.phone);
                                         break;
                                     case "MOBILE_PAYMENT_SEARCH_API":
                                         setP2PValidation(true);
-                                        setDisplayingRif(item?.id_doc);
-                                        setDisplayingPhone(item?.phone);
                                         break;
                                     case "MOBILE_PAYMENT":
                                         setC2PValidation(true);
@@ -453,7 +447,7 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingRif, displayingPhone, displayingEmail })
+                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingEmail })
                     )
                 )
             ),
