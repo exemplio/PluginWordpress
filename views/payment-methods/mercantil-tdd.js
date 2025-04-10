@@ -89,8 +89,8 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 }
             }
         }).catch((err) => {
-            sendModalValue("msgWarning","Error al solicitar clave dinámica de Mercantil");         
-            openModal('msgWarning');
+            sendModalValue("msgError","Error al solicitar clave dinámica de Mercantil");         
+            openModal('msgError');
             return;
         });        
 	}
@@ -206,13 +206,15 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
 				}
             }catch(er){
             }
-            if(data.indexOf("X")>-1){
-                setVerifyDisabled(false);
-                setNroTarjeta(numeroOriginalValue);
-            }else{
-                setVerifyDisabled(true);
-                setNroTarjeta(enmascararTarjeta(data));
-                
+            if (data.length>=13) {
+                if(data.indexOf("X")>-1){
+                    setVerifyDisabled(false);
+                    setNroTarjeta(numeroOriginalValue);
+                }else{
+                    setVerifyDisabled(true);
+                    setNroTarjeta(enmascararTarjeta(data));
+                    
+                }
             }
         }
 	}
@@ -307,7 +309,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     ),
                 )
             ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -370,46 +372,46 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     React.createElement("label", { htmlFor: `tipoCuenta${metodoColeccion?.credential_service}`, className: "font-regular", style: { marginBottom: '0px' } }, "Tipo cuenta")
                 )
             ),
-        ),
-        React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
-            React.createElement("div", { className: "form-floating" },
-                React.createElement("input", {
-                    type: "text",
-                    maxLength: 10,
-                    className: "form-control",
-                    id: `token${metodoColeccion?.credential_service}`,
-                    name: `token${metodoColeccion?.credential_service}`,
-                    style: { textTransform: 'uppercase' },
-                    value: tokenBank,
-                    onChange: (e) => setTokenBank(e.target.value),
-                    inputMode: "numeric",
-                    onKeyPress: (e) => keypressNumeros(e)
-                }),
-                React.createElement("label", { htmlFor: `token${metodoColeccion?.credential_service}`, className:'font-regular' }, "Clave dinámica")
-            )
+            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+                React.createElement("div", { className: "form-floating" },
+                    React.createElement("input", {
+                        type: "text",
+                        maxLength: 10,
+                        className: "form-control",
+                        id: `token${metodoColeccion?.credential_service}`,
+                        name: `token${metodoColeccion?.credential_service}`,
+                        style: { textTransform: 'uppercase' },
+                        value: tokenBank,
+                        onChange: (e) => setTokenBank(e.target.value),
+                        inputMode: "numeric",
+                        onKeyPress: (e) => keypressNumeros(e)
+                    }),
+                    React.createElement("label", { htmlFor: `token${metodoColeccion?.credential_service}`, className:'font-regular' }, "Clave dinámica")
+                )
+            ),
         ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
-            React.createElement("div", { className: "col-lg-4 col-md-4 col-sm-4 col-12", style: { textAlign: 'right' } },
+            React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-12 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
                     type: "button",
-                    className: "btn btn-danger btn-lg",
-                    style: { margin: '10px', fontSize: '14px', width: '100%' },
+                    className: "btn btn-danger btn-lg font-regular",
+                    style: { margin: '10px', fontSize: '13px !important', width: '100%', display: 'flex', justifyContent: 'center' },
                     onClick: () => getOTP()
                 }, "Solicitar token")
             ),
-            React.createElement("div", { className: "col-lg-4 col-md-4 col-sm-4 col-12", style: { textAlign: 'right' } },
+            React.createElement("div", { className: "col-lg-3 col-md-3 col-sm-12 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
                     type: "button",
                     className: "btn btn-lg button-clean font-regular",
-                    style: { margin: '10px', fontSize: '14px', width: '100%' },
+                    style: { margin: '10px', fontSize: '13px !important', width: '100%', display: 'flex', justifyContent: 'center' },
                     onClick: () => clean(),
                 }, "Limpiar")
             ),
-            React.createElement("div", { className: "col-lg-4 col-md-4 col-sm-4 col-12", style: { textAlign: 'right' } },
+            React.createElement("div", { className: "col-lg-3 col-md-3 col-sm-12 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
                     type: "button",
                     className: "btn btn btn-lg button-payment font-regular",
-                    style: { margin: '10px', fontSize: '14px', width: '100%' },
+                    style: { margin: '10px', fontSize: '13px !important', width: '100%', display: 'flex', justifyContent: 'center' },
                     onClick: () => verifyData(),
                 }, "Pagar")
             ),
@@ -423,7 +425,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.product_name}`)}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.credential_service}`)}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -432,7 +434,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.product_name}`)},
+                                onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.credential_service}`)},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),

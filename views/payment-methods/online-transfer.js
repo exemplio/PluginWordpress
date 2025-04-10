@@ -115,7 +115,7 @@ const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 React.createElement("button", {
                     type: "button",
                     className: "btn btn-lg button-clean font-regular",
-                    style: { margin: '10px', fontSize: '14px', width: '100%' },
+                    style: { margin: '10px', fontSize: '13px !important', width: '100%' },
                     onClick: () => clean()
                 }, "Limpiar")
             ),
@@ -123,7 +123,7 @@ const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 React.createElement("button", {
                     type: "button",
                     className: "btn btn btn-lg button-payment font-regular",
-                    style: { margin: '10px', fontSize: '14px', width: '100%' },
+                    style: { margin: '10px', fontSize: '13px !important', width: '100%' },
                     onClick: () => verifyDataP2P('PAY')
                 }, "Pagar")
             )

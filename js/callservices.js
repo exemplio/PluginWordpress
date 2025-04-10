@@ -4,44 +4,54 @@ function getBearerToken(){
 	return JSON.parse(localStorage.getItem('authorize-credentials'))?.access_token;
 }
 
-function callServices(url, method, headers, body, auth){
-	return new Promise((resolve, reject) => {
-		if(auth){
-			headers['Authorization']='bearer '+ getBearerToken();
-		}
-		ActiveLoading();
-		fetch(
-			url,
-		{				
-			method: method,
-			headers: headers,
-			processData: false,
-			body: method!= "GET" ? JSON.stringify(body) : null,
-			contentType: "application/json; charset=UTF-8",
-		})
-		.then(response => {
-			if (!response.ok) {
-				if (response?.status == 401 || response?.status == "401" || response?.status == 403 || response?.status == "403" || response?.status == 502 || response?.status == "502") {
-					processResponse(response);
-					return;					
-				}
-				return response.json();
-			}
-			return response.json();
-		})
-		.then(data => {			
-			resolve(data);			
-		})
-		.catch(error => {
-			console.log(processError(error, "Error"));
-			reject(error);
-		})
-		.finally(() => {
-			if (!url.includes('payco/payment')) {
-				HideLoading();				
-			}			
-		})
-	});
+function callServices(url, method, headers, body, auth) {
+    return new Promise((resolve, reject) => {
+        if (auth) {
+            headers['Authorization'] = 'bearer ' + getBearerToken();
+        }
+        ActiveLoading();
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => {
+                reject(new Error('Request timed out after 1 minute'));
+            }, 60000);
+        });
+        const fetchPromise = fetch(url, {
+            method: method,
+            headers: {
+                ...headers,
+                'Content-Type': 'application/json; charset=UTF-8'
+            },
+            body: method !== "GET" ? JSON.stringify(body) : null
+        });
+        Promise.race([fetchPromise, timeoutPromise])
+            .then(response => {
+                if (response instanceof Response) {
+                    if (!response.ok) {
+                        if ([401, 403, 502].includes(response.status)) {
+                            processResponse(response);
+                            return;
+                        }
+                        return response.json();
+                    }
+                    return response.json();
+                }
+                throw new Error('Invalid response');
+            })
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+				sendModalValue("msgError","Error: Ha ocurrido un problema. Por favor, recarga la página");
+                openModal('msgError');				
+                console.log(processError(error, "Error"));
+                reject(error);
+            })
+            .finally(() => {
+                if (!url.includes('payco/payment')) {
+                    HideLoading();
+                }
+            });
+    });
 }
 
 function callServicesAjax(url, body, payment_method){

@@ -10,7 +10,7 @@ class My_Custom_Gateway extends WC_Payment_Gateway {
     $this->method_title = __('Servicios Paguetodo', 'gateway_paguetodo');
     $this->method_description = __('Realizar pagos personalizados', 'gateway_paguetodo');
     $this->init_form_fields();
-    $this->title = __('Pago móvil');
+    $this->title = __('Métodos de pago disponibles');
     $this->description = __('Servicios Paguetodo');
 
 

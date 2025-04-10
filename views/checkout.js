@@ -391,7 +391,7 @@ const Accordion = () => {
                         "data-bs-target": "#collapseTDD",
                         "aria-expanded": "false",
                         "aria-controls": "collapseTDD"
-                    }, "CREDICARDPAGOS DÉBITO")
+                    }, "CREDICARDPAGOS DÉBITO MAESTRO")
                 ),
                 React.createElement("div", {
                     id: "collapseTDD",

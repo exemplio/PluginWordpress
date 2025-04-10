@@ -16,6 +16,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
     const [displayingPhone, setDisplayingPhone] = React.useState("");
     const [sendCollectMethod, setSendCollectMethod] = React.useState("");
     const [bankImage, setBankImage] = React.useState("");
+    const [referenceLength, setReferenceLength] = React.useState("");
     let getReceptorBank = [];
     if (!(metodoColeccion == null || metodoColeccion == undefined || metodoColeccion == "")) {
         metodoColeccion.map((item) => {
@@ -31,6 +32,14 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
         setBankImage(php_var?.get_static+value?.bank_info?.thumbnail);
         setReceptorBank(value?.bank_info?.name);
         setSendCollectMethod(value);
+        switch (value?.credential_service) {
+            case "R4_MOBILE_PAYMENT_SEARCH":
+                setReferenceLength(8);                
+                break;                
+            default:
+                setReferenceLength(4);                
+                break;
+        }
     }
     const changeBank = (value) => {
         getReceptorBank.map((item) => {
@@ -39,6 +48,14 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                 setDisplayingPhone(item?.phone);
                 setBankImage(php_var?.get_static+item?.bank_info?.thumbnail);
                 setSendCollectMethod(item);
+                switch (value?.credential_service) {
+                    case "R4_MOBILE_PAYMENT_SEARCH":
+                        setReferenceLength(8);                
+                        break;                
+                    default:
+                        setReferenceLength(4);                
+                        break;
+                }
             }
         });        
     }
@@ -95,17 +112,6 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
             openModal('msgWarning');
             return;
         }
-        if(referenceP2PValue==null || referenceP2PValue==undefined || referenceP2PValue=="" || referenceP2PValue=="null"){
-            sendModalValue("msgWarning","Debe ingresar el número de referencia");
-            openModal('msgWarning');
-            return;
-        }else{
-            if(referenceP2PValue.length<4){
-                sendModalValue("msgWarning","El número de referencia debe ser de 4 digitos");
-                openModal('msgWarning');
-                return;
-            }
-        }
         if(dateP2PValue==null || dateP2PValue==undefined || dateP2PValue=="" || dateP2PValue=="null"){
             sendModalValue("msgWarning","Debe ingresar la fecha de emisión");
             openModal('msgWarning');
@@ -113,6 +119,17 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
         }else{
             if (dateP2PValue > formattedDate) {
                 sendModalValue("msgWarning","No puedes ingresar fechas futuras");
+                openModal('msgWarning');
+                return;
+            }
+        }
+        if(referenceP2PValue==null || referenceP2PValue==undefined || referenceP2PValue=="" || referenceP2PValue=="null"){
+            sendModalValue("msgWarning","Debe ingresar el número de referencia");
+            openModal('msgWarning');
+            return;
+        }else{
+            if(referenceP2PValue.length<4){
+                sendModalValue("msgWarning","El número de referencia debe ser de 4 digitos");
                 openModal('msgWarning');
                 return;
             }
@@ -139,7 +156,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
         setPhoneP2P("");
         setBank("");
         setP2PReference("");
-        setP2Pdate("");
+        if (referenceLength!=8){setP2Pdate("");}        
         setReceptorBank("");
         settingBank(getReceptorBank[0]);
     };
@@ -255,7 +272,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                     React.createElement("label", { htmlFor: "bank", className: "d-sm-none font-regular" }, "Banco pagador")
                 )
             ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            referenceLength!=8 && React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("input", {
                         type: "date",
@@ -279,7 +296,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                         inputMode: "numeric",
                         id: "reference",
                         name: "reference",
-                        maxLength: "4",
+                        maxLength: referenceLength,
                         value: referenceP2PValue,
                         onChange: (e) => setP2PReference(e.currentTarget.value)
                     }),
@@ -296,7 +313,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                 React.createElement("button", {
                     type: "button",
                     className: "btn btn-lg button-clean font-regular",
-                    style: { margin: '10px', fontSize: '14px', width: '100%' },
+                    style: { margin: '10px', fontSize: '13px !important', width: '100%' },
                     onClick: () => clean()
                 }, "Limpiar")
             ),
@@ -304,7 +321,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                 React.createElement("button", {
                     type: "button",
                     className: "btn btn btn-lg button-payment font-regular",
-                    style: { margin: '10px', fontSize: '14px', width: '100%' },
+                    style: { margin: '10px', fontSize: '13px !important', width: '100%' },
                     onClick: () => verifyDataP2P('PAY')
                 }, "Pagar")
             )

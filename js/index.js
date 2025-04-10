@@ -8,5 +8,6 @@ function getClientSecret(){
 }
 function getChannelId(){
 	return "d71b5f20-d2ba-11ef-a5d5-7f301c3f2f02"; // --> Demo
+	// return "af6331f0-164a-11f0-97a5-671e44067330"; // --> Demo
 	// return "a05b4480-f51c-11ef-ab64-9b51b95fefbd"; // --> Prod
 }
