@@ -20,8 +20,13 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
     React.useEffect(() => {
         if (modalValue=="PRUEBA") {
             jQuery(document).ready(function() {
-                jQuery(`#expiration${metodoColeccion?.credential_service}`).mask("00/00", {reverse: true});
+                jQuery(`#expiration${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`).mask("00/00", {reverse: true});
             });                                    
+        }
+        if (metodoColeccion?.credential_service!=undefined) {
+            metodoColeccion.typeToSend= metodoColeccion?.credential_service;            
+        }else{
+            metodoColeccion.typeToSend= metodoColeccion?.service;
         }
     }, []);
     const verifyExpiration = (expiration) => {
@@ -67,7 +72,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
             openModal('msgWarning');
             return;
         }
-		let querys = "?product_name="+metodoColeccion?.product_name+"&collect_method_id="+metodoColeccion?.id+"&channel_id="+getChannelId();
+		let querys = `?product_name=${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.service}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
         let mensajeAll = _("message_err_1");
         let parametros={};
         parametros.card_number=nroTarjetaValue;
@@ -188,7 +193,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
             }
         };        
         setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
-        openModal(`msgConfirmMercantil${metodoColeccion?.credential_service}`);
+        openModal(`msgConfirmMercantil${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`);
     }
     //Funcion para cambiar un input de type password a text de la tarjeta
     const changeTypeInputShowCard = (data,id,variable,setParam) => {
@@ -256,8 +261,8 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 React.createElement("div", { className: "input-group", style: { marginBottom: '0px' } },
                     React.createElement("select", {
                         className: "input-group-text",
-                        id: `documentType${metodoColeccion?.credential_service}`,
-                        name: `documentType${metodoColeccion?.credential_service}`,
+                        id: `documentType${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
+                        name: `documentType${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
                         required: true,
                         value: documentTypeValue,
                         onChange: (e) => {
@@ -274,8 +279,8 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 maxLength: "9",
                                 className: "form-control",
                                 inputMode: "numeric",
-                                id: `id_doc${metodoColeccion?.credential_service}`,
-                                name: `id_doc${metodoColeccion?.credential_service}`,
+                                id: `id_doc${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
+                                name: `id_doc${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
                                 style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
                                 value: idDocValue,
                                 onChange: (e) => setIdDoc(e.currentTarget.value),
@@ -285,7 +290,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 // onPaste: (e) => e.preventDefault(),
                                 // onDrag: (e) => e.preventDefault()
                         }),
-                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.credential_service}`,className: "font-regular" }, "Documento")
+                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,className: "font-regular" }, "Documento")
                     )
                 )
             ),
@@ -298,14 +303,14 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             autoComplete: "off",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: `nroTarjeta${metodoColeccion?.credential_service}`,
-                            name: `nroTarjeta${metodoColeccion?.credential_service}`,
+                            id: `nroTarjeta${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
+                            name: `nroTarjeta${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             disabled: verifyDisabled,
                             value: nroTarjetaValue,
                             onChange: (e) => setNroTarjeta(e.currentTarget.value),
                         }),
-                        React.createElement("label", { htmlFor: `nroTarjeta${metodoColeccion?.credential_service}`, className: "font-regular" }, "Nro. Tarjeta")
+                        React.createElement("label", { htmlFor: `nroTarjeta${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, className: "font-regular" }, "Nro. Tarjeta")
                     ),
                 )
             ),
@@ -318,8 +323,8 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             maxLength: "5",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: `expiration${metodoColeccion?.credential_service}`,
-                            name: `expiration${metodoColeccion?.credential_service}`,
+                            id: `expiration${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
+                            name: `expiration${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             onKeyUp: (e) => setExpiration(e.currentTarget.value),
                             value: expirationValue,
@@ -329,7 +334,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             onBlur: (e) => verifyExpiration(e.target.value),
                             style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' }
                         }),
-                        React.createElement("label", { htmlFor: `expiration${metodoColeccion?.credential_service}`, className: "font-regular" }, "Expiración")
+                        React.createElement("label", { htmlFor: `expiration${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, className: "font-regular" }, "Expiración")
                     ),
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -337,19 +342,19 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             maxLength: "4",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: `ccv${metodoColeccion?.credential_service}`,
-                            name: `ccv${metodoColeccion?.credential_service}`,
+                            id: `ccv${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
+                            name: `ccv${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             value: ccvValue,
                             onChange: (e) => setCcv(e.currentTarget.value),
                         }),
-                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.credential_service}`, className: "font-regular"}, "CCV")
+                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, className: "font-regular"}, "CCV")
                     ),
                     React.createElement("button", {
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShow(`ccv${metodoColeccion?.credential_service}`, ojitoCcvValue, setOjitoCcv)
+                        onClick: () => changeTypeInputShow(`ccv${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, ojitoCcvValue, setOjitoCcv)
                     },
                         React.createElement("img", { src: ojitoCcvValue, height: "18px", width: "18px", alt: "Toggle CCV visibility", style:{ margin: '0px' } })
                     ),
@@ -359,8 +364,8 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select browser-default font-regular",
-                        id: `tipoCuenta${metodoColeccion?.credential_service}`,
-                        name: `tipoCuenta${metodoColeccion?.credential_service}`,
+                        id: `tipoCuenta${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
+                        name: `tipoCuenta${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
                         required: true,
                         value: tipoCuentaValue,
                         onChange: (e) => setTipoCuenta(e.currentTarget.value)
@@ -369,7 +374,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             React.createElement("option", { key: index, value: item6 }, item6)
                         ))
                     ),
-                    React.createElement("label", { htmlFor: `tipoCuenta${metodoColeccion?.credential_service}`, className: "font-regular", style: { marginBottom: '0px' } }, "Tipo cuenta")
+                    React.createElement("label", { htmlFor: `tipoCuenta${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, className: "font-regular", style: { marginBottom: '0px' } }, "Tipo cuenta")
                 )
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -378,15 +383,15 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                         type: "text",
                         maxLength: 10,
                         className: "form-control",
-                        id: `token${metodoColeccion?.credential_service}`,
-                        name: `token${metodoColeccion?.credential_service}`,
+                        id: `token${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
+                        name: `token${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`,
                         style: { textTransform: 'uppercase' },
                         value: tokenBank,
                         onChange: (e) => setTokenBank(e.target.value),
                         inputMode: "numeric",
                         onKeyPress: (e) => keypressNumeros(e)
                     }),
-                    React.createElement("label", { htmlFor: `token${metodoColeccion?.credential_service}`, className:'font-regular' }, "Clave dinámica")
+                    React.createElement("label", { htmlFor: `token${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, className:'font-regular' }, "Clave dinámica")
                 )
             ),
         ),
@@ -420,12 +425,12 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
             React.createElement("label", { className: 'font-bold' }, "Procesado por: "),
             React.createElement("img", { src: mercantil, className: 'mini-size-img max-width-important', height: "40px", style: { objectFit: 'contain' } }),
         ),
-        React.createElement('div', { id:`msgConfirmMercantil${metodoColeccion?.credential_service}`, 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
+        React.createElement('div', { id:`msgConfirmMercantil${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.credential_service}`)}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`)}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -434,12 +439,12 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.credential_service}`)},
+                                onClick: () => {closeModal(`msgConfirmMercantil${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`)},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => paymentFun(`msgConfirmMercantil${metodoColeccion?.credential_service}`, metodoColeccion),
+                            onClick: () => paymentFun(`msgConfirmMercantil${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

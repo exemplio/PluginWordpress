@@ -7,7 +7,35 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
     const [phoneC2PValue, setPhoneC2P] = React.useState(null);
     const [bancoSelectedValue, setBancoSelected] = React.useState(null);
     const [otpValue, setOtp] = React.useState(null);
-    metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;    
+    const [receptorBankValue, setReceptorBank] = React.useState(null);
+    const [bankImage, setBankImage] = React.useState("");
+    const [sendCollectMethod, setSendCollectMethod] = React.useState("");
+    let getReceptorBank = [];
+    if (!(metodoColeccion == null || metodoColeccion == undefined || metodoColeccion == "")) {
+        metodoColeccion.map((item) => {
+            getReceptorBank.push(item);            
+        })
+        React.useEffect(() => {
+            changeBank(getReceptorBank[0]?.bank_name!=undefined ? getReceptorBank[0]?.bank_name : getReceptorBank[0]?.bank_info?.name);
+        }, []);
+    }
+    const changeBank = (value) => {
+        getReceptorBank.map((item) => {
+            if (Boolean(item?.bank_info?.name)) {
+                if (item?.bank_info?.name == value) {
+                    setBankImage(php_var?.get_static+item?.bank_info?.thumbnail);
+                    setReceptorBank(item?.bank_info?.name);
+                    item.typeToSend = item?.product_name;
+                    setSendCollectMethod(item);
+                }                
+            }else if(item?.bank_name == value){
+                setBankImage(php_var?.get_static+item?.bank_thumbnail);
+                item.typeToSend = "MOBILE_PAYMENT";
+                setSendCollectMethod(item);
+                setReceptorBank(item?.bank_name);
+            }
+        });        
+    } 
     //Funcion para cambiar un input de type password a text
     const changeTypeInputShow = (data,variable,setParam) => {
 		if(!(data==null || data==undefined || data=="")){
@@ -86,12 +114,12 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
             }
         }
         jsonTosend= {            
-            collect_method_id: metodoColeccion?.id,
+            collect_method_id: sendCollectMethod?.id,
             amount: totalAmount,
             payment: {
-                collect_method_id: metodoColeccion?.id,
+                collect_method_id: sendCollectMethod?.id,
                 amount: totalAmount,
-                bank_account_id: metodoColeccion?.bank_account_id,
+                bank_account_id: sendCollectMethod?.bank_account_id,
                 payer_id_doc: `${idDocTypeValue}${addZeros(idDocC2pValue, 9)}`,
                 payer_phone: `${prefixPhoneValue}${phoneC2PValue}`,
                 payer_bank_code: bancoSelectedValue,
@@ -118,11 +146,12 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
         setPhoneC2P("");
         setBancoSelected("");
         setOtp("");
+        changeBank(getReceptorBank[0]?.bank_name!=undefined ? getReceptorBank[0]?.bank_name : getReceptorBank[0]?.bank_info?.name);
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{marginTop:'15px'}},
             React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
-                React.createElement("img", { src: bank_image, style: { objectFit: 'contain', height: "40px" } }),
+                React.createElement("img", { src: bankImage, style: { objectFit: 'contain', height: "40px" } }),
                 React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, banco)
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -191,6 +220,26 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
+                        className: "form-select browser-default font-regular",
+                        name: "receptor_bank",
+                        style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' },
+                        value: receptorBankValue,
+                        onChange: (e) => {
+                            changeBank(e.currentTarget.value),
+                            setReceptorBank(e.currentTarget.value)}
+                    },
+                    React.createElement("option", { value: "", disabled: true, selected: true }, ""),
+                        getReceptorBank.map((item, index) => (
+                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item?.bank_info?.name!=undefined ? item?.bank_info?.name : item?.bank_name)
+                        ))
+                    ),
+                    React.createElement("label", { htmlFor: "receptor_bank", className: "d-none d-sm-inline-block font-regular" }, "Banco receptor"),
+                    React.createElement("label", { htmlFor: "receptor_bank", className: "d-sm-none font-regular" }, "Banco receptor")
+                )
+            ),
+            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+                React.createElement("div", { className: "form-floating" },
+                    React.createElement("select", {
                         className: "form-select",
                         id: `banco_selected_c2p`,
                         name: `banco_selected_c2p`,
@@ -204,13 +253,13 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
                     },
                     React.createElement("option", { value: "", disabled: true, selected: true }, ""),
                         allBanks().map((item, index) => (
-                            React.createElement("option", { key: index, value: item.code, style: { fontSize: '14px' }, className: "font-regular" }, item.name)
+                            React.createElement("option", { key: index, value: item.code, style: { fontSize: '14px' }, className: "font-regular" }, item.name.toUpperCase())
                         ))
                     ),
                     React.createElement("label", { htmlFor: `banco_selected`,className: "font-regular" }, "Banco emisor")
                 ),
             ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("div", { className: "form-floating", style: { width: 'calc(100% - 50px)' } },
                         React.createElement("input", {
@@ -286,7 +335,7 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => paymentFun('msgConfirmC2P',metodoColeccion),
+                            onClick: () => paymentFun('msgConfirmC2P',sendCollectMethod),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

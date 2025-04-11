@@ -15,6 +15,7 @@ const Accordion = () => {
     const [displayingEmail, setDisplayingEmail] = React.useState("");
     const [ShowTotalPayment, setShowTotalPayment] = React.useState(false);
     const [TotalAmount, setTotalAmount] = React.useState("");
+    let { collect_methods, credentials } = CollectMethod;
     // Obtener tasa del dia
     const getCurrency = () => {
         let query = `?realm=cuyawa&from_currency_code=USD&to_currency_code=VED`;
@@ -80,34 +81,72 @@ const Accordion = () => {
                         if(response.hasOwnProperty('collect_methods')){
                             setDisplayingEmail(response?.business_email);
                             setShowTotalPayment(true);
-                            response?.collect_methods.map((item) => {
-                                switch (item?.product_name) {
-                                    case "TDC_API":
-                                        setTDCValidation(true);
-                                        break;
-                                    case "TDD_API":
-                                        if (item?.credential_service=="CREDICARD_PAGOS_TDD") {
-                                            setTDDValidation(true);                                            
-                                        }else{
-                                            setMercantilTDDValidation(true);
-                                        }
-                                        break;
-                                    case "MOBILE_PAYMENT_SEARCH":
-                                        setP2PValidation(true);
-                                        break;
-                                    case "MOBILE_PAYMENT_SEARCH_API":
-                                        setP2PValidation(true);
-                                        break;
-                                    case "MOBILE_PAYMENT":
-                                        setC2PValidation(true);
-                                        break;
-                                    case "TRANSFER_PAYMENT_SEARCH":
-                                        setOTValidation(true);
-                                        break;
-                                    default:
-                                        break
-                                }
-                            });                
+                            let { collect_methods, credentials } = response;
+                                collect_methods.length!=0 ? collect_methods.map((item) => { 
+                                    switch (item?.product_name) {
+                                        case "TDC_API":
+                                            setTDCValidation(true);
+                                            break;
+                                        case "TDD_API":
+                                            switch (item?.credential_service) {
+                                                case "CREDICARD_PAGOS_TDD":
+                                                    setTDDValidation(true);                                            
+                                                    break;
+                                                case "MERCANTIL_TDD":
+                                                    setMercantilTDDValidation(true);
+                                                    break;                                            
+                                                default:
+                                                    break;
+                                            }
+                                            break;
+                                        case "MOBILE_PAYMENT_SEARCH":
+                                            setP2PValidation(true);
+                                            break;
+                                        case "MOBILE_PAYMENT_SEARCH_API":
+                                            setP2PValidation(true);
+                                            break;
+                                        case "MOBILE_PAYMENT":
+                                            setC2PValidation(true);
+                                            break;
+                                        case "TRANSFER_PAYMENT_SEARCH":
+                                            setOTValidation(true);
+                                            break;
+                                        default:
+                                            break
+                                    }
+                                }) : credentials.map((item) => { 
+                                    switch (item?.payment_method) {
+                                        case "TDC":
+                                            setTDCValidation(true);
+                                            break;
+                                        case "TDD":
+                                            switch (item?.service) {
+                                                case "CREDICARD_PAGOS_TDD":
+                                                    setTDDValidation(true);                                            
+                                                    break;
+                                                case "MERCANTIL_TDD":
+                                                    setMercantilTDDValidation(true);
+                                                    break;                                            
+                                                default:
+                                                    break;
+                                            }
+                                            break;
+                                        case "MOBILE_PAYMENT_SEARCH":
+                                            setP2PValidation(true);
+                                            break;
+                                        case "MOBILE_PAYMENT_SEARCH_API":
+                                            setP2PValidation(true);
+                                            break;
+                                        case "C2P":
+                                            setC2PValidation(true);
+                                            break;
+                                        case "TRANSFER_PAYMENT_SEARCH":
+                                            setOTValidation(true);
+                                            break;
+                                        default:
+                                            break
+                                    }
+                                });                                           
                         }
                     }
                     return;
@@ -183,8 +222,8 @@ const Accordion = () => {
                 return;
             }
         }
-        let mensajeAll = "Error al realizar el pago";
-        let query = `?product_name=${metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
+        let mensajeAll = "Error al realizar el pago";        
+        let query = `?product_name=${metodoColeccion?.product_name==undefined ? metodoColeccion?.typeToSend : metodoColeccion?.product_name}&payment_method_id=${metodoColeccion?.id}`;
         let data = jsonTosend;
         ActiveLoading();
         callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_true').then((responseChecking) => {
@@ -286,10 +325,11 @@ const Accordion = () => {
                                         }else{
                                             if(!(responsePayment?.status==200)){
                                                 let reference_name;
+                                                let {collect_method, credentials} = responsePayment;
                                                 if (!(responsePayment?.collector_reference==null || responsePayment?.collector_reference==undefined || responsePayment?.collector_reference=="")) {
-                                                    reference_name = `${translate(responsePayment?.collect_method?.product_name.toLowerCase())} #${responsePayment?.collector_reference}`;
+                                                    reference_name = `${collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase())} #${responsePayment?.collector_reference}`;
                                                 }else{
-                                                    reference_name = translate(responsePayment?.collect_method?.product_name.toLowerCase());
+                                                    reference_name = collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase());
                                                 }
                                                 callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo', reference_name).then((response) => {
                                                     window.location.href = dataResponse?.payment_result?.redirect_url;
@@ -378,7 +418,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDC_API"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(CredicardPay, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDC_API") : credentials.filter((item) => item?.payment_method === "TDC"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
@@ -401,7 +441,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="CREDICARD_PAGOS_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment } )
+                        React.createElement(CredicardPay, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="CREDICARD_PAGOS_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="CREDICARD_PAGOS_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
@@ -424,7 +464,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(MercantilTDD, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment } )
+                        React.createElement(MercantilTDD, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="MERCANTIL_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
@@ -447,7 +487,7 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement(MobilePayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingEmail })
+                        React.createElement(MobilePayment, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API") : credentials.filter((item) => item?.payment_method === "MOBILE_PAYMENT_SEARCH" || item?.payment_method === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingEmail })
                     )
                 )
             ),
@@ -469,7 +509,7 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement(C2pPayment, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(C2pPayment, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT") : credentials.filter((item) => item?.payment_method === "C2P"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
@@ -492,7 +532,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
-                        React.createElement(OnlineTransfer, { metodoColeccion: CollectMethod?.collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(OnlineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),

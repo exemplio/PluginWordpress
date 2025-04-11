@@ -42,20 +42,34 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
     const [bankType, setBankType] = React.useState("");
     const [amountToShow, setAmountToShow] = React.useState("");
     const [rowClass, setRowClass] = React.useState("col-lg-6 col-md-6 col-sm-6 col-12");
+    let tdd_conditional;
+    let tdc_conditional;
+    if (metodoColeccion[0]?.product_name==undefined) {
+        tdd_conditional= metodoColeccion[0]?.payment_method=='TDD';
+        tdc_conditional= metodoColeccion[0]?.payment_method=='TDC';
+    }else{
+        tdd_conditional=metodoColeccion[0]?.product_name=='TDD_API';
+        tdc_conditional=metodoColeccion[0]?.product_name=='TDC_API';
+    }
     if (!(metodoColeccion==null || metodoColeccion==undefined || metodoColeccion=="")) {
         metodoColeccion= metodoColeccion[0];
-        metodoColeccion.type = metodoColeccion?.product_name== "TDC_API" ? "TDC" : "TDD";
+        if (metodoColeccion?.product_name==undefined) {
+            metodoColeccion.type = metodoColeccion?.payment_method;
+            metodoColeccion.typeToSend = metodoColeccion?.payment_method == "TDD" ? "TDD_API" : "TDC_API";
+        }else{
+            metodoColeccion.type = metodoColeccion?.product_name== "TDC_API" ? "TDC" : "TDD";
+        }
     }
     React.useEffect(() => {
         if (modalValue=="PRUEBA") {
             jQuery(document).ready(function() {
-                jQuery(`#expiration${metodoColeccion?.product_name}`).mask("00/00", {reverse: true});
+                jQuery(`#expiration${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).mask("00/00", {reverse: true});
             });                                    
         }
     }, []);
 
     const changeDoc = () => {
-		let typeDoc = document.getElementById(`documentType${metodoColeccion?.product_name}`).value;
+		let typeDoc = document.getElementById(`documentType${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value;
 		if(typeDoc == "V" || typeDoc == "E" || typeDoc == "J" || typeDoc == "G"){
 			setTypeP(false);
 			// this.clean2();
@@ -97,7 +111,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
             if(Boolean(metodoColeccion)){
 				if(metodoColeccion.hasOwnProperty("id")){
                     let mensajeAll = translate("message_err_1");
-                    let query = `?product_name=${metodoColeccion?.product_name}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
+                    let query = `?product_name=${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.typeToSend}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
                     let body= {"card_number":tarjeta};
                     callServicesHttp('verify-card',query,body).then((response) => {
                         if (Boolean(response.code)) { 
@@ -240,7 +254,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
             return;
         }
         let body = { bank_code: bankCode, rif: `${documentTypeValue}${addZeros(idDocValue, 9)}`}
-        let querys = `?product_name=${metodoColeccion?.product_name}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
+        let querys = `?product_name=${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
         let mensajeAll = translate("message_err_4");
         callServicesHttp('send-bank-token',querys,body).then((response) => {
             if ((Boolean(response?.code))) {
@@ -282,7 +296,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
             }         
         };
         let result={};
-        let querys = `?product_name=${metodoColeccion?.product_name}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
+        let querys = `?product_name=${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}&collect_method_id=${metodoColeccion?.id}&channel_id=${getChannelId()}`;
         let mensajeAll = translate("message_err_3");
         callServicesHttp('send-token-with-card',querys,body).then((response) => {
             if (response == null || response == undefined || response == "") {
@@ -363,7 +377,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 return;
             }
         }
-        if (metodoColeccion?.product_name=='TDD_API') {
+        if (tdd_conditional) {
             if (pinValue==null || pinValue==undefined || pinValue=="") {
                 sendModalValue("msgWarning","Debe ingresar el PIN");
                 openModal('msgWarning');
@@ -403,8 +417,8 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 return;
             }
         }
-        switch (metodoColeccion?.product_name) {
-            case 'TDD_API':
+        switch (metodoColeccion?.type) {
+            case 'TDD':
                 if (showOtpCcr) {
                     sendModalValue("msgWarning",translate("message_warning_1"));
                     setErrorTarjeta(translate("message_warning_1"));
@@ -469,9 +483,9 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 }
                 // checkCommision(metodoColeccion?.type);
                 setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
-                openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
+                openModal(`msgConfirmCredicard${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`);
                 break;
-            case 'TDC_API':
+            case 'TDC':
                 if (showOtpCcr) {
                     jsonTosend= {
                         collect_method_id: metodoColeccion.id,
@@ -527,7 +541,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 }
                 // checkCommision(metodoColeccion?.type);
                 setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
-                openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
+                openModal(`msgConfirmCredicard${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`);
                 break;
             default:
                 break;
@@ -562,7 +576,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                         return;
                     }else{
                         setAmountToShow(response?.amount_formatted);
-                        openModal(`msgConfirmCredicard${metodoColeccion?.product_name}`);
+                        openModal(`msgConfirmCredicard${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`);
                         return;
                     }
                 }
@@ -626,7 +640,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
         }
     }
     const moveCursorToEnd = () =>{
-        var el=document.getElementById(`token_ccr${metodoColeccion?.product_name}`);
+        var el=document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`);
         if (typeof el.selectionStart == "number") {
             el.selectionStart = el.selectionEnd = el.value.length;
         } else if (typeof el.createTextRange != "undefined") {
@@ -655,19 +669,19 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                         if(tokenCcr.length==4){
                             if(tokenCcr=="0,00"){
                                 if(event.data==0 || event.data=="0"){
-                                    document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,00";
+                                    document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value="0,00";
                                     return false;
                                 }else{
-                                    document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,0"+event.data;
+                                    document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value="0,0"+event.data;
                                     return false;
                                 }
                             }else{
                                 if(tokenCcr.substring(0,3)=="0,0"){
-                                    document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,"+tokenCcr.charAt(tokenCcr.length-1)+event.data;
+                                    document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value="0,"+tokenCcr.charAt(tokenCcr.length-1)+event.data;
                                     return false;
                                 }else{
                                     if(tokenCcr.charAt(0)=="0" || tokenCcr.charAt(0)==0){
-                                        document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value=tokenCcr.charAt(2)+","+tokenCcr.charAt(3)+event.data;
+                                        document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value=tokenCcr.charAt(2)+","+tokenCcr.charAt(3)+event.data;
                                         return false;
                                     }
                                 }
@@ -681,22 +695,22 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 if(event.inputType=="deleteContentBackward"){
                         if(tokenCcr!=null){
                         if(tokenCcr==""){
-                            document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,00";
+                            document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value="0,00";
                         }else{
                             if(tokenCcr.length==3){
-                                document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,"+tokenCcr.charAt(0)+tokenCcr.charAt(2);
+                                document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value="0,"+tokenCcr.charAt(0)+tokenCcr.charAt(2);
                             }
                         }
                     }else{
-                        document.getElementById(`token_ccr${metodoColeccion?.product_name}`).value="0,00";
+                        document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).value="0,00";
                     }
                 }
             }
         }
     }
     const setMaskMonto = () =>{
-		jQuery(`#token_ccr${metodoColeccion?.product_name}`).mask("#.##0,00", {reverse: true});	
-		var el=document.getElementById(`token_ccr${metodoColeccion?.product_name}`);
+		jQuery(`#token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`).mask("#.##0,00", {reverse: true});	
+		var el=document.getElementById(`token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`);
 		if (typeof el.selectionStart == "number") {
 			el.selectionStart = el.selectionEnd = el.value.length;
 		} else if (typeof el.createTextRange != "undefined") {
@@ -778,8 +792,8 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 React.createElement("div", { className: "form-floating", style: { marginBottom: '0px' } },
                     React.createElement("input", {
                         type: "text",
-                        id: `cardHolder${metodoColeccion?.product_name}`,
-                        name: `cardHolder${metodoColeccion?.product_name}`,
+                        id: `cardHolder${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                        name: `cardHolder${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                         className: "form-control font-regular",
                         style: { textTransform: 'uppercase' },
                         maxLength: "50",
@@ -787,15 +801,15 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                         onChange: (e) => setCardHolder(e.currentTarget.value),
                         onKeyPress: (e) => keypressLetras(e)
                     }),
-                    React.createElement("label", { htmlFor: `cardHolder${metodoColeccion?.product_name}`, className: `font-regular` }, "Nombres y apellidos")
+                    React.createElement("label", { htmlFor: `cardHolder${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, className: `font-regular` }, "Nombres y apellidos")
                 ),                
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group", style: { marginBottom: '0px' } },
                     React.createElement("select", {
                         className: "input-group-text",
-                        id: `documentType${metodoColeccion?.product_name}`,
-                        name: `documentType${metodoColeccion?.product_name}`,
+                        id: `documentType${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                        name: `documentType${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                         required: true,
                         value: documentTypeValue,
                         onChange: (e) => {
@@ -814,8 +828,8 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 maxLength: "9",
                                 className: "form-control",
                                 inputMode: "numeric",
-                                id: `id_doc${metodoColeccion?.product_name}`,
-                                name: `id_doc${metodoColeccion?.product_name}`,
+                                id: `id_doc${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                                name: `id_doc${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                                 style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
                                 value: idDocValue,
                                 onChange: (e) => setIdDoc(e.currentTarget.value),
@@ -830,8 +844,8 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 maxLength: "9",
                                 className: "form-control",
                                 inputMode: "numeric",
-                                id: `id_doc${metodoColeccion?.product_name}`,
-                                name: `id_doc${metodoColeccion?.product_name}`,
+                                id: `id_doc${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                                name: `id_doc${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                                 style: { borderTopLeftRadius: '0px', borderBottomLeftRadius: '0px' },
                                 value: idDocValue,
                                 onChange: (e) => setIdDoc(e.currentTarget.value),
@@ -841,7 +855,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 // onPaste: (e) => e.preventDefault(),
                                 // onDrag: (e) => e.preventDefault()
                             }),
-                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.product_name}`,className: "font-regular" }, "Documento")
+                        React.createElement("label", { htmlFor: `id_doc${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,className: "font-regular" }, "Documento")
                     )
                 )
             ),
@@ -854,21 +868,21 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             autoComplete: "off",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: `nroTarjeta${metodoColeccion?.product_name}`,
-                            name: `nroTarjeta${metodoColeccion?.product_name}`,
+                            id: `nroTarjeta${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                            name: `nroTarjeta${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             disabled: verifyDisabled,
                             value: nroTarjetaValue,
                             onChange: (e) => setNroTarjeta(e.currentTarget.value),
                             onBlur: (e) => getCardInfo(nroTarjetaValue)
                         }),
-                        React.createElement("label", { htmlFor: `nroTarjeta${metodoColeccion?.product_name}`, className: "font-regular" }, "Nro. Tarjeta")
+                        React.createElement("label", { htmlFor: `nroTarjeta${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, className: "font-regular" }, "Nro. Tarjeta")
                     ),
                     React.createElement("button", {
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShowCard(nroTarjetaValue,`nroTarjeta${metodoColeccion?.product_name}`, ojitoTarjetaValue, setOjitoTarjeta)
+                        onClick: () => changeTypeInputShowCard(nroTarjetaValue,`nroTarjeta${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, ojitoTarjetaValue, setOjitoTarjeta)
                     },
                         React.createElement("img", { src: ojitoTarjetaValue, height: "18px", width: "18px", alt: "Toggle card visibility", style:{ margin: '0px' } })
                     )
@@ -883,8 +897,8 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             maxLength: "5",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: `expiration${metodoColeccion?.product_name}`,
-                            name: `expiration${metodoColeccion?.product_name}`,
+                            id: `expiration${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                            name: `expiration${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             onKeyUp: (e) => setExpiration(e.currentTarget.value),
                             value: expirationValue,
@@ -894,7 +908,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             onBlur: (e) => verifyExpiration(e.target.value),
                             style: { borderTopRightRadius: '0px', borderBottomRightRadius: '0px' }
                         }),
-                        React.createElement("label", { htmlFor: `expiration${metodoColeccion?.product_name}`, className: "font-regular" }, "Expiración")
+                        React.createElement("label", { htmlFor: `expiration${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, className: "font-regular" }, "Expiración")
                     ),
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -902,25 +916,25 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             maxLength: "4",
                             className: "form-control font-regular",
                             inputMode: "numeric",
-                            id: `ccv${metodoColeccion?.product_name}`,
-                            name: `ccv${metodoColeccion?.product_name}`,
+                            id: `ccv${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                            name: `ccv${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                             onKeyPress: (e) => keypressNumeros(e),
                             value: ccvValue,
                             onChange: (e) => setCcv(e.currentTarget.value),
                         }),
-                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.product_name}`, className: "font-regular"}, "CCV")
+                        React.createElement("label", { htmlFor: `ccv${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, className: "font-regular"}, "CCV")
                     ),
                     React.createElement("button", {
                         type: "button",
                         className: "btn btn-outline-primary font-regular",
                         style: { width: '20%', margin: '0px', display: 'flex', justifyContent: 'center', alignItems: 'center' },
-                        onClick: () => changeTypeInputShow(`ccv${metodoColeccion?.product_name}`, ojitoCcvValue, setOjitoCcv)
+                        onClick: () => changeTypeInputShow(`ccv${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, ojitoCcvValue, setOjitoCcv)
                     },
                         React.createElement("img", { src: ojitoCcvValue, height: "18px", width: "18px", alt: "Toggle CCV visibility", style:{ margin: '0px' }})
                     ),
                 ),
             ),
-            metodoColeccion?.product_name=='TDD_API' && React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            tdd_conditional && React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select browser-default font-regular",
@@ -937,7 +951,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     React.createElement("label", { htmlFor: "tipoCuenta", className: "font-regular", style: { marginBottom: '0px' } }, "Tipo cuenta")
                 )
             ),
-            metodoColeccion?.product_name=='TDD_API' && React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex", style: { marginBottom: '15px' } },
+            tdd_conditional  && React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 d-flex", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("div", { className: "form-floating" },
                         React.createElement("input", {
@@ -979,13 +993,13 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                         inputMode: "numeric",
                         maxLength: 20,
                         className: "form-control",
-                        id: `token_ccr${metodoColeccion?.product_name}`,
-                        name: `token_ccr${metodoColeccion?.product_name}`,
+                        id: `token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                        name: `token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                         style: { textTransform: 'uppercase' },
                         value: tokenCcr,
                         onChange: (e) => setTokenCcr(e.target.value)
                     }),
-                    React.createElement("label", { htmlFor: `token_ccr${metodoColeccion?.product_name}` }, "Token")
+                    React.createElement("label", { htmlFor: `token_ccr${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}` }, "Token")
                 )
             ),
             showOtpBank && React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
@@ -994,15 +1008,15 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                         type: "text",
                         maxLength: 10,
                         className: "form-control",
-                        id: `token${metodoColeccion?.product_name}`,
-                        name: `token${metodoColeccion?.product_name}`,
+                        id: `token${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
+                        name: `token${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`,
                         style: { textTransform: 'uppercase' },
                         value: tokenBank,
                         onChange: (e) => setTokenBank(e.target.value),
                         inputMode: "numeric",
                         onKeyPress: (e) => keypressNumeros(e)
                     }),
-                    React.createElement("label", { htmlFor: `token${metodoColeccion?.product_name}`, className: "font-regular" }, "Token")
+                    React.createElement("label", { htmlFor: `token${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, className: "font-regular" }, "Token")
                 )
             ),
         ),
@@ -1044,7 +1058,7 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
             React.createElement("label", { className: 'font-bold' }, "Procesado por: "),
             React.createElement("img", { src: credicard, className: 'mini-size-img max-width-important', height: "40px", style: { objectFit: 'contain' } }),
         ),
-        metodoColeccion?.product_name=='TDD_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+        tdd_conditional && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             React.createElement("label", { className: 'font-bold' }, "Bancos aliados: "),
             React.createElement("img", { src: maestro, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: venezuela, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
@@ -1057,17 +1071,17 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
             React.createElement("img", { src: bicentenario, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             // React.createElement("img", { src: bfc, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
-        metodoColeccion?.product_name=='TDC_API' && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+        tdc_conditional && React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
             React.createElement("label", { className: 'font-bold' }, "Marcas aliadas: "),
             React.createElement("img", { src: visa, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
             React.createElement("img", { src: master_card, height: "40px", className: 'mini-size-img', style: { objectFit: 'contain' } }),
         ),
-        React.createElement('div', { id:`msgConfirmCredicard${metodoColeccion?.product_name}`, 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
+        React.createElement('div', { id:`msgConfirmCredicard${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name}`)}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`)}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -1076,12 +1090,12 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name}`)},
+                                onClick: () => {closeModal(`msgConfirmCredicard${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`)},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => paymentFun(`msgConfirmCredicard${metodoColeccion?.product_name}`, metodoColeccion),
+                            onClick: () => paymentFun(`msgConfirmCredicard${metodoColeccion?.product_name!=undefined ? metodoColeccion?.product_name : metodoColeccion?.payment_method}`, metodoColeccion),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

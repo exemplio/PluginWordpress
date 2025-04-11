@@ -123,7 +123,7 @@ function allBanks() {
       },
       {
           code: "0169",
-          name: "Mi Banco, Banco Microfinanciero C.A.",
+          name: "R4 Banco Microfinanciero C.A.",
           rif: "J315941023"
       },
       {

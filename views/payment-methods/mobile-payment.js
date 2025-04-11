@@ -21,34 +21,38 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
     if (!(metodoColeccion == null || metodoColeccion == undefined || metodoColeccion == "")) {
         metodoColeccion.map((item) => {
             getReceptorBank.push(item);
-        })
+        });
         React.useEffect(() => {
-            settingBank(getReceptorBank[0]);
+            changeBank(getReceptorBank[0]?.bank_name!=undefined ? getReceptorBank[0]?.bank_name : getReceptorBank[0]?.bank_info?.name);
         }, []);
-    }
-    const settingBank = (value) => {
-        setDisplayingRif(value?.id_doc);
-        setDisplayingPhone(value?.phone);
-        setBankImage(php_var?.get_static+value?.bank_info?.thumbnail);
-        setReceptorBank(value?.bank_info?.name);
-        setSendCollectMethod(value);
-        switch (value?.credential_service) {
-            case "R4_MOBILE_PAYMENT_SEARCH":
-                setReferenceLength(8);                
-                break;                
-            default:
-                setReferenceLength(4);                
-                break;
-        }
     }
     const changeBank = (value) => {
         getReceptorBank.map((item) => {
-            if (item?.bank_info?.name == value) {
-                setDisplayingRif(item?.id_doc);
-                setDisplayingPhone(item?.phone);
-                setBankImage(php_var?.get_static+item?.bank_info?.thumbnail);
+            if (Boolean(item?.bank_info?.name)) {
+                if (item?.bank_info?.name == value) {
+                    setDisplayingRif(item?.id_doc);
+                    setDisplayingPhone(item?.phone);
+                    setBankImage(php_var?.get_static+item?.bank_info?.thumbnail);
+                    setReceptorBank(item?.bank_info?.name);
+                    item.typeToSend = item?.product_name;
+                    setSendCollectMethod(item);
+                    switch (item?.credential_service) {
+                        case "R4_MOBILE_PAYMENT_SEARCH":
+                            setReferenceLength(8);                
+                            break;                
+                        default:
+                            setReferenceLength(4);                
+                            break;
+                    }
+                }                
+            }else if(item?.bank_name == value){
+                setDisplayingRif(item?.collector_id_doc);
+                setDisplayingPhone(item?.collector_phone);
+                setBankImage(php_var?.get_static+item?.bank_thumbnail);
+                item.typeToSend = item?.payment_method;
                 setSendCollectMethod(item);
-                switch (value?.credential_service) {
+                setReceptorBank(item?.bank_name);
+                switch (item?.service) {
                     case "R4_MOBILE_PAYMENT_SEARCH":
                         setReferenceLength(8);                
                         break;                
@@ -156,9 +160,9 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
         setPhoneP2P("");
         setBank("");
         setP2PReference("");
-        if (referenceLength!=8){setP2Pdate("");}        
+        if (referenceLength<=4){setP2Pdate("");}        
         setReceptorBank("");
-        settingBank(getReceptorBank[0]);
+        changeBank(getReceptorBank[0]?.bank_name!=undefined ? getReceptorBank[0]?.bank_name : getReceptorBank[0]?.bank_info?.name);
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
@@ -247,7 +251,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                     },
                     React.createElement("option", { value: "", disabled: true, selected: true }, ""),
                         getReceptorBank.map((item, index) => (
-                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item?.bank_info?.name)
+                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item?.bank_info?.name!=undefined ? item?.bank_info?.name : item?.bank_name)
                         ))
                     ),
                     React.createElement("label", { htmlFor: "receptor_bank", className: "d-none d-sm-inline-block font-regular" }, "Banco receptor"),
@@ -265,7 +269,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                     },
                     React.createElement("option", { value: "", disabled: true, selected: true }, ""),
                         allBanks().map((item, index) => (
-                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name)
+                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name.toUpperCase())
                         ))
                     ),
                     React.createElement("label", { htmlFor: "bank", className: "d-none d-sm-inline-block font-regular" }, "Banco pagador"),
@@ -287,7 +291,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                     React.createElement("label", { htmlFor: "date",className: "font-regular" }, "Fecha de emisión")
                 )
             ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            React.createElement("div", { className: referenceLength>4 ? "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" : "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("input", {
                         type: "text",
@@ -300,7 +304,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                         value: referenceP2PValue,
                         onChange: (e) => setP2PReference(e.currentTarget.value)
                     }),
-                    React.createElement("label", { htmlFor: "reference",className: "font-regular" }, "Ref. (Últ. 4 dígitos)")
+                    React.createElement("label", { htmlFor: "reference",className: "font-regular" }, referenceLength>4 ? "Referencia" : "Ref. (Últ. 4 dígitos)")
                 )
             ),
         ),
