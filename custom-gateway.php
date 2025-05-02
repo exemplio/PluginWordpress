@@ -52,7 +52,7 @@ function get_payment_method_script_handles() {
     );
     wp_register_script(
       'mercantil_payments_script',
-      plugin_dir_url(__FILE__) . 'views/payment-methods/mercantil-tdd.js',
+      plugin_dir_url(__FILE__) . 'views/payment-methods/mercantil-pagos.js',
       [
           'gateway_paguetodo-blocks-integration',
       ],
@@ -62,6 +62,15 @@ function get_payment_method_script_handles() {
     wp_register_script(
       'online_transfer_script',
       plugin_dir_url(__FILE__) . 'views/payment-methods/online-transfer.js',
+      [
+          'gateway_paguetodo-blocks-integration',
+      ],
+      null,
+      true
+    );
+    wp_register_script(
+      'offline_transfer_script',
+      plugin_dir_url(__FILE__) . 'views/payment-methods/offline-payment.js',
       [
           'gateway_paguetodo-blocks-integration',
       ],
@@ -223,6 +232,7 @@ function get_payment_method_script_handles() {
     wp_enqueue_script('credicard_payments_script');
     wp_enqueue_script('mercantil_payments_script');
     wp_enqueue_script('online_transfer_script');
+    wp_enqueue_script('offline_transfer_script');
     wp_enqueue_script('mobile_payment_script');
     wp_enqueue_script('c2p_script');
     wp_enqueue_script('loading_script');

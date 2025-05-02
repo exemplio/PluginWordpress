@@ -109,3 +109,14 @@
   .text-muted {
       color: #6c757d!important;
   }
+  @media screen and (min-width: 1440px) {
+    .responsive-width {
+      width: 13% !important;
+    }
+  }
+  
+  @media screen and (max-width: 1024px) {
+    .responsive-width {
+      width: 16% !important;
+    }
+  }

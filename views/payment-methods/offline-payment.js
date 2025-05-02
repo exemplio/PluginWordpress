@@ -1,4 +1,4 @@
-const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
+const OfflineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
@@ -62,7 +62,7 @@ const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
             reference: referenceValue,
             amount: totalAmount,            
         }
-        openModal("msgConfirmOT");
+        openModal("msgConfirmOfflinePay");
     }
     const clean = () => { 
         setIdDocType("V");
@@ -176,12 +176,12 @@ const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 }, "Pagar")
             )
         ),
-        React.createElement('div', { id:"msgConfirmOT", 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
+        React.createElement('div', { id:"msgConfirmOfflinePay", 'data-bs-backdrop':'static', 'data-keyboard':'false' , className: 'modal fade bd-example-modal-sm hide modal-backdrop', style: { overflow: 'hidden', textAlign : 'center', paddingLeft: '19px;', display : 'none', opacity: '0.94' } },
             React.createElement('div', { className: 'modal-dialog', role: 'document', style: { marginTop: '60px', } },
                 React.createElement('div', { className: 'modal-content' },
                     React.createElement('div', { className: 'modal-header', style:{justifyContent:'space-between'} },
                         React.createElement('h5',{ className: 'modal-title font-regular' },'Confirmar transacción'),
-                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal('msgConfirmOT')}, 'aria-label': 'Cerrar'},
+                        React.createElement('button',{ type: 'button', className: 'close', onClick: () => {closeModal('msgConfirmOfflinePay')}, 'aria-label': 'Cerrar'},
                             React.createElement('span', { 'aria-hidden': 'true' }, '×')
                         )
                     ),
@@ -190,12 +190,12 @@ const OnlineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     ),
                     React.createElement('div', { className: 'modal-footer' },
                         React.createElement('button',{ type: 'button', className: 'btn btn-secondary',
-                                onClick: () => {closeModal('msgConfirmOT')},
+                                onClick: () => {closeModal('msgConfirmOfflinePay')},
                             },
                             React.createElement('span',{className: 'font-regular' }, 'Cerrar')
                         ),
                         React.createElement('button',{ type: 'button', className: 'btn btn-primary',
-                            onClick: () => paymentFun('msgConfirmOT',sendCollectMethod),
+                            onClick: () => paymentFun('msgConfirmOfflinePay',sendCollectMethod),
                         },
                             React.createElement('span',{className: 'font-regular' }, 'Pagar')
                         ),

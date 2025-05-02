@@ -1,4 +1,4 @@
-const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
+const MercantilPagos = ({ metodoColeccion, totalAmount, paymentFun }) => {
     let mercantil = php_var.mercantil;
     metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;
     const [ojitoCcvValue, setOjitoCcv] = React.useState(eyeSolid);
@@ -101,7 +101,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
 	}
     const verifyData = () => {
         setModalValue("Está seguro de realizar la transacción?");
-        let pinToSend;
+        jsonTosend.payment={};
         if (documentTypeValue==null || documentTypeValue==undefined || documentTypeValue=="" || documentTypeValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
             openModal('msgWarning');
@@ -120,11 +120,14 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     return;
                 }
             }
+            jsonTosend.payment.payer_id_doc= `${documentTypeValue}${addZeros(idDocValue, 9)}`;            
         }
         if (nroTarjetaValue==null || nroTarjetaValue==undefined || nroTarjetaValue=="") {
             sendModalValue("msgWarning","Debe ingresar el número de tarjeta");         
             openModal('msgWarning');
             return;
+        }else{
+            jsonTosend.payment.card_number= nroTarjetaValue;
         }
         if (expirationValue==null || expirationValue==undefined || expirationValue=="" || expirationValue=="null") {
             sendModalValue("msgWarning","Debe ingresar la fecha de expiración de la tarjeta");         
@@ -147,6 +150,9 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 sendModalValue("msgWarning","El año de expiración de la tarjeta tiene formato incorrecto");         
                 openModal('msgWarning');
                 return;
+            }else{
+                jsonTosend.payment.expiration_month= month;
+                jsonTosend.payment.expiration_year= year;
             }
         }
         if (ccvValue==null || ccvValue==undefined || ccvValue=="") {
@@ -164,34 +170,35 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 sendModalValue("msgWarning","El formato del cvv es incorrecto, se aceptan sólo números y debe ser 3 o 4 caracteres");
                 openModal('msgWarning');
                 return;
-            }
-        }
-        let typeAccount;
-        if (tipoCuentaValue==null || tipoCuentaValue==undefined || tipoCuentaValue=="") {
-            sendModalValue("msgWarning","Debe ingresar el tipo de cuenta");
-            openModal('msgWarning');
-            return;
-        }else{
-            if(tipoCuentaValue=="CORRIENTE"){
-                typeAccount= "CC";
             }else{
-                typeAccount="CA";
+                jsonTosend.payment.cvv= ccvValue;
             }
         }
-        jsonTosend= {
-            collect_method_id: metodoColeccion.id,
-            amount: totalAmount,
-            payment:{
-                amount: totalAmount,
-                card_number: nroTarjetaValue,
-                expiration_month: month,
-                expiration_year: year,
-                payer_id_doc: `${documentTypeValue}${addZeros(idDocValue, 9)}`,
-                cvv: ccvValue,
-                account_type: typeAccount,
-                otp: tokenBank
+        if (metodoColeccion?.credential_service=="MERCANTIL_TDD") {
+            if (tipoCuentaValue==null || tipoCuentaValue==undefined || tipoCuentaValue=="") {
+                sendModalValue("msgWarning","Debe ingresar el tipo de cuenta");
+                openModal('msgWarning');
+                return;
+            }else{
+                if(tipoCuentaValue=="CORRIENTE"){
+                    jsonTosend.payment.account_type= "CC";
+                }else{
+                    jsonTosend.payment.account_type="CA";
+                }
             }
-        };        
+        }
+        if (metodoColeccion?.credential_service=="MERCANTIL_TDD") {
+            if (tokenBank==null || tokenBank==undefined || tokenBank=="") {
+                sendModalValue("msgWarning","Debe ingresar la clave dinámica");
+                openModal('msgWarning');
+                return;
+            }else{
+                jsonTosend.payment.otp= tokenBank;
+            }            
+        }
+        jsonTosend.collect_method_id= metodoColeccion.id;
+        jsonTosend.amount= totalAmount;
+        jsonTosend.payment.amount= totalAmount;
         setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
         openModal(`msgConfirmMercantil${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`);
     }
@@ -316,7 +323,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
             ),
             React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
-                    React.createElement("div", { className: "form-floating" },
+                    React.createElement("div", { className: "form-floating responsive-width" },
                         React.createElement("input", {
                             type: "text",
                             autoComplete: "off",
@@ -360,7 +367,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     ),
                 ),
             ),
-            React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            metodoColeccion?.credential_service=="MERCANTIL_TDD" && React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("select", {
                         className: "form-select browser-default font-regular",
@@ -377,7 +384,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     React.createElement("label", { htmlFor: `tipoCuenta${metodoColeccion?.credential_service!=undefined ? metodoColeccion?.credential_service : metodoColeccion?.service}`, className: "font-regular", style: { marginBottom: '0px' } }, "Tipo cuenta")
                 )
             ),
-            React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
+            metodoColeccion?.credential_service=="MERCANTIL_TDD" && React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
                     React.createElement("input", {
                         type: "text",
@@ -396,7 +403,7 @@ const MercantilTDD = ({ metodoColeccion, totalAmount, paymentFun }) => {
             ),
         ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
-            React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-12 col-12", style: { textAlign: 'right' } },
+            metodoColeccion?.credential_service=="MERCANTIL_TDD" && React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-12 col-12", style: { textAlign: 'right' } },
                 React.createElement("button", {
                     type: "button",
                     className: "btn btn-danger btn-lg font-regular",

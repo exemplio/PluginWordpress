@@ -6,10 +6,12 @@ const eyeSlash= php_var.eye_slash;
 const Accordion = () => {
     const [TDCValidation, setTDCValidation] = React.useState(false);
     const [TDDValidation, setTDDValidation] = React.useState(false);
+    const [MercantilTDCValidation, setMercantilTDCValidation] = React.useState(false);
     const [MercantilTDDValidation, setMercantilTDDValidation] = React.useState(false);
     const [P2PValidation, setP2PValidation] = React.useState(false);
     const [C2PValidation, setC2PValidation] = React.useState(false);
     const [OTValidation, setOTValidation] = React.useState(false);
+    const [OFPaymentValidation, setOFPaymentValidation] = React.useState(false);
     const [ReceiptValidation, setReceiptValidation] = React.useState(false);
     const [CollectMethod, setCollectMethod] = React.useState("");
     const [displayingEmail, setDisplayingEmail] = React.useState("");
@@ -85,7 +87,16 @@ const Accordion = () => {
                                 collect_methods.length!=0 ? collect_methods.map((item) => { 
                                     switch (item?.product_name) {
                                         case "TDC_API":
-                                            setTDCValidation(true);
+                                            switch (item?.credential_service) {
+                                                case "CREDICARD_PAGOS_TDC":
+                                                    setTDCValidation(true);                                            
+                                                    break;
+                                                case "MERCANTIL_TDC":
+                                                    setMercantilTDCValidation(true);
+                                                    break;                                            
+                                                default:
+                                                    break;
+                                            }
                                             break;
                                         case "TDD_API":
                                             switch (item?.credential_service) {
@@ -109,7 +120,16 @@ const Accordion = () => {
                                             setC2PValidation(true);
                                             break;
                                         case "TRANSFER_PAYMENT_SEARCH":
-                                            setOTValidation(true);
+                                            switch (item?.credential_service) {
+                                                case "BANCARIBE_TRANSFER_PAYMENT_SEARCH":
+                                                    setOTValidation(true);                                          
+                                                    break;
+                                                case "OFFLINE_PAYMENT":
+                                                    setOFPaymentValidation(true);
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
                                             break;
                                         default:
                                             break
@@ -141,7 +161,16 @@ const Accordion = () => {
                                             setC2PValidation(true);
                                             break;
                                         case "TRANSFER_PAYMENT_SEARCH":
-                                            setOTValidation(true);
+                                            switch (item?.credential_service) {
+                                                case "BANCARIBE_TRANSFER_PAYMENT_SEARCH":
+                                                    setOTValidation(true);                                          
+                                                    break;
+                                                case "OFFLINE_PAYMENT":
+                                                    setOFPaymentValidation(true);
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
                                             break;
                                         default:
                                             break
@@ -445,6 +474,29 @@ const Accordion = () => {
                     )
                 )
             ),
+            MercantilTDCValidation && React.createElement("div", { className: "accordion-item" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingMercantilTDC", style: { margin: '0' } },
+                    React.createElement("button", {
+                        className: "accordion-button collapsed",
+                        type: "button",
+                        "data-bs-toggle": "collapse",
+                        "data-bs-target": "#collapseMercantilTDC",
+                        "aria-expanded": "false",
+                        "aria-controls": "collapseMercantilTDC"
+                    }, "MERCANTIL TDC")
+                ),
+                React.createElement("div", {
+                    id: "collapseMercantilTDC",
+                    className: "accordion-collapse collapse",
+                    "aria-labelledby": "headingMercantilTDC",
+                    "data-bs-parent": "#accordion"
+                },
+                    React.createElement("div", { className: "accordion-body" },
+                        React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
+                        React.createElement(MercantilPagos, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDC_API" && item?.credential_service=="MERCANTIL_TDC") : credentials.filter((item) => item?.payment_method === "TDC" && item?.service=="MERCANTIL_TDC"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                    )
+                )
+            ),
             MercantilTDDValidation && React.createElement("div", { className: "accordion-item" },
                 React.createElement("h2", { className: "accordion-header font-regular", id: "headingMercantilTDD", style: { margin: '0' } },
                     React.createElement("button", {
@@ -464,7 +516,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(MercantilTDD, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="MERCANTIL_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(MercantilPagos, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="MERCANTIL_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
@@ -478,7 +530,7 @@ const Accordion = () => {
                         "aria-expanded": "false",
                         "aria-controls": "collapseP2P",
                         onClick: () => OpenAccordionModal()
-                    }, "PAGO P2P")
+                    }, "PAGO MÓVIL")
                 ),
                 React.createElement("div", {
                     id: "collapseP2P",
@@ -522,7 +574,7 @@ const Accordion = () => {
                         "data-bs-target": "#collapseIT",
                         "aria-expanded": "false",
                         "aria-controls": "collapseIT"
-                    }, "TRANSFERENCIA ONLINE")
+                    }, "TRANSFERENCIA INMEDIATA")
                 ),
                 React.createElement("div", {
                     id: "collapseIT",
@@ -532,7 +584,30 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
-                        React.createElement(OnlineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(OnlineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service!="OFFLINE_PAYMENT") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service!="OFFLINE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                    )
+                )
+            ),
+            OFPaymentValidation && React.createElement("div", { className: "accordion-item" },
+                React.createElement("h2", { className: "accordion-header font-regular", id: "headingOFPayment", style: { margin: '0' } },
+                    React.createElement("button", {
+                        className: "accordion-button collapsed",
+                        type: "button",
+                        "data-bs-toggle": "collapse",
+                        "data-bs-target": "#collapseOFPayment",
+                        "aria-expanded": "false",
+                        "aria-controls": "collapseOFPayment"
+                    }, "TRANSFERENCIA BANCARIA FUERA DE LÍNEA")
+                ),
+                React.createElement("div", {
+                    id: "collapseOFPayment",
+                    className: "accordion-collapse collapse",
+                    "aria-labelledby": "headingOFPayment",
+                    "data-bs-parent": "#accordion"
+                },
+                    React.createElement("div", { className: "accordion-body" },
+                        React.createElement("h5", { className: "font-bold", }, "Transferencia bancaria fuera de línea"),
+                        React.createElement(OfflineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service=="OFFLINE_PAYMENT") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service=="OFFLINE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment })
                     )
                 )
             ),
