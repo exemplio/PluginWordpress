@@ -61,6 +61,7 @@
 	"bank_card_validator_service_error":"error del servicio", 
 	"service_is_unavailable":"Servicio no disponible", 
 	"mercantil_tdd":"mercantil tdd", 
+	"mercantil_tdc":"mercantil tdc", 
 	"201025":"201025-Moneda no corresponde a cuenta", 
 	"161632":"161632-Cliente no tiene número de teléfono afiliado en mi Conexión Bancaribe", 
 	"248":"248-Error en la longitud / formato de la referencia", 
@@ -130,4 +131,8 @@
 	"otp_ccr_is_expired":"Otp expirado",
 	"empty_response":"Respuesta vacía",
 	"deegle_payco_collect_method_not_found":"Método de colección no encontrado",
+	"invalid_payer_id_doc":"Documento de identidad inválido",
+	"transfer_payment_search":"Transferencia inmediata",
+	"invalid_payer_bank_code":"Código de banco inválido",
+	"payerbankcode invalid_payer_bank_code":"Código de banco inválido",
 };

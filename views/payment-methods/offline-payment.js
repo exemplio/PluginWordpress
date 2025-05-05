@@ -1,10 +1,15 @@
-const OfflineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
+const OfflineTransfer = ({ metodoColeccion, banco, totalAmount, paymentFun }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
     const [referenceValue, setReference] = React.useState(null);
     const [receptorBankValue, setReceptorBank] = React.useState(null);
     const [bankImage, setBankImage] = React.useState("");
+    const [bankName, setBankName] = React.useState("");
+    const [bankCode, setBankCode] = React.useState("");
+    const [rifValue, setRifValue] = React.useState("");
+    const [commerceValue, setCommerceValue] = React.useState("");
+    const [accountNValue, setAccountNValue] = React.useState("");
     const [sendCollectMethod, setSendCollectMethod] = React.useState("");
     let getReceptorBank = [];
     if (!(metodoColeccion == null || metodoColeccion == undefined || metodoColeccion == "")) {
@@ -20,15 +25,25 @@ const OfflineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
             if (Boolean(item?.bank_info?.name)) {
                 if (item?.bank_info?.name == value) {
                     setBankImage(php_var?.get_static+item?.bank_info?.thumbnail);
+                    setBankName(item?.bank_info?.name);
+                    setBankCode(item?.bank_info?.code);
+                    setRifValue(item?.credential_json?.collector_id_doc);
+                    setCommerceValue(item?.credential_json?.collector_name);
+                    setAccountNValue(item?.credential_json?.collector_bank_account);
                     setReceptorBank(item?.bank_info?.name);
                     item.typeToSend = item?.product_name;
                     setSendCollectMethod(item);
                 }                
             }else if(item?.bank_name == value){
                 setBankImage(php_var?.get_static+item?.bank_thumbnail);
+                setBankName(item?.bank_info?.name);
+                setBankCode(item?.bank_info?.code);
+                setReceptorBank(item?.bank_info?.name);
+                setRifValue(item?.credential_json?.collector_id_doc);
+                setCommerceValue(item?.credential_json?.collector_name);
+                setAccountNValue(item?.credential_json?.collector_bank_account);
                 item.typeToSend = "MOBILE_PAYMENT";
                 setSendCollectMethod(item);
-                setReceptorBank(item?.bank_name);
             }
         });        
     } 
@@ -54,13 +69,16 @@ const OfflineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
             return;
         }
         jsonTosend= {                        
-            product_name: metodoColeccion?.product_name,
-            collect_method_id: metodoColeccion?.id,
+            product_name: sendCollectMethod?.product_name,
+            collect_method_id: sendCollectMethod?.id,
             amount: totalAmount,
-            bank_account_id: metodoColeccion?.bank_account_id,
-            payer_id_doc: payerIdDocValue,
-            reference: referenceValue,
-            amount: totalAmount,            
+            payment: {
+                bank_account_id: sendCollectMethod?.bank_account_id,
+                payer_id_doc: `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`,
+                payer_bank_code: bankCode,
+                reference: referenceValue,
+                amount: totalAmount,            
+            }
         }
         openModal("msgConfirmOfflinePay");
     }
@@ -69,9 +87,14 @@ const OfflineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
         setPayerIdDoc("");
         setBank("");
         setReference("");
+        changeBank(getReceptorBank[0]?.bank_name!=undefined ? getReceptorBank[0]?.bank_name : getReceptorBank[0]?.bank_info?.name);
     };
     return React.createElement("div", { className: "col-lg-12 col-md-12 col-sm-12 col-12" },
         React.createElement("div", {className:"row", style:{ marginTop:'15px' }},
+            React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'center' } },
+                React.createElement("img", { src: bankImage, style: { objectFit: 'contain', height: "40px" } }),
+                React.createElement("h5", { className: "font-bold", style: { textTransform: 'uppercase' } }, bankName)
+            ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "input-group" },
                     React.createElement("select", {
@@ -121,7 +144,7 @@ const OfflineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     ),
                     React.createElement("label", { htmlFor: "receptor_bank", className: "d-none d-sm-inline-block font-regular" }, "Banco receptor"),
                     React.createElement("label", { htmlFor: "receptor_bank", className: "d-sm-none font-regular" }, "Banco receptor")
-                )
+                ),
             ),
             React.createElement("div", { className: "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12", style: { marginBottom: '15px' } },
                 React.createElement("div", { className: "form-floating" },
@@ -157,6 +180,16 @@ const OfflineTransfer = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     React.createElement("label", { htmlFor: "reference",className: "font-regular" }, "Referencia")
                 )
             ),
+        ),
+        React.createElement("div", { className: "col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12", style: { textAlign: 'left' } },
+            React.createElement("b", { className: "font-regular", style: { margin: 0 } }, "Rif: "),
+            React.createElement("span", { className: "font-regular", style: { margin: 0 } }, rifValue),
+            React.createElement("br"),
+            React.createElement("b", { className: "font-regular", style: { margin: 0 } }, "Comercio: "),
+            React.createElement("span", { className: "font-regular", style: { margin: 0 } }, commerceValue),
+            React.createElement("br"),
+            React.createElement("b", { className: "font-regular", style: { margin: 0 } }, "Nro. cuenta: "),
+            React.createElement("span", { className: "font-regular", style: { margin: 0 } }, accountNValue),
         ),
         React.createElement("div", { className: "row col-lg-12 offset-md-12 col-md-12 col-sm-12 col-12 mt-2 reportButtons", style: { justifyContent: 'right', display: 'flex', marginTop: '15px' } },
             React.createElement("div", { className: "col-lg-6 col-md-6 col-sm-6 col-12", style: { textAlign: 'right' } },
