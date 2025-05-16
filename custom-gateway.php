@@ -223,10 +223,10 @@ function get_payment_method_script_handles() {
       'cart_total' => WC()->cart !== null ? WC()->cart->total : 0,
       'empty_cart' => admin_url('admin-ajax.php'),
       'customer_info' => admin_url('admin-ajax.php'),
-      'url_link' => 'https://apid.paguetodo.com/demo', // demo
-      // 'url_link' => 'https://api.paguetodo.com', // prod
-      'get_static' => 'http://staticd.paguetodo.com/', // demo
-      // 'get_static' => 'http://static.paguetodo.com/', // prod
+      // 'url_link' => 'https://apid.paguetodo.com/demo', // demo
+      'url_link' => 'https://api.paguetodo.com', // prod
+      // 'get_static' => 'http://staticd.paguetodo.com/', // demo
+      'get_static' => 'http://static.paguetodo.com/', // prod
     ]);
     wp_enqueue_script('gateway_paguetodo-blocks-integration');
     wp_enqueue_script('credicard_payments_script');

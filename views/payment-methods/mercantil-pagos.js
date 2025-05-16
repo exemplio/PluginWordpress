@@ -1,4 +1,4 @@
-const MercantilPagos = ({ metodoColeccion, totalAmount, paymentFun }) => {
+const MercantilPagos = ({ metodoColeccion, totalAmount, paymentFun, isCollectMethod }) => {
     let mercantil = php_var.mercantil;
     metodoColeccion= !(metodoColeccion== null || metodoColeccion== undefined) ? metodoColeccion[0] : null;
     const [ojitoCcvValue, setOjitoCcv] = React.useState(eyeSolid);
@@ -196,7 +196,11 @@ const MercantilPagos = ({ metodoColeccion, totalAmount, paymentFun }) => {
                 jsonTosend.payment.otp= tokenBank;
             }            
         }
-        jsonTosend.collect_method_id= metodoColeccion.id;
+        if (isCollectMethod) {            
+            jsonTosend.collect_method_id= metodoColeccion.id;
+        }else{
+            jsonTosend.credential_id= metodoColeccion.id;
+        }
         jsonTosend.amount= totalAmount;
         jsonTosend.payment.amount= totalAmount;
         setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);

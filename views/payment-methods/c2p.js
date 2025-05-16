@@ -1,4 +1,4 @@
-const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {  
+const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun, isCollectMethod }) => {  
     let bank_image = php_var.bancaribe;
     const [ojitoOperacion, setOjitoOperacion] = React.useState(eyeSolid);
     const [idDocTypeValue, setIdDocType] = React.useState("V");
@@ -54,45 +54,51 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
 		}
     };
     const verifyDataC2P = () => {
+        jsonTosend.payment={};
         if (idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
             openModal('msgWarning');
             return;
-        }
-        if (idDocC2pValue==null || idDocC2pValue==undefined || idDocC2pValue=="" || idDocC2pValue=="null") {
-            sendModalValue("msgWarning","Debe ingresar el número de documento");
-            openModal('msgWarning');
-            return;
         }else{
-            setIdDocC2p(idDocC2pValue+"".trim().toUpperCase());
-            if(idDocTypeValue!="P"){
-                if(!utils_keyNumber(idDocC2pValue)){
-                    sendModalValue("msgWarning","El formato del número de documento es incorrecto");
-                    openModal('msgWarning');
-                    return;
+            if (idDocC2pValue==null || idDocC2pValue==undefined || idDocC2pValue=="" || idDocC2pValue=="null") {
+                sendModalValue("msgWarning","Debe ingresar el número de documento");
+                openModal('msgWarning');
+                return;
+            }else{
+                setIdDocC2p(idDocC2pValue+"".trim().toUpperCase());
+                if(idDocTypeValue!="P"){
+                    if(!utils_keyNumber(idDocC2pValue)){
+                        sendModalValue("msgWarning","El formato del número de documento es incorrecto");
+                        openModal('msgWarning');
+                        return;
+                    }
                 }
-            }
+                jsonTosend.payment.payer_id_doc=`${idDocTypeValue}${addZeros(idDocC2pValue, 9)}`;
+            }            
         }
         if (prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el prefijo del teléfono");
             openModal('msgWarning');
             return;
-        }
-        if (phoneC2PValue==null || phoneC2PValue==undefined || phoneC2PValue=="" || phoneC2PValue=="null") {
-            sendModalValue("msgWarning","Debe ingresar el número del teléfono");
-            openModal('msgWarning');
-            return;
         }else{
-            var phone=(phoneC2PValue+"").trim().replace("-","");
-            if(phone.length!=7){
-                sendModalValue("msgWarning","El número del teléfono esta incompleto");
+            if (phoneC2PValue==null || phoneC2PValue==undefined || phoneC2PValue=="" || phoneC2PValue=="null") {
+                sendModalValue("msgWarning","Debe ingresar el número del teléfono");
                 openModal('msgWarning');
                 return;
             }else{
-                if(!utils_keyNumber(phone)){
-                    sendModalValue("msgWarning","El número del teléfono sólo acepta números");
+                var phone=(phoneC2PValue+"").trim().replace("-","");
+                if(phone.length!=7){
+                    sendModalValue("msgWarning","El número del teléfono esta incompleto");
                     openModal('msgWarning');
                     return;
+                }else{
+                    if(!utils_keyNumber(phone)){
+                        sendModalValue("msgWarning","El número del teléfono sólo acepta números");
+                        openModal('msgWarning');
+                        return;
+                    }else{
+                        jsonTosend.payment.payer_phone=`${prefixPhoneValue}${phone}`;
+                    }
                 }
             }
         }
@@ -100,6 +106,8 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
             sendModalValue("msgWarning","Debe seleccionar el banco pagador");
             openModal('msgWarning');
             return;            
+        }else{
+            jsonTosend.payment.payer_bank_code=bancoSelectedValue;
         }
         if (otpValue==null || otpValue==undefined || otpValue=="" || otpValue=="null") {
             sendModalValue("msgWarning","Debe ingresar el OTP");
@@ -111,21 +119,17 @@ const C2pPayment = ({ metodoColeccion,banco, totalAmount, paymentFun }) => {
                 sendModalValue("msgWarning","El OTP esta incompleto");
                 openModal('msgWarning');
                 return;
+            }else{
+                jsonTosend.payment.otp=otpValue;   
             }
         }
-        jsonTosend= {            
-            collect_method_id: sendCollectMethod?.id,
-            amount: totalAmount,
-            payment: {
-                collect_method_id: sendCollectMethod?.id,
-                amount: totalAmount,
-                bank_account_id: sendCollectMethod?.bank_account_id,
-                payer_id_doc: `${idDocTypeValue}${addZeros(idDocC2pValue, 9)}`,
-                payer_phone: `${prefixPhoneValue}${phoneC2PValue}`,
-                payer_bank_code: bancoSelectedValue,
-                otp: otpValue                
-            }
+        if (isCollectMethod) {            
+            jsonTosend.collect_method_id=sendCollectMethod?.id;
+        }else{
+            jsonTosend.credential_id=sendCollectMethod?.id;
         }
+        jsonTosend.amount=totalAmount;
+        jsonTosend.payment.amount=totalAmount;
         openModal("msgConfirmC2P");
     };
     const setTooltip= (banco) => {

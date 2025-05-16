@@ -1,4 +1,4 @@
-const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEmail }) => {
+const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEmail, isCollectMethod }) => {
     let actualDate = new Date();
     let year = actualDate.getFullYear();
     let month = String(actualDate.getMonth() + 1).padStart(2, '0');
@@ -64,45 +64,51 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
         });        
     }
     const verifyDataP2P = () => {
+        jsonTosend.payment={};
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
             openModal('msgWarning');
             return;
-        }
-        if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
-            sendModalValue("msgWarning","Debe ingresar el número de documento");
-            openModal('msgWarning');
-            return;
         }else{
-            setPayerIdDoc(payerIdDocValue+"".trim().toUpperCase());
-            if(idDocTypeValue!="P"){
-                if(!utils_keyNumber(payerIdDocValue)){
-                    sendModalValue("msgWarning","El formato del número de documento es incorrecto");
-                    openModal('msgWarning');
-                    return;
+            if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
+                sendModalValue("msgWarning","Debe ingresar el número de documento");
+                openModal('msgWarning');
+                return;
+            }else{
+                setPayerIdDoc(payerIdDocValue+"".trim().toUpperCase());
+                if(idDocTypeValue!="P"){
+                    if(!utils_keyNumber(payerIdDocValue)){
+                        sendModalValue("msgWarning","El formato del número de documento es incorrecto");
+                        openModal('msgWarning');
+                        return;
+                    }
                 }
+                jsonTosend.payment.payer_id_doc=`${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`;
             }
         }
         if(prefixPhoneValue==null || prefixPhoneValue==undefined || prefixPhoneValue=="" || prefixPhoneValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el código de area del teléfono");
             openModal('msgWarning');
             return;
-        }
-        if(phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="" || phoneP2PValue=="null"){
-            sendModalValue("msgWarning","Debe ingresar el número del teléfono");
-            openModal('msgWarning');
-            return;
         }else{
-            var phone_p2p= phoneP2PValue.replaceAll('-','');             
-            if(phone_p2p.length!=7){
-                sendModalValue("msgWarning","El número del teléfono esta incompleto");
+            if(phoneP2PValue==null || phoneP2PValue==undefined || phoneP2PValue=="" || phoneP2PValue=="null"){
+                sendModalValue("msgWarning","Debe ingresar el número del teléfono");
                 openModal('msgWarning');
                 return;
             }else{
-                if(!utils_keyNumber(phone_p2p)){
-                    sendModalValue("msgWarning","El número del teléfono sólo acepta números");
+                var phone_p2p= phoneP2PValue.replaceAll('-','');             
+                if(phone_p2p.length!=7){
+                    sendModalValue("msgWarning","El número del teléfono esta incompleto");
                     openModal('msgWarning');
                     return;
+                }else{
+                    if(!utils_keyNumber(phone_p2p)){
+                        sendModalValue("msgWarning","El número del teléfono sólo acepta números");
+                        openModal('msgWarning');
+                        return;
+                    }else{
+                        jsonTosend.payment.payer_phone=prefixPhoneValue+phoneP2PValue+"".trim().toUpperCase();
+                    }
                 }
             }
         }
@@ -125,6 +131,8 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                 sendModalValue("msgWarning","No puedes ingresar fechas futuras");
                 openModal('msgWarning');
                 return;
+            }else{
+                jsonTosend.payment.date=dateP2PValue+"".trim().toUpperCase();
             }
         }
         if(referenceP2PValue==null || referenceP2PValue==undefined || referenceP2PValue=="" || referenceP2PValue=="null"){
@@ -136,20 +144,17 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                 sendModalValue("msgWarning","El número de referencia debe ser de 4 digitos");
                 openModal('msgWarning');
                 return;
+            }else{
+                jsonTosend.payment.reference=referenceP2PValue+"".trim().toUpperCase();
             }
         }
-        jsonTosend= {            
-            collect_method_id: sendCollectMethod?.id,
-            amount: totalAmount,
-            payment: {
-                collect_method_id: sendCollectMethod?.id,
-                amount: totalAmount,
-                payer_id_doc: `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`,
-                payer_phone: `${prefixPhoneValue}${phoneP2PValue}`,
-                reference: referenceP2PValue,
-                date: dateP2PValue,
-            }
+        if (isCollectMethod) {            
+            jsonTosend.collect_method_id=sendCollectMethod?.id;
+        }else{
+            jsonTosend.credential_id=sendCollectMethod?.id;
         }
+        jsonTosend.amount=totalAmount;
+        jsonTosend.payment.amount=totalAmount;
         openModal("msgConfirmP2P");
     }
     const clean = () => { 

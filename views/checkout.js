@@ -137,7 +137,16 @@ const Accordion = () => {
                                 }) : credentials.map((item) => { 
                                     switch (item?.payment_method) {
                                         case "TDC":
-                                            setTDCValidation(true);
+                                            switch (item?.service) {
+                                                case "CREDICARD_PAGOS_TDC":
+                                                    setTDCValidation(true);                                            
+                                                    break;
+                                                case "MERCANTIL_TDC":
+                                                    setMercantilTDCValidation(true);
+                                                    break;                                            
+                                                default:
+                                                    break;
+                                            }
                                             break;
                                         case "TDD":
                                             switch (item?.service) {
@@ -343,36 +352,69 @@ const Accordion = () => {
                                     withCredentials: true
                                 },
                                 success: function(dataResponse) {
-                                    callServicesHttp('payment', query, data).then((responsePayment) => {
-                                        if ((Boolean(responsePayment?.code))) {
-                                            callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_false').then((response) => {
-                                                HideLoading();
-                                                sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
-                                                openModal('msgError');
-                                                return;
-                                            })
-                                        }else{
-                                            if(!(responsePayment?.status==200)){
-                                                let reference_name;
-                                                let {collect_method, credentials} = responsePayment;
-                                                if (!(responsePayment?.collector_reference==null || responsePayment?.collector_reference==undefined || responsePayment?.collector_reference=="")) {
-                                                    reference_name = `${collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase())} #${responsePayment?.collector_reference}`;
-                                                }else{
-                                                    reference_name = collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase());
-                                                }
-                                                callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo', reference_name).then((response) => {
-                                                    window.location.href = dataResponse?.payment_result?.redirect_url;
-                                                }).catch((e)=>console.log(e))
-                                            }else{
+                                    if (collect_methods.length!=0) {
+                                        callServicesHttp('payment', query, data).then((responsePayment) => {
+                                            if ((Boolean(responsePayment?.code))) {
                                                 callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_false').then((response) => {
                                                     HideLoading();
                                                     sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
                                                     openModal('msgError');
                                                     return;
                                                 })
-                                            } 
-                                        }
-                                    }).catch((e)=>console.log(e))                   
+                                            }else{
+                                                if(!(responsePayment?.status==200)){
+                                                    let reference_name;
+                                                    let {collect_method, credentials} = responsePayment;
+                                                    if (!(responsePayment?.collector_reference==null || responsePayment?.collector_reference==undefined || responsePayment?.collector_reference=="")) {
+                                                        reference_name = `${collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase())} #${responsePayment?.collector_reference}`;
+                                                    }else{
+                                                        reference_name = collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase());
+                                                    }
+                                                    callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo', reference_name).then((response) => {
+                                                        window.location.href = dataResponse?.payment_result?.redirect_url;
+                                                    }).catch((e)=>console.log(e))
+                                                }else{
+                                                    callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_false').then((response) => {
+                                                        HideLoading();
+                                                        sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                                                        openModal('msgError');
+                                                        return;
+                                                    })
+                                                } 
+                                            }
+                                        }).catch((e)=>console.log(e))                                        
+                                    }else{
+                                        callServicesHttp('payment-credential', query, data).then((responsePayment) => {
+                                            if ((Boolean(responsePayment?.code))) {
+                                                callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_false').then((response) => {
+                                                    HideLoading();
+                                                    sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                                                    openModal('msgError');
+                                                    return;
+                                                })
+                                            }else{
+                                                if(!(responsePayment?.status==200)){
+                                                    let reference_name;
+                                                    let {collect_method, credentials} = responsePayment;
+                                                    if (!(responsePayment?.collector_reference==null || responsePayment?.collector_reference==undefined || responsePayment?.collector_reference=="")) {
+                                                        reference_name = `${collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase())} #${responsePayment?.collector_reference}`;
+                                                    }else{
+                                                        reference_name = collect_method != undefined ? translate(collect_method?.product_name.toLowerCase()) : translate(credentials?.payment_method.toLowerCase());
+                                                    }
+                                                    callServicesHttp('place-order', php_var.empty_cart, 'place_order_woo', reference_name).then((response) => {
+                                                        window.location.href = dataResponse?.payment_result?.redirect_url;
+                                                    }).catch((e)=>console.log(e))
+                                                }else{
+                                                    callServicesHttp('place-order', php_var.empty_cart, 'set_payment_status_false').then((response) => {
+                                                        HideLoading();
+                                                        sendModalValue("msgError",processMessageError(responsePayment,mensajeAll));
+                                                        openModal('msgError');
+                                                        return;
+                                                    })
+                                                } 
+                                            }
+                                        }).catch((e)=>console.log(e))
+                                    }
                                 }
                             }).catch((e)=>{
                                 HideLoading();
@@ -447,7 +489,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(CredicardPay, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDC_API") : credentials.filter((item) => item?.payment_method === "TDC"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(CredicardPay, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDC_API") : credentials.filter((item) => item?.payment_method === "TDC" && item?.service=="CREDICARD_PAGOS_TDC"), totalAmount: TotalAmount, paymentFun: sendPayment, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),
@@ -470,7 +512,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(CredicardPay, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="CREDICARD_PAGOS_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="CREDICARD_PAGOS_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(CredicardPay, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="CREDICARD_PAGOS_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="CREDICARD_PAGOS_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),
@@ -493,7 +535,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Crédito'),
-                        React.createElement(MercantilPagos, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDC_API" && item?.credential_service=="MERCANTIL_TDC") : credentials.filter((item) => item?.payment_method === "TDC" && item?.service=="MERCANTIL_TDC"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(MercantilPagos, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDC_API" && item?.credential_service=="MERCANTIL_TDC") : credentials.filter((item) => item?.payment_method === "TDC" && item?.service=="MERCANTIL_TDC"), totalAmount: TotalAmount, paymentFun: sendPayment, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),
@@ -516,7 +558,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, 'Tarjeta de Débito'),
-                        React.createElement(MercantilPagos, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="MERCANTIL_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(MercantilPagos, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TDD_API" && item?.credential_service=="MERCANTIL_TDD") : credentials.filter((item) => item?.payment_method === "TDD" && item?.service=="MERCANTIL_TDD"), totalAmount: TotalAmount, paymentFun: sendPayment, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),
@@ -539,7 +581,7 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement(MobilePayment, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API") : credentials.filter((item) => item?.payment_method === "MOBILE_PAYMENT_SEARCH" || item?.payment_method === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingEmail })
+                        React.createElement(MobilePayment, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT_SEARCH" || item?.product_name === "MOBILE_PAYMENT_SEARCH_API") : credentials.filter((item) => item?.payment_method === "MOBILE_PAYMENT_SEARCH" || item?.payment_method === "MOBILE_PAYMENT_SEARCH_API"), totalAmount: TotalAmount, paymentFun: sendPayment, displayingEmail, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),
@@ -561,7 +603,7 @@ const Accordion = () => {
                     "data-bs-parent": "#accordion"
                 },
                     React.createElement("div", { className: "accordion-body" },
-                        React.createElement(C2pPayment, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT") : credentials.filter((item) => item?.payment_method === "C2P"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(C2pPayment, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "MOBILE_PAYMENT") : credentials.filter((item) => item?.payment_method === "C2P"), totalAmount: TotalAmount, paymentFun: sendPayment, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),
@@ -584,7 +626,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia Online"),
-                        React.createElement(OnlineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service!="OFFLINE_PAYMENT") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service!="OFFLINE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(OnlineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service!="OFFLINE_PAYMENT") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service!="OFFLINE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),
@@ -607,7 +649,7 @@ const Accordion = () => {
                 },
                     React.createElement("div", { className: "accordion-body" },
                         React.createElement("h5", { className: "font-bold", }, "Transferencia bancaria fuera de línea"),
-                        React.createElement(OfflineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service=="OFFLINE_PAYMENT") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service=="OFFLINE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment })
+                        React.createElement(OfflineTransfer, { metodoColeccion: collect_methods.length!=0 ? collect_methods.filter((item) => item?.product_name === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service=="OFFLINE_PAYMENT") : credentials.filter((item) => item?.payment_method === "TRANSFER_PAYMENT_SEARCH" && item?.credential_service=="OFFLINE_PAYMENT"), totalAmount: TotalAmount, paymentFun: sendPayment, isCollectMethod: collect_methods.length!=0 ? true : false })
                     )
                 )
             ),

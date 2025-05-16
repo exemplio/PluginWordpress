@@ -116,6 +116,10 @@ function callServicesHttp(ser,querys,data,payment_method){
 			request=callServices(_url+'/payco/payment'+querys,"POST",headers,data,true);
 			return request;
 		}break;
+		case 'payment-credential':{
+			request=callServices(_url+'/payco/payment_by_credential'+querys,"POST",headers,data,true);
+			return request;
+		}break;
 		case 'customer-info':{
 			request=callServicesAjax(querys,data);
 			return request;

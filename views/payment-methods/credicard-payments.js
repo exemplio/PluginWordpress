@@ -1,4 +1,4 @@
-const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
+const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun, isCollectMethod }) => {
     let credicard = php_var.credicard;
     let visa = php_var.visa;
     let master_card = php_var.master_card;
@@ -426,7 +426,6 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                     return;
                 }else if(showOtpBank){
                     jsonTosend= {
-                        collect_method_id: metodoColeccion.id,
                         amount: totalAmount,
                         payment:{
                             reason:	'Pago de servicios CREDICARD PAGOS',
@@ -453,10 +452,14 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                                 }
                             }
                         }
-                    };  
+                    };
+                    if (isCollectMethod) {            
+                        jsonTosend.collect_method_id=metodoColeccion?.id;
+                    }else{
+                        jsonTosend.credential_id=metodoColeccion?.id;
+                    }
                 }else{
                     jsonTosend= {
-                        collect_method_id: metodoColeccion.id,
                         amount: totalAmount,
                         payment:{
                             product_name: metodoColeccion?.product_name,
@@ -480,6 +483,11 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             }
                         }
                     };
+                    if (isCollectMethod) {            
+                        jsonTosend.collect_method_id=metodoColeccion?.id;
+                    }else{
+                        jsonTosend.credential_id=metodoColeccion?.id;
+                    }
                 }
                 // checkCommision(metodoColeccion?.type);
                 setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);
@@ -488,7 +496,6 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
             case 'TDC':
                 if (showOtpCcr) {
                     jsonTosend= {
-                        collect_method_id: metodoColeccion.id,
                         amount: totalAmount,
                         payment:{
                             reason: "Pago de servicios CREDICARD PAGOS",
@@ -513,13 +520,17 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             }
                         }
                     };
+                    if (isCollectMethod) {            
+                        jsonTosend.collect_method_id=metodoColeccion?.id;
+                    }else{
+                        jsonTosend.credential_id=metodoColeccion?.id;
+                    }
                     if (action=='TOKEN') {
                         sendTokenCcr(jsonTosend?.payment?.credit_card);
                         return;                        
                     }
                 }else{
                     jsonTosend= {
-                        collect_method_id: metodoColeccion.id,
                         amount: totalAmount,
                         payment:{
                             reason: "Pago de servicios CREDICARD PAGOS",
@@ -538,6 +549,11 @@ const CredicardPay = ({ metodoColeccion, totalAmount, paymentFun }) => {
                             }
                         }
                     };
+                    if (isCollectMethod) {            
+                        jsonTosend.collect_method_id=metodoColeccion?.id;
+                    }else{
+                        jsonTosend.credential_id=metodoColeccion?.id;
+                    }
                 }
                 // checkCommision(metodoColeccion?.type);
                 setAmountToShow(`Bs. ${parseAmount(totalAmount)}`);

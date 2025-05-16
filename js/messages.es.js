@@ -135,4 +135,5 @@
 	"transfer_payment_search":"Transferencia inmediata",
 	"invalid_payer_bank_code":"Código de banco inválido",
 	"payerbankcode invalid_payer_bank_code":"Código de banco inválido",
+	"r4_mobile_payment_search":"Pago móvil R4",
 };

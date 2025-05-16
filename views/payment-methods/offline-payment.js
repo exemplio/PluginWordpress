@@ -1,4 +1,4 @@
-const OfflineTransfer = ({ metodoColeccion, banco, totalAmount, paymentFun }) => {
+const OfflineTransfer = ({ metodoColeccion, banco, totalAmount, paymentFun, isCollectMethod }) => {
     const [idDocTypeValue, setIdDocType] = React.useState("V");
     const [payerIdDocValue, setPayerIdDoc] = React.useState(null);
     const [bankValue, setBank] = React.useState(null);
@@ -48,38 +48,43 @@ const OfflineTransfer = ({ metodoColeccion, banco, totalAmount, paymentFun }) =>
         });        
     } 
     const verifyDataP2P = () => {
+        jsonTosend.payment={};
         if(idDocTypeValue==null || idDocTypeValue==undefined || idDocTypeValue=="" || idDocTypeValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el tipo de documento");
             openModal('msgWarning');
             return;
-        }
-        if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
-            sendModalValue("msgWarning","Debe ingresar el número de documento");
-            openModal('msgWarning');
-            return;
+        }else{
+            if(payerIdDocValue==null || payerIdDocValue==undefined || payerIdDocValue=="" || payerIdDocValue=="null"){
+                sendModalValue("msgWarning","Debe ingresar el número de documento");
+                openModal('msgWarning');
+                return;
+            }else{
+                jsonTosend.payment.payer_id_doc = `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`;
+            }        
         }
         if(bankValue==null || bankValue==undefined || bankValue=="" || bankValue=="null"){
             sendModalValue("msgWarning","Debe seleccionar el banco de origen");
             openModal('msgWarning');
             return;
+        }else{
+            jsonTosend.payment.payer_bank_code = bankCode;
         }
         if(referenceValue==null || referenceValue==undefined || referenceValue=="" || referenceValue=="null"){
             sendModalValue("msgWarning","Debe ingresar el número de referencia");
             openModal('msgWarning');
             return;
+        }else{
+            jsonTosend.payment.reference = referenceValue;
         }
-        jsonTosend= {                        
-            product_name: sendCollectMethod?.product_name,
-            collect_method_id: sendCollectMethod?.id,
-            amount: totalAmount,
-            payment: {
-                bank_account_id: sendCollectMethod?.bank_account_id,
-                payer_id_doc: `${idDocTypeValue}${addZeros(payerIdDocValue, 9)}`,
-                payer_bank_code: bankCode,
-                reference: referenceValue,
-                amount: totalAmount,            
-            }
+        if (isCollectMethod) {            
+            jsonTosend.collect_method_id=sendCollectMethod?.id;
+        }else{
+            jsonTosend.credential_id=sendCollectMethod?.id;
         }
+        jsonTosend.product_name = sendCollectMethod?.product_name;
+        jsonTosend.amount = totalAmount;
+        jsonTosend.payment.bank_account_id = sendCollectMethod?.bank_account_id;
+        jsonTosend.payment.amount = totalAmount;
         openModal("msgConfirmOfflinePay");
     }
     const clean = () => { 
