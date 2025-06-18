@@ -121,6 +121,8 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
             sendModalValue("msgWarning","Debe seleccionar el banco emisor");
             openModal('msgWarning');
             return;
+        }else{
+            jsonTosend.payment.payer_bank_code=bankValue;
         }
         if(dateP2PValue==null || dateP2PValue==undefined || dateP2PValue=="" || dateP2PValue=="null"){
             sendModalValue("msgWarning","Debe ingresar la fecha de emisión");
@@ -132,7 +134,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                 openModal('msgWarning');
                 return;
             }else{
-                jsonTosend.payment.date=dateP2PValue+"".trim().toUpperCase();
+                jsonTosend.payment.date_of_payment=dateP2PValue+"".trim().toUpperCase();
             }
         }
         if(referenceP2PValue==null || referenceP2PValue==undefined || referenceP2PValue=="" || referenceP2PValue=="null"){
@@ -274,7 +276,7 @@ const MobilePayment = ({ metodoColeccion, totalAmount, paymentFun, displayingEma
                     },
                     React.createElement("option", { value: "", disabled: true, selected: true }, ""),
                         allBanks().map((item, index) => (
-                            React.createElement("option", { key: index, value: item.value, style: { fontSize: '14px' }, className: "font-regular" }, item.name.toUpperCase())
+                            React.createElement("option", { key: index, value: item.code, style: { fontSize: '14px' }, className: "font-regular" }, item.name.toUpperCase())
                         ))
                     ),
                     React.createElement("label", { htmlFor: "bank", className: "d-none d-sm-inline-block font-regular" }, "Banco pagador"),

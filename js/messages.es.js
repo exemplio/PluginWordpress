@@ -136,4 +136,6 @@
 	"invalid_payer_bank_code":"Código de banco inválido",
 	"payerbankcode invalid_payer_bank_code":"Código de banco inválido",
 	"r4_mobile_payment_search":"Pago móvil R4",
+	"bdv_mobile_payment_search":"Pago móvil Bdv",
+	"bdv_c2p":"C2P Bdv",
 };
